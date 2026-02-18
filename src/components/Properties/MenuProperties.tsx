@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import type { Block, MenuBlockProperties, MenuItem } from '../../types';
+import { narrowBlock } from '../../types';
 import { useEditorDispatch } from '../../context/EditorContext';
 import { ColorPicker } from './controls/ColorPicker';
 import { PaddingInput } from './controls/PaddingInput';
@@ -14,7 +15,6 @@ interface MenuPropertiesProps {
 
 export function MenuProperties({ block }: MenuPropertiesProps) {
   const dispatch = useEditorDispatch();
-  const p = block.properties as MenuBlockProperties;
 
   const update = useCallback(
     (props: Partial<MenuBlockProperties>) => {
@@ -28,36 +28,39 @@ export function MenuProperties({ block }: MenuPropertiesProps) {
 
   const updateItem = useCallback(
     (index: number, changes: Partial<MenuItem>) => {
-      const items = [...p.items];
+      const items = [...block.properties.items];
       items[index] = { ...items[index], ...changes };
       update({ items });
     },
-    [p.items, update],
+    [block.properties.items, update],
   );
 
   const addItem = useCallback(() => {
-    const items = [...p.items, { text: 'Link', href: '#' }];
+    const items = [...block.properties.items, { text: 'Link', href: '#' }];
     update({ items });
-  }, [p.items, update]);
+  }, [block.properties.items, update]);
 
   const removeItem = useCallback(
     (index: number) => {
-      const items = p.items.filter((_: any, i: number) => i !== index);
+      const items = block.properties.items.filter((_: any, i: number) => i !== index);
       update({ items });
     },
-    [p.items, update],
+    [block.properties.items, update],
   );
 
   const moveItem = useCallback(
     (index: number, direction: -1 | 1) => {
-      const items = [...p.items];
+      const items = [...block.properties.items];
       const newIndex = index + direction;
       if (newIndex < 0 || newIndex >= items.length) return;
       [items[index], items[newIndex]] = [items[newIndex], items[index]];
       update({ items });
     },
-    [p.items, update],
+    [block.properties.items, update],
   );
+
+  if (!narrowBlock(block, 'menu')) return null;
+  const p = block.properties;
 
   return (
     <div className={styles.propertiesBody}>

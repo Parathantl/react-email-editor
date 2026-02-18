@@ -32,6 +32,8 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
     [onChange],
   );
 
+  const isHex = /^#[0-9a-fA-F]{6}$/.test(value);
+
   return (
     <div className={styles.fieldGroup}>
       <label className={styles.fieldLabel}>{label}</label>
@@ -40,11 +42,24 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
           className={styles.colorPickerTrigger}
           onClick={() => setIsOpen(!isOpen)}
         >
-          <div className={styles.colorSwatch} style={{ backgroundColor: value }} />
-          <span className={styles.colorValue}>{value}</span>
+          <div
+            className={`${styles.colorSwatch} ${value === 'transparent' ? styles.colorSwatchTransparent : ''}`}
+            style={value !== 'transparent' ? { backgroundColor: value || 'transparent' } : undefined}
+          />
+          <span className={styles.colorValue}>{value || 'transparent'}</span>
         </div>
         {isOpen && (
           <div className={styles.colorPresets}>
+            <button
+              className={`${styles.colorPresetBtn} ${styles.colorPresetBtnTransparent} ${
+                value === 'transparent' ? styles.colorPresetBtnActive : ''
+              }`}
+              onClick={() => handlePresetClick('transparent')}
+              title="transparent"
+              style={{ gridColumn: '1 / -1', width: '100%' }}
+            >
+              Transparent
+            </button>
             {COLOR_PRESETS.map((color) => (
               <button
                 key={color}
@@ -58,7 +73,7 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
             ))}
             <input
               type="color"
-              value={value}
+              value={isHex ? value : '#ffffff'}
               onChange={(e) => onChange(e.target.value)}
               style={{ width: '100%', gridColumn: '1 / -1', height: 28, cursor: 'pointer', border: 'none' }}
             />

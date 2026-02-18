@@ -1,6 +1,8 @@
 import React, { useCallback } from 'react';
 import type { Block, HeroBlockProperties } from '../../types';
+import { narrowBlock } from '../../types';
 import { useEditorDispatch } from '../../context/EditorContext';
+import { ImageUploader } from '../ImageUpload/ImageUploader';
 import { ColorPicker } from './controls/ColorPicker';
 import { PaddingInput } from './controls/PaddingInput';
 import { AlignmentPicker } from './controls/AlignmentPicker';
@@ -13,7 +15,6 @@ interface HeroPropertiesProps {
 
 export function HeroProperties({ block }: HeroPropertiesProps) {
   const dispatch = useEditorDispatch();
-  const p = block.properties as HeroBlockProperties;
 
   const update = useCallback(
     (props: Partial<HeroBlockProperties>) => {
@@ -24,6 +25,9 @@ export function HeroProperties({ block }: HeroPropertiesProps) {
     },
     [dispatch, block.id],
   );
+
+  if (!narrowBlock(block, 'hero')) return null;
+  const p = block.properties;
 
   return (
     <div className={styles.propertiesBody}>
@@ -114,6 +118,38 @@ export function HeroProperties({ block }: HeroPropertiesProps) {
         value={p.padding}
         onChange={(padding) => update({ padding })}
       />
+      <div className={styles.separator} />
+      <ColorPicker
+        label="Background Color"
+        value={p.backgroundColor}
+        onChange={(backgroundColor) => update({ backgroundColor })}
+      />
+      <div className={styles.fieldGroup}>
+        <label className={styles.fieldLabel}>Background Image URL</label>
+        <input
+          className={styles.fieldInput}
+          value={p.backgroundImage}
+          onChange={(e) => update({ backgroundImage: e.target.value })}
+          placeholder="https://example.com/image.jpg"
+        />
+      </div>
+      {!p.backgroundImage && (
+        <ImageUploader
+          blockId={block.id}
+          onUploadComplete={(url) => update({ backgroundImage: url })}
+        />
+      )}
+      {p.backgroundImage && (
+        <div className={styles.fieldGroup}>
+          <button
+            className={styles.fieldInput}
+            style={{ cursor: 'pointer', textAlign: 'center' }}
+            onClick={() => update({ backgroundImage: '' })}
+          >
+            Remove Background Image
+          </button>
+        </div>
+      )}
     </div>
   );
 }

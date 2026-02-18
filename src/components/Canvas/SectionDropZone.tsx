@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { isSectionDrop, getSectionMoveFromDrop } from '../../utils/dnd';
-import { useEditor } from '../../context/EditorContext';
+import { useEditorDispatch } from '../../context/EditorContext';
 import styles from '../../styles/canvas.module.css';
 
 interface SectionDropZoneProps {
@@ -8,7 +8,7 @@ interface SectionDropZoneProps {
 }
 
 export function SectionDropZone({ index }: SectionDropZoneProps) {
-  const { dispatch } = useEditor();
+  const dispatch = useEditorDispatch();
   const [isOver, setIsOver] = useState(false);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {

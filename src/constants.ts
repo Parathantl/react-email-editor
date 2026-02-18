@@ -157,6 +157,8 @@ export const DEFAULT_HERO_PROPERTIES: HeroBlockProperties = {
   buttonBorderRadius: '4px',
   align: 'center',
   padding: '40px 25px',
+  backgroundImage: '',
+  backgroundColor: '#ffffff',
 };
 
 export const DEFAULT_BLOCK_PROPERTIES: { [K in BlockType]: BlockPropertiesMap[K] } = {
@@ -177,7 +179,7 @@ export const DEFAULT_BLOCK_PROPERTIES: { [K in BlockType]: BlockPropertiesMap[K]
 // ---- Default Section Properties ----
 
 export const DEFAULT_SECTION_PROPERTIES: SectionProperties = {
-  backgroundColor: '#ffffff',
+  backgroundColor: 'transparent',
   padding: '20px 0',
   borderRadius: '0px',
   fullWidth: false,

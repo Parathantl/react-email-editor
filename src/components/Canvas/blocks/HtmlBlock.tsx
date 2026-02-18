@@ -7,7 +7,7 @@ interface HtmlBlockProps {
   block: Block;
 }
 
-export function HtmlBlock({ block }: HtmlBlockProps) {
+export const HtmlBlock = React.memo(function HtmlBlock({ block }: HtmlBlockProps) {
   const p = block.properties;
 
   const sanitizedContent = useMemo(() => {
@@ -36,4 +36,4 @@ export function HtmlBlock({ block }: HtmlBlockProps) {
       dangerouslySetInnerHTML={{ __html: sanitizedContent }}
     />
   );
-}
+});

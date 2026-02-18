@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import type { Block, ImageBlockProperties } from '../../types';
-import { useEditor, useEditorDispatch } from '../../context/EditorContext';
+import { useEditorDispatch, useImageAdapter } from '../../context/EditorContext';
 import { useImageUpload } from '../ImageUpload/useImageUpload';
 import { PaddingInput } from './controls/PaddingInput';
 import { AlignmentPicker } from './controls/AlignmentPicker';
@@ -13,7 +13,7 @@ interface ImagePropertiesProps {
 
 export function ImageProperties({ block }: ImagePropertiesProps) {
   const dispatch = useEditorDispatch();
-  const { imageUploadAdapter } = useEditor();
+  const { imageUploadAdapter } = useImageAdapter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const p = block.properties;
 

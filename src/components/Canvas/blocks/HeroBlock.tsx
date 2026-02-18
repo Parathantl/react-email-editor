@@ -6,11 +6,21 @@ interface HeroBlockProps {
   block: Block;
 }
 
-export function HeroBlock({ block }: HeroBlockProps) {
+export const HeroBlock = React.memo(function HeroBlock({ block }: HeroBlockProps) {
   const p = block.properties;
 
+  const containerStyle: React.CSSProperties = {
+    padding: p.padding,
+    textAlign: p.align,
+    backgroundColor: p.backgroundColor || undefined,
+    backgroundImage: p.backgroundImage ? `url(${p.backgroundImage})` : undefined,
+    backgroundSize: p.backgroundImage ? 'cover' : undefined,
+    backgroundPosition: p.backgroundImage ? 'center' : undefined,
+    backgroundRepeat: p.backgroundImage ? 'no-repeat' : undefined,
+  };
+
   return (
-    <div className={styles.heroBlock} style={{ padding: p.padding, textAlign: p.align }}>
+    <div className={styles.heroBlock} style={containerStyle}>
       {p.heading && (
         <h2
           className={styles.heroHeading}
@@ -47,4 +57,4 @@ export function HeroBlock({ block }: HeroBlockProps) {
       )}
     </div>
   );
-}
+});

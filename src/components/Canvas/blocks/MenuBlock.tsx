@@ -6,7 +6,7 @@ interface MenuBlockProps {
   block: Block;
 }
 
-export function MenuBlock({ block }: MenuBlockProps) {
+export const MenuBlock = React.memo(function MenuBlock({ block }: MenuBlockProps) {
   const p = block.properties;
 
   const alignStyle =
@@ -35,4 +35,4 @@ export function MenuBlock({ block }: MenuBlockProps) {
       </div>
     </div>
   );
-}
+});

@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import { useImageUpload } from './useImageUpload';
-import { useEditor } from '../../context/EditorContext';
+import { useImageAdapter } from '../../context/EditorContext';
 import styles from '../../styles/blocks.module.css';
 
 interface ImageUploaderProps {
@@ -9,7 +9,7 @@ interface ImageUploaderProps {
 }
 
 export function ImageUploader({ blockId, onUploadComplete }: ImageUploaderProps) {
-  const { imageUploadAdapter } = useEditor();
+  const { imageUploadAdapter } = useImageAdapter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { status, progress, error, upload, cancel } = useImageUpload({

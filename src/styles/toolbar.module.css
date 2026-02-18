@@ -119,6 +119,43 @@
   border-color: var(--ee-color-primary);
 }
 
+/* Export dropdown */
+.exportWrapper {
+  position: relative;
+}
+
+.exportDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background: var(--ee-bg-panel);
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius);
+  box-shadow: var(--ee-shadow-md);
+  z-index: var(--ee-z-dropdown);
+  min-width: 120px;
+  overflow: hidden;
+}
+
+.exportDropdownItem {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  font-size: var(--ee-font-size-sm);
+  font-family: var(--ee-font-family);
+  color: var(--ee-text-primary);
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--ee-transition-fast);
+}
+
+.exportDropdownItem:hover {
+  background: var(--ee-bg-hover);
+}
+
 /* Rich text toolbar */
 .richTextToolbar {
   display: flex;

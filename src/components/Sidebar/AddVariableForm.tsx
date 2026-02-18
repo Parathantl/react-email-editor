@@ -1,20 +1,18 @@
 import React, { useState, useCallback } from 'react';
-import { useEditor } from '../../context/EditorContext';
+import { useEditorVariables } from '../../context/EditorContext';
 import styles from '../../styles/sidebar.module.css';
 
 export function AddVariableForm() {
-  const { variables, addCustomVariable } = useEditor();
+  const { variables, addCustomVariable } = useEditorVariables();
   const [isOpen, setIsOpen] = useState(false);
   const [key, setKey] = useState('');
   const [label, setLabel] = useState('');
-  const [sample, setSample] = useState('');
   const [group, setGroup] = useState('Custom');
   const [error, setError] = useState<string | null>(null);
 
   const resetForm = useCallback(() => {
     setKey('');
     setLabel('');
-    setSample('');
     setGroup('Custom');
     setError(null);
   }, []);
@@ -34,22 +32,16 @@ export function AddVariableForm() {
         return;
       }
 
-      if (!sample.trim()) {
-        setError('Sample value is required');
-        return;
-      }
-
       addCustomVariable({
         key: trimmedKey,
         label: label.trim() || trimmedKey,
-        sample: sample.trim(),
         group: group.trim() || 'Custom',
       });
 
       resetForm();
       setIsOpen(false);
     },
-    [key, label, sample, group, variables, addCustomVariable, resetForm],
+    [key, label, group, variables, addCustomVariable, resetForm],
   );
 
   const handleCancel = useCallback(() => {
@@ -90,18 +82,6 @@ export function AddVariableForm() {
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           placeholder="e.g. Coupon Code"
-        />
-      </div>
-      <div className={styles.addVariableField}>
-        <label className={styles.addVariableLabel}>Sample Value *</label>
-        <input
-          className={styles.addVariableInput}
-          value={sample}
-          onChange={(e) => {
-            setSample(e.target.value);
-            setError(null);
-          }}
-          placeholder="e.g. SAVE20"
         />
       </div>
       <div className={styles.addVariableField}>

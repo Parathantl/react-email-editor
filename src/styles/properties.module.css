@@ -169,6 +169,18 @@
   border-color: var(--ee-color-primary);
 }
 
+.colorPresetBtnTransparent {
+  background: repeating-conic-gradient(#d0d0d0 0% 25%, #ffffff 0% 50%) 0 0 / 12px 12px;
+  font-size: 11px;
+  color: #666;
+  font-weight: 500;
+  height: 24px;
+}
+
+.colorSwatchTransparent {
+  background: repeating-conic-gradient(#d0d0d0 0% 25%, #ffffff 0% 50%) 0 0 / 8px 8px;
+}
+
 /* Padding Input */
 .paddingGrid {
   display: grid;

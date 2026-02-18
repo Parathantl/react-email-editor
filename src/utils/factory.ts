@@ -25,7 +25,7 @@ export function cloneSection(section: Section): Section {
 }
 
 /** Create a new block with default properties */
-export function createBlock(type: BlockType): Block {
+export function createBlock<T extends BlockType>(type: T): Block<T> {
   return {
     id: generateBlockId(),
     type,

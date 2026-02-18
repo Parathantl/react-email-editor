@@ -103,7 +103,7 @@ describe('createSection', () => {
 
   it('has default section properties', () => {
     const section = createSection();
-    expect(section.properties.backgroundColor).toBe('#ffffff');
+    expect(section.properties.backgroundColor).toBe('transparent');
     expect(section.properties.padding).toBe('20px 0');
     expect(section.properties.fullWidth).toBe(false);
   });

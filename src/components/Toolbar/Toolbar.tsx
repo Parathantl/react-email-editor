@@ -1,5 +1,5 @@
-import React, { useCallback, useRef } from 'react';
-import { useEditor } from '../../context/EditorContext';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
+import { useTemplateContext, useEditorDispatch } from '../../context/EditorContext';
 import { generateMJML } from '../../mjml/generator';
 import { compileMJMLToHTML } from '../../mjml/compiler';
 import { parseMJML } from '../../mjml/parser';
@@ -15,10 +15,18 @@ interface ToolbarProps {
 }
 
 export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggleProperties }: ToolbarProps) {
-  const { state, dispatch } = useEditor();
+  const { template, activeTab, historyIndex, history } = useTemplateContext();
+  const dispatch = useEditorDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [exportOpen, setExportOpen] = useState(false);
 
-  const { activeTab, historyIndex, history } = state;
+  // Close export dropdown when clicking outside
+  useEffect(() => {
+    if (!exportOpen) return;
+    const handleClick = () => setExportOpen(false);
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, [exportOpen]);
   const canUndo = historyIndex > 0;
   const canRedo = historyIndex < history.length - 1;
 
@@ -38,7 +46,7 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
   }, [dispatch]);
 
   const handleExportMJML = useCallback(() => {
-    const mjml = generateMJML(state.template);
+    const mjml = generateMJML(template);
     const blob = new Blob([mjml], { type: 'text/xml' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -46,10 +54,10 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
     a.download = 'template.mjml';
     a.click();
     URL.revokeObjectURL(url);
-  }, [state.template]);
+  }, [template]);
 
   const handleExportHTML = useCallback(async () => {
-    const mjml = generateMJML(state.template);
+    const mjml = generateMJML(template);
     const result = await compileMJMLToHTML(mjml);
     const blob = new Blob([result.html], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
@@ -58,10 +66,10 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
     a.download = 'template.html';
     a.click();
     URL.revokeObjectURL(url);
-  }, [state.template]);
+  }, [template]);
 
   const handleExportPDF = useCallback(async () => {
-    const mjml = generateMJML(state.template);
+    const mjml = generateMJML(template);
     const result = await compileMJMLToHTML(mjml);
     const printStyles = `
       <style>
@@ -86,7 +94,7 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
     doc.close();
     iframe.contentWindow!.print();
     setTimeout(() => document.body.removeChild(iframe), 1000);
-  }, [state.template]);
+  }, [template]);
 
   const handleImportMJML = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,19 +188,24 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
         >
           Import
         </button>
-        <button className={styles.toolbarBtn} onClick={handleExportMJML} aria-label="Export as MJML">
-          Export MJML
-        </button>
-        <button
-          className={`${styles.toolbarBtn} ${styles.toolbarBtnPrimary}`}
-          onClick={handleExportHTML}
-          aria-label="Export as HTML"
-        >
-          Export HTML
-        </button>
-        <button className={styles.toolbarBtn} onClick={handleExportPDF} aria-label="Export as PDF">
-          Export PDF
-        </button>
+        <div className={styles.exportWrapper}>
+          <button
+            className={styles.toolbarBtn}
+            onClick={(e) => { e.stopPropagation(); setExportOpen((prev) => !prev); }}
+            aria-label="Export template"
+            aria-expanded={exportOpen}
+            aria-haspopup="true"
+          >
+            Export
+          </button>
+          {exportOpen && (
+            <div className={styles.exportDropdown} role="menu">
+              <button className={styles.exportDropdownItem} onClick={handleExportMJML} role="menuitem">MJML</button>
+              <button className={styles.exportDropdownItem} onClick={handleExportHTML} role="menuitem">HTML</button>
+              <button className={styles.exportDropdownItem} onClick={handleExportPDF} role="menuitem">PDF</button>
+            </div>
+          )}
+        </div>
       </div>
 
       <input

@@ -33,7 +33,7 @@ interface BlockRendererProps {
   block: Block;
 }
 
-export function BlockRenderer({ block }: BlockRendererProps) {
+export const BlockRenderer = React.memo(function BlockRenderer({ block }: BlockRendererProps) {
   const Component = blockRendererRegistry[block.type];
   if (!Component) return null;
   return (
@@ -41,4 +41,4 @@ export function BlockRenderer({ block }: BlockRendererProps) {
       <Component block={block} />
     </ErrorBoundary>
   );
-}
+});

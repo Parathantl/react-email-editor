@@ -9,12 +9,23 @@ export {
   useEditorDispatch,
   useSelectedBlock,
   useSelectedSection,
+  useEditorVariables,
+  useEditorFonts,
+  useImageAdapter,
+  useTemplateContext,
+  useSelectionContext,
+  useDispatchContext,
+  useConfigContext,
 } from './context/EditorContext';
+
+// Type guard
+export { narrowBlock } from './types';
 
 // Types
 export type {
   BlockType,
   Block,
+  TypedBlock,
   Column,
   Section,
   SectionProperties,

@@ -2,6 +2,7 @@ import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useSta
 import type { EmailEditorProps, EmailEditorRef, BlockType } from '../types';
 import { EditorProvider, useEditor } from '../context/EditorContext';
 import { ErrorBoundary } from './ErrorBoundary';
+import { ConfirmDialog } from './ConfirmDialog';
 import { Toolbar } from './Toolbar/Toolbar';
 import { Sidebar } from './Sidebar/Sidebar';
 import { Canvas } from './Canvas/Canvas';
@@ -28,6 +29,13 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
   // Panel toggle state for responsive layout
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [propertiesOpen, setPropertiesOpen] = useState(false);
+
+  // Confirm dialog state for keyboard-triggered removal
+  const [pendingRemoval, setPendingRemoval] = useState<
+    | { type: 'block'; sectionId: string; columnId: string; blockId: string }
+    | { type: 'section'; sectionId: string }
+    | null
+  >(null);
 
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);
@@ -109,15 +117,15 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
         return;
       }
 
-      // Delete/Backspace → remove selected block or section
+      // Delete/Backspace → confirm then remove selected block or section
       if (e.key === 'Delete' || e.key === 'Backspace') {
         const { sectionId, columnId, blockId } = state.selection;
         if (blockId && sectionId && columnId) {
           e.preventDefault();
-          dispatch({ type: 'REMOVE_BLOCK', payload: { sectionId, columnId, blockId } });
+          setPendingRemoval({ type: 'block', sectionId, columnId, blockId });
         } else if (sectionId) {
           e.preventDefault();
-          dispatch({ type: 'REMOVE_SECTION', payload: { sectionId } });
+          setPendingRemoval({ type: 'section', sectionId });
         }
       }
     };
@@ -125,6 +133,16 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
     el.addEventListener('keydown', handler);
     return () => el.removeEventListener('keydown', handler);
   }, [dispatch, state.template, state.selection, onSave]);
+
+  const handleConfirmRemoval = useCallback(() => {
+    if (!pendingRemoval) return;
+    if (pendingRemoval.type === 'block') {
+      dispatch({ type: 'REMOVE_BLOCK', payload: pendingRemoval });
+    } else {
+      dispatch({ type: 'REMOVE_SECTION', payload: { sectionId: pendingRemoval.sectionId } });
+    }
+    setPendingRemoval(null);
+  }, [dispatch, pendingRemoval]);
 
   useImperativeHandle(ref, () => ({
     getMJML: () => generateMJML(state.template),
@@ -227,6 +245,18 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
 
   return (
     <div ref={containerRef} className={editorStyles.editorContainer} tabIndex={-1}>
+      {pendingRemoval && (
+        <ConfirmDialog
+          title={pendingRemoval.type === 'block' ? 'Remove Block' : 'Remove Section'}
+          message={
+            pendingRemoval.type === 'block'
+              ? 'Are you sure you want to remove this block? This action can be undone with Ctrl+Z.'
+              : 'Are you sure you want to remove this section and all its contents? This action can be undone with Ctrl+Z.'
+          }
+          onConfirm={handleConfirmRemoval}
+          onCancel={() => setPendingRemoval(null)}
+        />
+      )}
       <Toolbar
         sidebarOpen={sidebarOpen}
         propertiesOpen={propertiesOpen}
@@ -256,9 +286,18 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
           </>
         )}
         {state.activeTab === 'source' && (
-          <ErrorBoundary>
-            <SourceEditor />
-          </ErrorBoundary>
+          <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <ErrorBoundary>
+                <SourceEditor />
+              </ErrorBoundary>
+            </div>
+            <div style={{ flex: 1, minWidth: 0, borderLeft: '1px solid var(--ee-border-color)' }}>
+              <ErrorBoundary>
+                <PreviewPanel />
+              </ErrorBoundary>
+            </div>
+          </div>
         )}
         {state.activeTab === 'preview' && (
           <ErrorBoundary>
@@ -278,6 +317,7 @@ export const EmailEditor = forwardRef<EmailEditorRef, EmailEditorProps>(
       variables,
       imageUploadAdapter,
       onChange,
+      onVariablesChange,
       fontFamilies,
       fontSizes,
       persistenceKey,
@@ -301,6 +341,7 @@ export const EmailEditor = forwardRef<EmailEditorRef, EmailEditorProps>(
         variables={variables}
         imageUploadAdapter={imageUploadAdapter}
         onChange={onChange}
+        onVariablesChange={onVariablesChange}
         fontFamilies={fontFamilies}
         fontSizes={fontSizes}
         persistenceKey={persistenceKey}

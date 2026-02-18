@@ -21,7 +21,7 @@
 /* Section */
 .section {
   position: relative;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   transition: border-color var(--ee-transition-fast);
   cursor: pointer;
 }
@@ -116,7 +116,7 @@
 .column {
   flex: 1;
   min-height: 40px;
-  padding: 4px;
+  padding: 2px;
   position: relative;
 }
 
@@ -180,9 +180,17 @@
   border-color: var(--ee-color-primary);
 }
 
+.blockDropBefore {
+  box-shadow: 0 -2px 0 0 var(--ee-color-primary) !important;
+}
+
+.blockDropAfter {
+  box-shadow: 0 2px 0 0 var(--ee-color-primary) !important;
+}
+
 /* Drop Zone */
 .dropZone {
-  min-height: 8px;
+  min-height: 2px;
   padding: 4px 0;
   transition: all var(--ee-transition-fast);
   position: relative;
@@ -231,7 +239,7 @@
 
 /* Section Drop Zone */
 .sectionDropZone {
-  min-height: 4px;
+  min-height: 2px;
   transition: all var(--ee-transition-fast);
   position: relative;
 }

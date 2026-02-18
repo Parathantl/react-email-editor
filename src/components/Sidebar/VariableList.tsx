@@ -1,11 +1,10 @@
 import React, { useCallback, useState } from 'react';
-import { useEditor } from '../../context/EditorContext';
+import { useEditorVariables } from '../../context/EditorContext';
 import { groupVariables } from '../../utils/variables';
-import type { Variable } from '../../types';
 import styles from '../../styles/sidebar.module.css';
 
 export function VariableList() {
-  const { variables, customVariables, insertVariable, removeCustomVariable } = useEditor();
+  const { variables, customVariables, insertVariable, removeCustomVariable } = useEditorVariables();
   const [flashKey, setFlashKey] = useState<string | null>(null);
 
   const customKeys = new Set(customVariables.map((v) => v.key));
@@ -54,7 +53,7 @@ export function VariableList() {
               <span
                 key={v.key}
                 className={`${styles.variableChip} ${flashKey === v.key ? styles.variableChipInserted : ''} ${customKeys.has(v.key) ? styles.variableChipCustom : ''}`}
-                title={`Click to insert • Sample: ${v.sample}${customKeys.has(v.key) ? ' • Custom variable' : ''}`}
+                title={`Click to insert${v.sample ? ` • Sample: ${v.sample}` : ''}${customKeys.has(v.key) ? ' • Custom variable' : ''}`}
                 onClick={() => handleChipClick(v.key)}
                 draggable
                 onDragStart={(e) => {

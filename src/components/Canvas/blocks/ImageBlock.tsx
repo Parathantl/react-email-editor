@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import type { Block } from '../../../types';
-import { useEditor } from '../../../context/EditorContext';
+import { useEditorDispatch, useConfigContext } from '../../../context/EditorContext';
 import { useImageUpload } from '../../ImageUpload/useImageUpload';
 import styles from '../../../styles/blocks.module.css';
 
@@ -9,7 +9,8 @@ interface ImageBlockProps {
 }
 
 export function ImageBlock({ block }: ImageBlockProps) {
-  const { dispatch, imageUploadAdapter } = useEditor();
+  const dispatch = useEditorDispatch();
+  const { imageUploadAdapter } = useConfigContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const p = block.properties;
 

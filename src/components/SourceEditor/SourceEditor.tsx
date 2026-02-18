@@ -1,16 +1,17 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useEditor } from '../../context/EditorContext';
+import { useTemplateContext, useEditorDispatch } from '../../context/EditorContext';
 import { generateMJML } from '../../mjml/generator';
 import { parseMJML } from '../../mjml/parser';
 
 export function SourceEditor() {
-  const { state, dispatch } = useEditor();
+  const { template } = useTemplateContext();
+  const dispatch = useEditorDispatch();
   const [source, setSource] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setSource(generateMJML(state.template));
-  }, [state.template]);
+    setSource(generateMJML(template));
+  }, [template]);
 
   const handleApply = useCallback(() => {
     try {

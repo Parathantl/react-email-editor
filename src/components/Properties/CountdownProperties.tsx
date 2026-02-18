@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import type { Block, CountdownBlockProperties } from '../../types';
+import { narrowBlock } from '../../types';
 import { useEditorDispatch } from '../../context/EditorContext';
 import { ColorPicker } from './controls/ColorPicker';
 import { PaddingInput } from './controls/PaddingInput';
@@ -12,7 +13,6 @@ interface CountdownPropertiesProps {
 
 export function CountdownProperties({ block }: CountdownPropertiesProps) {
   const dispatch = useEditorDispatch();
-  const p = block.properties as CountdownBlockProperties;
 
   const update = useCallback(
     (props: Partial<CountdownBlockProperties>) => {
@@ -23,6 +23,9 @@ export function CountdownProperties({ block }: CountdownPropertiesProps) {
     },
     [dispatch, block.id],
   );
+
+  if (!narrowBlock(block, 'countdown')) return null;
+  const p = block.properties;
 
   return (
     <div className={styles.propertiesBody}>

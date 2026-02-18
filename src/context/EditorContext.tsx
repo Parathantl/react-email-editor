@@ -6,7 +6,6 @@ import React, {
   useEffect,
   useMemo,
   useRef,
-  useState,
   type ReactNode,
 } from 'react';
 import type { Editor } from '@tiptap/core';
@@ -22,9 +21,18 @@ import type {
   Section,
   SelectionState,
 } from '../types';
-import { DEFAULT_GLOBAL_STYLES, DEFAULT_HEAD_METADATA, DEFAULT_VARIABLE_CHIP_STYLE, DEFAULT_FONT_SIZES, FONT_OPTIONS, MAX_HISTORY_SIZE } from '../constants';
+import { DEFAULT_GLOBAL_STYLES, DEFAULT_HEAD_METADATA, DEFAULT_FONT_SIZES, FONT_OPTIONS, MAX_HISTORY_SIZE } from '../constants';
 import { cloneBlock, cloneSection } from '../utils/factory';
 import { localStorageAdapter } from '../utils/persistence';
+import { useVariables } from '../hooks/useVariables';
+import { useTipTapTracking } from '../hooks/useTipTapTracking';
+import { usePersistence } from '../hooks/usePersistence';
+import { DispatchContext, useDispatchContext } from './DispatchContext';
+import { TemplateContext, type TemplateContextValue } from './TemplateContext';
+import { SelectionContext } from './SelectionContext';
+import { ConfigContext, useConfigContext, type ConfigContextValue } from './ConfigContext';
+import { useTemplateContext } from './TemplateContext';
+import { useSelectionContext } from './SelectionContext';
 
 // ---- Initial State ----
 
@@ -65,6 +73,18 @@ function pushHistory(state: EditorState, newTemplate: EmailTemplate): EditorStat
     isDirty: true,
   };
 }
+
+function applyWithoutHistory(state: EditorState, newTemplate: EmailTemplate): EditorState {
+  return { ...state, template: newTemplate, isDirty: true };
+}
+
+// Actions that update template without pushing to history (debounced externally)
+const DEBOUNCE_ELIGIBLE: ReadonlySet<string> = new Set([
+  'UPDATE_BLOCK',
+  'UPDATE_SECTION',
+  'UPDATE_GLOBAL_STYLES',
+  'UPDATE_HEAD_METADATA',
+]);
 
 function editorReducer(state: EditorState, action: EditorAction): EditorState {
   switch (action.type) {
@@ -108,7 +128,7 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
           ? { ...s, properties: { ...s.properties, ...properties } }
           : s,
       );
-      return pushHistory(state, { ...state.template, sections });
+      return applyWithoutHistory(state, { ...state.template, sections });
     }
 
     case 'ADD_BLOCK': {
@@ -149,9 +169,21 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
     }
 
     case 'MOVE_BLOCK': {
-      const { fromSectionId, fromColumnId, blockId, toSectionId, toColumnId, toIndex } =
+      const { fromSectionId, fromColumnId, blockId, toSectionId, toColumnId, toIndex: rawToIndex } =
         action.payload;
       let movedBlock: Block | null = null;
+      // For same-column moves, adjust toIndex since removal shifts indices
+      let toIndex = rawToIndex;
+      if (fromSectionId === toSectionId && fromColumnId === toColumnId) {
+        const srcSection = state.template.sections.find((s) => s.id === fromSectionId);
+        const srcCol = srcSection?.columns.find((c) => c.id === fromColumnId);
+        if (srcCol) {
+          const fromIndex = srcCol.blocks.findIndex((b) => b.id === blockId);
+          if (fromIndex >= 0 && fromIndex < toIndex) {
+            toIndex--;
+          }
+        }
+      }
       // Remove from source
       let sections = state.template.sections.map((section) => {
         if (section.id !== fromSectionId) return section;
@@ -195,7 +227,7 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
           ),
         })),
       }));
-      return pushHistory(state, { ...state.template, sections });
+      return applyWithoutHistory(state, { ...state.template, sections });
     }
 
     case 'SELECT_BLOCK': {
@@ -220,13 +252,13 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
 
     case 'UPDATE_GLOBAL_STYLES': {
       const globalStyles = { ...state.template.globalStyles, ...action.payload };
-      return pushHistory(state, { ...state.template, globalStyles });
+      return applyWithoutHistory(state, { ...state.template, globalStyles });
     }
 
     case 'UPDATE_HEAD_METADATA': {
       const current = state.template.headMetadata ?? { ...DEFAULT_HEAD_METADATA, headStyles: [] };
       const headMetadata = { ...current, ...action.payload };
-      return pushHistory(state, { ...state.template, headMetadata });
+      return applyWithoutHistory(state, { ...state.template, headMetadata });
     }
 
     case 'DUPLICATE_BLOCK': {
@@ -277,6 +309,10 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
       };
     }
 
+    case 'PUSH_HISTORY': {
+      return pushHistory(state, state.template);
+    }
+
     default:
       return state;
   }
@@ -320,31 +356,47 @@ export function useEditor(): EditorContextValue {
 }
 
 export function useEditorState(): EditorState {
-  return useEditor().state;
+  const tmpl = useTemplateContext();
+  const sel = useSelectionContext();
+  return useMemo(
+    () => ({
+      template: tmpl.template,
+      history: tmpl.history,
+      historyIndex: tmpl.historyIndex,
+      isDirty: tmpl.isDirty,
+      activeTab: tmpl.activeTab,
+      selection: sel,
+    }),
+    [tmpl, sel],
+  );
 }
 
 export function useEditorDispatch(): React.Dispatch<EditorAction> {
-  return useEditor().dispatch;
+  return useDispatchContext();
 }
 
 export function useSelectedBlock(): Block | null {
-  const { state } = useEditor();
-  const { blockId } = state.selection;
-  if (!blockId) return null;
-  for (const section of state.template.sections) {
-    for (const column of section.columns) {
-      const block = column.blocks.find((b) => b.id === blockId);
-      if (block) return block;
+  const { template } = useTemplateContext();
+  const { blockId } = useSelectionContext();
+  return useMemo(() => {
+    if (!blockId) return null;
+    for (const section of template.sections) {
+      for (const column of section.columns) {
+        const block = column.blocks.find((b) => b.id === blockId);
+        if (block) return block;
+      }
     }
-  }
-  return null;
+    return null;
+  }, [template.sections, blockId]);
 }
 
 export function useSelectedSection(): Section | null {
-  const { state } = useEditor();
-  const { sectionId } = state.selection;
-  if (!sectionId) return null;
-  return state.template.sections.find((s) => s.id === sectionId) ?? null;
+  const { template } = useTemplateContext();
+  const { sectionId } = useSelectionContext();
+  return useMemo(() => {
+    if (!sectionId) return null;
+    return template.sections.find((s) => s.id === sectionId) ?? null;
+  }, [template.sections, sectionId]);
 }
 
 // ---- Provider ----
@@ -355,6 +407,7 @@ interface EditorProviderProps {
   variables?: Variable[];
   imageUploadAdapter?: ImageUploadAdapter;
   onChange?: (template: EmailTemplate) => void;
+  onVariablesChange?: (customVariables: Variable[]) => void;
   fontFamilies?: string[];
   fontSizes?: string[];
   persistenceKey?: string;
@@ -367,6 +420,7 @@ export function EditorProvider({
   variables: predefinedVariables = [],
   imageUploadAdapter,
   onChange,
+  onVariablesChange,
   fontFamilies: fontFamiliesProp,
   fontSizes: fontSizesProp,
   persistenceKey,
@@ -387,55 +441,81 @@ export function EditorProvider({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [state, dispatch] = useReducer(editorReducer, resolvedInitial, createInitialState);
-  const [customVariables, setCustomVariables] = useState<Variable[]>([]);
-  const [variableChipStyle, setVariableChipStyle] = useState<VariableChipStyle>({ ...DEFAULT_VARIABLE_CHIP_STYLE });
+  const [state, rawDispatch] = useReducer(editorReducer, resolvedInitial, createInitialState);
+
+  // Debounced dispatch: for debounce-eligible actions, dispatch immediately for UI,
+  // then schedule PUSH_HISTORY after 500ms of inactivity.
+  const historyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const flushHistoryTimer = useCallback(() => {
+    if (historyTimerRef.current !== null) {
+      clearTimeout(historyTimerRef.current);
+      historyTimerRef.current = null;
+      rawDispatch({ type: 'PUSH_HISTORY' });
+    }
+  }, []);
+
+  const dispatch: React.Dispatch<EditorAction> = useCallback(
+    (action: EditorAction) => {
+      if (DEBOUNCE_ELIGIBLE.has(action.type)) {
+        // Dispatch immediately for UI update, then schedule history snapshot
+        rawDispatch(action);
+        if (historyTimerRef.current !== null) {
+          clearTimeout(historyTimerRef.current);
+        }
+        historyTimerRef.current = setTimeout(() => {
+          historyTimerRef.current = null;
+          rawDispatch({ type: 'PUSH_HISTORY' });
+        }, 500);
+      } else if (action.type === 'UNDO' || action.type === 'REDO') {
+        // Flush pending edits first so they get their own undo entry
+        flushHistoryTimer();
+        rawDispatch(action);
+      } else if (
+        action.type === 'SELECT_BLOCK' ||
+        action.type === 'SELECT_SECTION' ||
+        action.type === 'SET_ACTIVE_TAB'
+      ) {
+        // UI-only: no history logic
+        rawDispatch(action);
+      } else {
+        // Structural actions: flush pending, then dispatch (pushHistory runs in reducer)
+        flushHistoryTimer();
+        rawDispatch(action);
+      }
+    },
+    [flushHistoryTimer],
+  );
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (historyTimerRef.current !== null) {
+        clearTimeout(historyTimerRef.current);
+      }
+    };
+  }, []);
+
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
-  // Track the currently focused TipTap editor instance
-  const activeEditorRef = useRef<Editor | null>(null);
+  // Delegate to focused hooks
+  const {
+    customVariables,
+    allVariables,
+    variableChipStyle,
+    addCustomVariable,
+    removeCustomVariable,
+    updateVariableChipStyle,
+  } = useVariables({ predefinedVariables, onVariablesChange });
 
-  const setActiveEditor = useCallback((editor: Editor | null) => {
-    activeEditorRef.current = editor;
-  }, []);
+  const { setActiveEditor, getActiveEditor, insertVariable } = useTipTapTracking();
 
-  const getActiveEditor = useCallback(() => {
-    return activeEditorRef.current;
-  }, []);
-
-  const insertVariable = useCallback((key: string): boolean => {
-    const editor = activeEditorRef.current;
-    if (!editor || editor.isDestroyed) return false;
-    editor.chain().focus().insertVariable(key).run();
-    return true;
-  }, []);
-
-  const addCustomVariable = useCallback((variable: Variable) => {
-    setCustomVariables((prev) => {
-      if (prev.some((v) => v.key === variable.key)) return prev;
-      return [...prev, variable];
-    });
-  }, []);
-
-  const removeCustomVariable = useCallback((key: string) => {
-    setCustomVariables((prev) => prev.filter((v) => v.key !== key));
-  }, []);
-
-  const updateVariableChipStyle = useCallback((partial: Partial<VariableChipStyle>) => {
-    setVariableChipStyle((prev) => ({ ...prev, ...partial }));
-  }, []);
-
-  // Merge pre-defined + custom variables
-  const allVariables = useMemo(() => {
-    const merged = [...predefinedVariables];
-    for (const cv of customVariables) {
-      if (!merged.some((v) => v.key === cv.key)) {
-        merged.push(cv);
-      }
-    }
-    return merged;
-  }, [predefinedVariables, customVariables]);
+  const { clearPersisted } = usePersistence({
+    template: state.template,
+    persistenceKey,
+    persistenceAdapter,
+  });
 
   // Debounced onChange notification (150ms) to avoid excessive calls during rapid edits
   const isFirstRender = useRef(true);
@@ -450,33 +530,44 @@ export function EditorProvider({
     return () => clearTimeout(timer);
   }, [state.template]);
 
-  // Debounced auto-save to persistence (500ms)
-  const persistenceKeyRef = useRef(persistenceKey);
-  persistenceKeyRef.current = persistenceKey;
-  const persistenceAdapterRef = useRef(persistenceAdapter);
-  persistenceAdapterRef.current = persistenceAdapter;
+  // Focused context values with memoization for referential stability
+  const templateValue: TemplateContextValue = useMemo(
+    () => ({
+      template: state.template,
+      history: state.history,
+      historyIndex: state.historyIndex,
+      isDirty: state.isDirty,
+      activeTab: state.activeTab,
+    }),
+    [state.template, state.history, state.historyIndex, state.isDirty, state.activeTab],
+  );
 
-  const isFirstPersistRender = useRef(true);
-  useEffect(() => {
-    if (isFirstPersistRender.current) {
-      isFirstPersistRender.current = false;
-      return;
-    }
-    const key = persistenceKeyRef.current;
-    if (!key) return;
-    const adapter = persistenceAdapterRef.current ?? localStorageAdapter;
-    const timer = setTimeout(() => {
-      adapter.save(key, state.template);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [state.template]);
+  const selectionValue = useMemo(
+    () => state.selection,
+    [state.selection.sectionId, state.selection.columnId, state.selection.blockId],
+  );
 
-  const clearPersisted = useCallback(() => {
-    if (!persistenceKeyRef.current) return;
-    const adapter = persistenceAdapterRef.current ?? localStorageAdapter;
-    adapter.remove(persistenceKeyRef.current);
-  }, []);
+  const configValue: ConfigContextValue = useMemo(
+    () => ({
+      variables: allVariables,
+      predefinedVariables,
+      customVariables,
+      imageUploadAdapter,
+      setActiveEditor,
+      getActiveEditor,
+      insertVariable,
+      addCustomVariable,
+      removeCustomVariable,
+      variableChipStyle,
+      updateVariableChipStyle,
+      fontFamilies,
+      fontSizes,
+      clearPersisted,
+    }),
+    [allVariables, predefinedVariables, customVariables, imageUploadAdapter, setActiveEditor, getActiveEditor, insertVariable, addCustomVariable, removeCustomVariable, variableChipStyle, updateVariableChipStyle, fontFamilies, fontSizes, clearPersisted],
+  );
 
+  // Legacy combined value for backward compatibility (useEditor() still works)
   const value = useMemo(
     () => ({
       state,
@@ -500,8 +591,42 @@ export function EditorProvider({
   );
 
   return (
-    <EditorContext.Provider value={value}>{children}</EditorContext.Provider>
+    <DispatchContext.Provider value={dispatch}>
+      <TemplateContext.Provider value={templateValue}>
+        <SelectionContext.Provider value={selectionValue}>
+          <ConfigContext.Provider value={configValue}>
+            <EditorContext.Provider value={value}>{children}</EditorContext.Provider>
+          </ConfigContext.Provider>
+        </SelectionContext.Provider>
+      </TemplateContext.Provider>
+    </DispatchContext.Provider>
   );
 }
 
-export { EditorContext, editorReducer, createInitialState };
+// ---- Convenience Hooks ----
+
+/** Returns just variable-related fields from the editor context */
+export function useEditorVariables() {
+  const { variables, predefinedVariables, customVariables, addCustomVariable, removeCustomVariable, insertVariable, variableChipStyle, updateVariableChipStyle } = useConfigContext();
+  return { variables, predefinedVariables, customVariables, addCustomVariable, removeCustomVariable, insertVariable, variableChipStyle, updateVariableChipStyle };
+}
+
+/** Returns just font-related fields from the editor context */
+export function useEditorFonts() {
+  const { fontFamilies, fontSizes } = useConfigContext();
+  return { fontFamilies, fontSizes };
+}
+
+/** Returns just the image upload adapter from the editor context */
+export function useImageAdapter() {
+  const { imageUploadAdapter } = useConfigContext();
+  return { imageUploadAdapter };
+}
+
+export { EditorContext, editorReducer, createInitialState, DEBOUNCE_ELIGIBLE };
+
+// Re-export focused context hooks for direct consumption
+export { useDispatchContext } from './DispatchContext';
+export { useTemplateContext } from './TemplateContext';
+export { useSelectionContext } from './SelectionContext';
+export { useConfigContext } from './ConfigContext';

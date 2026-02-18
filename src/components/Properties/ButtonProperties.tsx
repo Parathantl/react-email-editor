@@ -107,7 +107,7 @@ export function ButtonProperties({ block }: ButtonPropertiesProps) {
         <select
           className={styles.fieldSelect}
           value={p.textTransform || 'none'}
-          onChange={(e) => update({ textTransform: e.target.value })}
+          onChange={(e) => update({ textTransform: e.target.value as ButtonBlockProperties['textTransform'] })}
         >
           <option value="none">None</option>
           <option value="uppercase">Uppercase</option>

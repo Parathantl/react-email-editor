@@ -19,7 +19,7 @@ const PLATFORM_COLORS: Record<string, string> = {
   web: '#4caf50',
 };
 
-export function SocialBlock({ block }: SocialBlockProps) {
+export const SocialBlock = React.memo(function SocialBlock({ block }: SocialBlockProps) {
   const p = block.properties;
   const isVertical = p.mode === 'vertical';
 
@@ -78,4 +78,4 @@ export function SocialBlock({ block }: SocialBlockProps) {
       })}
     </div>
   );
-}
+});

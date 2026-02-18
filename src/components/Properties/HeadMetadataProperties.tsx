@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react';
 import type { HeadMetadata } from '../../types';
-import { useEditor } from '../../context/EditorContext';
+import { useTemplateContext, useEditorDispatch } from '../../context/EditorContext';
 import styles from '../../styles/properties.module.css';
 
 export function HeadMetadataProperties() {
-  const { state, dispatch } = useEditor();
-  const metadata = state.template.headMetadata ?? { title: '', previewText: '', headStyles: [] };
+  const { template } = useTemplateContext();
+  const dispatch = useEditorDispatch();
+  const metadata = template.headMetadata ?? { title: '', previewText: '', headStyles: [] };
 
   const update = useCallback(
     (props: Partial<HeadMetadata>) => {

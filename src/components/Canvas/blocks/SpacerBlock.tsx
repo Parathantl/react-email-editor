@@ -6,7 +6,7 @@ interface SpacerBlockProps {
   block: Block;
 }
 
-export function SpacerBlock({ block }: SpacerBlockProps) {
+export const SpacerBlock = React.memo(function SpacerBlock({ block }: SpacerBlockProps) {
   const p = block.properties;
 
   return (
@@ -14,4 +14,4 @@ export function SpacerBlock({ block }: SpacerBlockProps) {
       <span className={styles.spacerLabel}>{p.height}</span>
     </div>
   );
-}
+});

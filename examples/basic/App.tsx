@@ -20,36 +20,19 @@ export default function App() {
     console.log('Template changed:', template);
   }, []);
 
-  const handleGetMJML = useCallback(() => {
-    if (editorRef.current) {
-      const mjml = editorRef.current.getMJML();
-      console.log('MJML output:', mjml);
-    }
-  }, []);
-
-  const handleGetHTML = useCallback(async () => {
-    if (editorRef.current) {
-      const html = await editorRef.current.getHTML();
-      console.log('HTML output:', html);
-    }
+  const handleVariablesChange = useCallback((customVars: Variable[]) => {
+    console.log('Custom variables changed:', customVars);
   }, []);
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ padding: '8px 16px', display: 'flex', gap: 8, borderBottom: '1px solid #e5e7eb' }}>
-        <button onClick={handleGetMJML}>Log MJML</button>
-        <button onClick={handleGetHTML}>Log HTML</button>
-        <button onClick={() => editorRef.current?.undo()}>Undo</button>
-        <button onClick={() => editorRef.current?.redo()}>Redo</button>
-        <button onClick={() => editorRef.current?.reset()}>Reset</button>
-      </div>
+    <div style={{ height: '100vh' }}>
       <EmailEditor
         ref={editorRef}
         variables={sampleVariables}
         imageUploadAdapter={imageAdapter}
         onChange={handleChange}
-        style={{ flex: 1 }}
+        onVariablesChange={handleVariablesChange}
       />
     </div>
   );
-}
+};

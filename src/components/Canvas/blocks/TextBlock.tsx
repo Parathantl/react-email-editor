@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import type { Block } from '../../../types';
-import { useEditor } from '../../../context/EditorContext';
+import { useEditorDispatch, useConfigContext } from '../../../context/EditorContext';
 import { TipTapEditor } from '../../../tiptap/TipTapEditor';
 import { RichTextToolbar } from '../../Toolbar/RichTextToolbar';
 import type { Editor } from '@tiptap/core';
@@ -12,7 +12,8 @@ interface TextBlockProps {
 }
 
 export function TextBlock({ block }: TextBlockProps) {
-  const { dispatch, setActiveEditor } = useEditor();
+  const dispatch = useEditorDispatch();
+  const { setActiveEditor } = useConfigContext();
   const editorRef = useRef<Editor | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -82,7 +83,7 @@ export function TextBlock({ block }: TextBlockProps) {
           lineHeight: block.properties.lineHeight,
           padding: block.properties.padding,
           fontWeight: block.properties.fontWeight,
-          textTransform: block.properties.textTransform as any,
+          textTransform: block.properties.textTransform,
           letterSpacing: block.properties.letterSpacing,
         }}
       >

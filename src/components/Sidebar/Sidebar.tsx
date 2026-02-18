@@ -2,13 +2,13 @@ import React, { useCallback } from 'react';
 import { BlockPalette } from './BlockPalette';
 import { VariableList } from './VariableList';
 import { AddVariableForm } from './AddVariableForm';
-import { useEditor } from '../../context/EditorContext';
+import { useEditorDispatch } from '../../context/EditorContext';
 import { COLUMN_LAYOUTS } from '../../constants';
 import { createSection } from '../../utils/factory';
 import styles from '../../styles/sidebar.module.css';
 
 export function Sidebar() {
-  const { dispatch } = useEditor();
+  const dispatch = useEditorDispatch();
 
   const handleAddSection = useCallback(
     (widths: string[]) => {

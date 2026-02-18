@@ -11,7 +11,7 @@ export interface TextBlockProperties {
   padding: string;
   align: 'left' | 'center' | 'right' | 'justify';
   fontWeight: string;
-  textTransform: string;
+  textTransform: 'none' | 'uppercase' | 'lowercase' | 'capitalize';
   letterSpacing: string;
 }
 
@@ -28,7 +28,7 @@ export interface ButtonBlockProperties {
   align: 'left' | 'center' | 'right';
   width: string;
   fontWeight: string;
-  textTransform: string;
+  textTransform: 'none' | 'uppercase' | 'lowercase' | 'capitalize';
   letterSpacing: string;
 }
 
@@ -99,7 +99,7 @@ export interface HeadingBlockProperties {
   fontWeight: string;
   padding: string;
   align: 'left' | 'center' | 'right' | 'justify';
-  textTransform: string;
+  textTransform: 'none' | 'uppercase' | 'lowercase' | 'capitalize';
   letterSpacing: string;
 }
 
@@ -144,6 +144,8 @@ export interface HeroBlockProperties {
   buttonBorderRadius: string;
   align: 'left' | 'center' | 'right';
   padding: string;
+  backgroundImage: string;
+  backgroundColor: string;
 }
 
 export type BlockProperties =
@@ -175,10 +177,20 @@ export interface BlockPropertiesMap {
   hero: HeroBlockProperties;
 }
 
-export interface Block {
+export interface Block<T extends BlockType = BlockType> {
   id: string;
-  type: BlockType;
+  type: T;
   properties: Record<string, any>;
+}
+
+/** A Block with type-safe properties, returned by narrowBlock */
+export interface TypedBlock<T extends BlockType> extends Block<T> {
+  properties: BlockPropertiesMap[T];
+}
+
+/** Narrow a Block to a specific type for type-safe property access */
+export function narrowBlock<T extends BlockType>(block: Block, type: T): block is TypedBlock<T> {
+  return block.type === type;
 }
 
 // ---- Layout ----
@@ -230,7 +242,7 @@ export interface EmailTemplate {
 export interface Variable {
   key: string;
   icon?: string;
-  sample: string;
+  sample?: string;
   label?: string;
   group?: string;
 }
@@ -328,7 +340,8 @@ export type EditorAction =
   | { type: 'DUPLICATE_BLOCK'; payload: { sectionId: string; columnId: string; blockId: string } }
   | { type: 'DUPLICATE_SECTION'; payload: { sectionId: string } }
   | { type: 'UNDO' }
-  | { type: 'REDO' };
+  | { type: 'REDO' }
+  | { type: 'PUSH_HISTORY' };
 
 // ---- Props ----
 
@@ -340,6 +353,8 @@ export interface EmailEditorProps {
   onChange?: (template: EmailTemplate) => void;
   onSave?: (mjml: string, html: string) => void;
   onReady?: () => void;
+  /** Called when custom variables are added or removed by the user. Receives all custom variables. */
+  onVariablesChange?: (customVariables: Variable[]) => void;
   /** Custom font family options for the rich text toolbar. Falls back to FONT_OPTIONS constant. */
   fontFamilies?: string[];
   /** Custom font size options for the rich text toolbar (e.g. ['12px', '14px', '16px']). Falls back to DEFAULT_FONT_SIZES constant. */

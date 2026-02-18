@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { isDropAllowed, getBlockTypeFromDrop, getBlockMoveFromDrop } from '../../utils/dnd';
-import { useEditor } from '../../context/EditorContext';
+import { isDropAllowed, getBlockTypeFromDrop, getBlockMoveFromDrop, DND_TYPES } from '../../utils/dnd';
+import { useEditorDispatch } from '../../context/EditorContext';
 import { generateBlockId } from '../../utils/id';
 import { DEFAULT_BLOCK_PROPERTIES } from '../../constants';
 import styles from '../../styles/canvas.module.css';
@@ -14,7 +14,7 @@ interface DropZoneProps {
 }
 
 export function DropZone({ sectionId, columnId, index, emptyPlaceholder }: DropZoneProps) {
-  const { dispatch } = useEditor();
+  const dispatch = useEditorDispatch();
   const [isOver, setIsOver] = useState(false);
 
   const handleDragOver = useCallback(
@@ -22,7 +22,7 @@ export function DropZone({ sectionId, columnId, index, emptyPlaceholder }: DropZ
       if (!isDropAllowed(e)) return;
       e.preventDefault();
       e.stopPropagation();
-      e.dataTransfer.dropEffect = 'copy';
+      e.dataTransfer.dropEffect = e.dataTransfer.types.includes(DND_TYPES.BLOCK_ID) ? 'move' : 'copy';
       setIsOver(true);
     },
     [],

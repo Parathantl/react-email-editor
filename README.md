@@ -157,6 +157,7 @@ Or pass MJML at init time without a ref:
 | `onChange` | `(template: EmailTemplate) => void` | Called on every template change (debounced 150ms) |
 | `onSave` | `(mjml: string, html: string) => void` | Called on Ctrl+S |
 | `onReady` | `() => void` | Called once after editor mounts |
+| `onVariablesChange` | `(customVariables: Variable[]) => void` | Called when user adds/removes custom variables |
 | `fontFamilies` | `string[]` | Custom font options for the toolbar |
 | `fontSizes` | `string[]` | Custom font size options |
 | `persistenceKey` | `string` | Key for auto-save/restore (enables persistence) |
@@ -183,7 +184,7 @@ Or pass MJML at init time without a ref:
 
 ## Template Variables
 
-Define variables and insert them into text blocks as `{{ variable_name }}`:
+Define variables and insert them into text blocks as `{{ variable_name }}`. Variables appear as insertable chips in the sidebar, grouped by category. Users can click or drag them into any text/heading block.
 
 ```tsx
 <EmailEditor
@@ -195,11 +196,137 @@ Define variables and insert them into text blocks as `{{ variable_name }}`:
 />
 ```
 
-Extract used variables programmatically:
+| Variable Field | Required | Description |
+|---------------|----------|-------------|
+| `key` | Yes | The placeholder key used in `{{ key }}` syntax |
+| `sample` | No | Sample value shown in previews and tooltips |
+| `label` | No | Display label in the sidebar (defaults to `key`) |
+| `group` | No | Group name for organizing variables in the sidebar |
+| `icon` | No | Icon shown next to the variable chip |
+
+### Retrieving used variables
+
+Extract which variables are actually used in the current template:
 
 ```tsx
 const keys = editorRef.current?.getVariables();
 // ['first_name', 'unsubscribe_url']
+```
+
+### Listening for custom variable changes
+
+Users can create custom variables at runtime via the sidebar. Use `onVariablesChange` to sync these back to your backend:
+
+```tsx
+<EmailEditor
+  variables={backendVariables}
+  onVariablesChange={(customVars) => {
+    // customVars = variables created by the user in the editor
+    saveToBackend(customVars);
+  }}
+/>
+```
+
+## Custom Fonts
+
+Pass custom font families and sizes to the editor. These appear in the rich text toolbar dropdowns.
+
+```tsx
+<EmailEditor
+  fontFamilies={[
+    'Arial, sans-serif',
+    'Georgia, serif',
+    'Courier New, monospace',
+    'Inter, sans-serif',         // your custom web font
+  ]}
+  fontSizes={['12px', '14px', '16px', '18px', '20px', '24px', '32px']}
+/>
+```
+
+If omitted, the editor falls back to built-in defaults (8 font families, 11 font sizes).
+
+## Backend Integration
+
+A complete example showing how to pass placeholders from your backend, save the template, and retrieve used variables:
+
+```tsx
+import { useRef, useEffect, useState } from 'react';
+import { EmailEditor } from '@parathantl/react-email-editor';
+import '@parathantl/react-email-editor/styles.css';
+import type { EmailEditorRef, EmailTemplate, Variable } from '@parathantl/react-email-editor';
+
+function TemplateEditor({ templateId }: { templateId: string }) {
+  const editorRef = useRef<EmailEditorRef>(null);
+  const [variables, setVariables] = useState<Variable[]>([]);
+  const [initialTemplate, setInitialTemplate] = useState<EmailTemplate | undefined>();
+
+  // 1. Load variables and template from backend on mount
+  useEffect(() => {
+    fetch(`/api/templates/${templateId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setVariables(data.variables);      // backend-defined placeholders
+        setInitialTemplate(data.template); // saved template JSON
+      });
+  }, [templateId]);
+
+  // 2. Save template + used variables to backend
+  const handleSave = async (mjml: string, html: string) => {
+    const usedVariables = editorRef.current?.getVariables(); // ['first_name', 'company']
+    const templateJSON = editorRef.current?.getJSON();
+
+    await fetch(`/api/templates/${templateId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        mjml,
+        html,
+        template: templateJSON,
+        usedVariables,
+      }),
+    });
+  };
+
+  // 3. Sync user-created custom variables to backend
+  const handleVariablesChange = (customVars: Variable[]) => {
+    fetch(`/api/templates/${templateId}/variables`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(customVars),
+    });
+  };
+
+  if (!initialTemplate) return <div>Loading...</div>;
+
+  return (
+    <EmailEditor
+      ref={editorRef}
+      initialTemplate={initialTemplate}
+      variables={variables}
+      onSave={handleSave}
+      onVariablesChange={handleVariablesChange}
+      onChange={(template) => {
+        // Optional: auto-save on every change
+        console.log('Template updated');
+      }}
+      fontFamilies={['Arial, sans-serif', 'Georgia, serif', 'Inter, sans-serif']}
+    />
+  );
+}
+```
+
+### Data flow summary
+
+```
+Backend                          Editor                         Backend
+  |                                |                              |
+  |-- variables (props) --------> |                              |
+  |-- initialTemplate (props) --> |                              |
+  |                                |                              |
+  |                                | -- onSave(mjml, html) -----> |
+  |                                | -- ref.getVariables() -----> |  (used variable keys)
+  |                                | -- ref.getJSON() ----------> |  (template structure)
+  |                                | -- onVariablesChange() ----> |  (custom variables)
 ```
 
 ## Custom Block Types

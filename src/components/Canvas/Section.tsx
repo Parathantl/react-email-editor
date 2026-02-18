@@ -1,7 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import type { Section as SectionType } from '../../types';
 import { Column } from './Column';
-import { useEditor } from '../../context/EditorContext';
+import { ConfirmDialog } from '../ConfirmDialog';
+import { useSelectionContext, useEditorDispatch } from '../../context/EditorContext';
 import { setSectionMoveDragData } from '../../utils/dnd';
 import styles from '../../styles/canvas.module.css';
 
@@ -9,9 +10,11 @@ interface SectionProps {
   section: SectionType;
 }
 
-export function Section({ section }: SectionProps) {
-  const { state, dispatch } = useEditor();
-  const isSelected = state.selection.sectionId === section.id && !state.selection.blockId;
+export const Section = React.memo(function Section({ section }: SectionProps) {
+  const selection = useSelectionContext();
+  const dispatch = useEditorDispatch();
+  const isSelected = selection.sectionId === section.id && !selection.blockId;
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
 
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
@@ -24,10 +27,15 @@ export function Section({ section }: SectionProps) {
   const handleRemove = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      dispatch({ type: 'REMOVE_SECTION', payload: { sectionId: section.id } });
+      setShowRemoveConfirm(true);
     },
-    [dispatch, section.id],
+    [],
   );
+
+  const handleConfirmRemove = useCallback(() => {
+    dispatch({ type: 'REMOVE_SECTION', payload: { sectionId: section.id } });
+    setShowRemoveConfirm(false);
+  }, [dispatch, section.id]);
 
   const handleDuplicate = useCallback(
     (e: React.MouseEvent) => {
@@ -94,6 +102,14 @@ export function Section({ section }: SectionProps) {
           <Column key={column.id} column={column} sectionId={section.id} />
         ))}
       </div>
+      {showRemoveConfirm && (
+        <ConfirmDialog
+          title="Remove Section"
+          message="Are you sure you want to remove this section and all its contents? This action can be undone with Ctrl+Z."
+          onConfirm={handleConfirmRemove}
+          onCancel={() => setShowRemoveConfirm(false)}
+        />
+      )}
     </div>
   );
-}
+});

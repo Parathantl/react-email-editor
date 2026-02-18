@@ -5,7 +5,7 @@ import { blockParserRegistry, registerBlockParser } from '../registry';
 
 export function parseMJML(mjmlString: string): EmailTemplate {
   const parser = new DOMParser();
-  const preprocessed = decodeHtmlEntities(mjmlString);
+  const preprocessed = fixVoidElements(decodeHtmlEntities(mjmlString));
   const doc = parser.parseFromString(preprocessed, 'text/xml');
 
   // Check for XML parse errors
@@ -42,6 +42,65 @@ function decodeHtmlEntities(mjml: string): string {
     tmp.innerHTML = match;
     return tmp.textContent || match;
   });
+}
+
+/**
+ * Self-close HTML void elements that are not already self-closed.
+ * XML requires <br/> but HTML allows <br>. MJML content (mj-text etc.)
+ * often contains HTML-style void elements that break XML parsing.
+ */
+function fixVoidElements(mjml: string): string {
+  // Match void elements that are NOT already self-closed (no /> at end)
+  return mjml.replace(
+    /<(br|hr|img|input|meta|link|col|area|base|embed|param|source|track|wbr)\b([^>]*?)(?<!\/)>/gi,
+    '<$1$2/>',
+  );
+}
+
+/**
+ * Convert legacy HTML elements (<font>, etc.) to modern <span style="...">
+ * for TipTap compatibility. Uses DOM parsing for robustness.
+ */
+function convertLegacyHtml(html: string): string {
+  if (!html || (!html.includes('<font') && !html.includes('<FONT'))) return html;
+
+  const FONT_SIZE_MAP: Record<string, string> = {
+    '1': '10px', '2': '13px', '3': '16px',
+    '4': '18px', '5': '24px', '6': '32px', '7': '48px',
+  };
+
+  const doc = document.createElement('div');
+  doc.innerHTML = html;
+
+  const fonts = doc.querySelectorAll('font');
+  for (let i = 0; i < fonts.length; i++) {
+    const font = fonts[i];
+    const span = document.createElement('span');
+    const styles: string[] = [];
+
+    const color = font.getAttribute('color');
+    if (color) styles.push(`color: ${color}`);
+
+    const size = font.getAttribute('size');
+    if (size && FONT_SIZE_MAP[size]) {
+      styles.push(`font-size: ${FONT_SIZE_MAP[size]}`);
+    }
+
+    const face = font.getAttribute('face');
+    if (face) styles.push(`font-family: ${face}`);
+
+    if (styles.length > 0) {
+      span.setAttribute('style', styles.join('; '));
+    }
+
+    // Move all children from <font> to <span>
+    while (font.firstChild) {
+      span.appendChild(font.firstChild);
+    }
+    font.parentNode?.replaceChild(span, font);
+  }
+
+  return doc.innerHTML;
 }
 
 function parseGlobalStyles(doc: Document): GlobalStyles {
@@ -98,13 +157,15 @@ function parseSections(doc: Document): Section[] {
 
   const sections: Section[] = [];
 
-  // Walk direct children of mj-body: handle mj-section and mj-wrapper
+  // Walk direct children of mj-body: handle mj-section, mj-hero, and mj-wrapper
   for (let i = 0; i < mjBody.children.length; i++) {
     const child = mjBody.children[i];
     const tag = child.tagName.toLowerCase();
 
     if (tag === 'mj-section') {
       sections.push(parseSectionElement(child));
+    } else if (tag === 'mj-hero') {
+      sections.push(parseHeroElement(child));
     } else if (tag === 'mj-wrapper') {
       // mj-wrapper groups multiple mj-sections — unwrap them
       const innerSections = child.querySelectorAll(':scope > mj-section');
@@ -162,6 +223,152 @@ function parseSectionElement(el: Element): Section {
   }
 
   return { id, columns, properties };
+}
+
+/**
+ * Parse mj-hero as a section. mj-hero doesn't use mj-column —
+ * its direct children (mj-text, mj-image, mj-button) become blocks
+ * in a single 100% column. The background-url maps to backgroundImage.
+ */
+function parseHeroElement(el: Element): Section {
+  const id = generateSectionId();
+
+  // Check if hero has mj-image children — if so, parse as a regular section
+  // with individual blocks to preserve all content (images, text, buttons).
+  // Otherwise, parse as a single structured hero block.
+  let hasImages = false;
+  for (let i = 0; i < el.children.length; i++) {
+    if (el.children[i].tagName.toLowerCase() === 'mj-image') {
+      hasImages = true;
+      break;
+    }
+  }
+
+  if (hasImages) {
+    // Complex hero with images → section with background + individual blocks
+    const properties: any = {
+      backgroundColor: el.getAttribute('background-color') ?? DEFAULT_SECTION_PROPERTIES.backgroundColor,
+      padding: resolvePadding(el, DEFAULT_SECTION_PROPERTIES.padding),
+      borderRadius: '0px',
+      fullWidth: false,
+    };
+    const bgUrl = el.getAttribute('background-url');
+    if (bgUrl) properties.backgroundImage = bgUrl;
+
+    return {
+      id,
+      columns: [{
+        id: generateColumnId(),
+        width: '100%',
+        blocks: parseBlockElements(el),
+      }],
+      properties,
+    };
+  }
+
+  // Simple hero (text/button only) → structured hero block
+  const properties: any = {
+    backgroundColor: DEFAULT_SECTION_PROPERTIES.backgroundColor,
+    padding: '0',
+    borderRadius: '0px',
+    fullWidth: false,
+  };
+
+  const heroBlock = buildHeroBlock(el);
+
+  return {
+    id,
+    columns: [{
+      id: generateColumnId(),
+      width: '100%',
+      blocks: [heroBlock],
+    }],
+    properties,
+  };
+}
+
+/**
+ * Build a hero block from an mj-hero element.
+ * Extracts heading, subtext, and button from child mj-text/mj-button elements.
+ */
+function buildHeroBlock(el: Element): Block {
+  const defaults = DEFAULT_BLOCK_PROPERTIES.hero;
+
+  let heading = '';
+  let subtext = '';
+  let buttonText = '';
+  let buttonHref = defaults.buttonHref;
+  let headingColor = defaults.headingColor;
+  let headingFontSize = defaults.headingFontSize;
+  let subtextColor = defaults.subtextColor;
+  let subtextFontSize = defaults.subtextFontSize;
+  let buttonBackgroundColor = defaults.buttonBackgroundColor;
+  let buttonColor = defaults.buttonColor;
+  let buttonBorderRadius = defaults.buttonBorderRadius;
+  let align: string = defaults.align;
+
+  for (let i = 0; i < el.children.length; i++) {
+    const child = el.children[i];
+    const tag = child.tagName.toLowerCase();
+
+    if (tag === 'mj-text') {
+      const content = child.innerHTML?.trim() ?? '';
+      const textContent = child.textContent?.trim() ?? '';
+      // If content contains a heading tag, treat as heading
+      if (/<h[1-4]/i.test(content) && !heading) {
+        heading = textContent;
+        headingColor = child.getAttribute('color') ?? defaults.headingColor;
+        headingFontSize = child.getAttribute('font-size') ?? defaults.headingFontSize;
+      } else if (!subtext) {
+        subtext = textContent;
+        subtextColor = child.getAttribute('color') ?? defaults.subtextColor;
+        subtextFontSize = child.getAttribute('font-size') ?? defaults.subtextFontSize;
+      }
+      const a = child.getAttribute('align');
+      if (a) align = a;
+    } else if (tag === 'mj-button') {
+      buttonText = child.textContent?.trim() ?? '';
+      buttonHref = child.getAttribute('href') ?? defaults.buttonHref;
+      buttonBackgroundColor = child.getAttribute('background-color') ?? defaults.buttonBackgroundColor;
+      buttonColor = child.getAttribute('color') ?? defaults.buttonColor;
+      buttonBorderRadius = child.getAttribute('border-radius') ?? defaults.buttonBorderRadius;
+      const a = child.getAttribute('align');
+      if (a) align = a;
+    }
+    // mj-image children are not mapped to hero block properties
+  }
+
+  // If no heading was found but there's a plain mj-text, promote first text to heading
+  if (!heading && subtext) {
+    heading = subtext;
+    headingColor = subtextColor;
+    headingFontSize = subtextFontSize;
+    subtext = '';
+    subtextColor = defaults.subtextColor;
+    subtextFontSize = defaults.subtextFontSize;
+  }
+
+  return {
+    id: generateBlockId(),
+    type: 'hero',
+    properties: {
+      heading,
+      subtext,
+      buttonText,
+      buttonHref,
+      headingColor,
+      headingFontSize,
+      subtextColor,
+      subtextFontSize,
+      buttonBackgroundColor,
+      buttonColor,
+      buttonBorderRadius,
+      align,
+      padding: resolvePadding(el, defaults.padding),
+      backgroundImage: el.getAttribute('background-url') ?? defaults.backgroundImage,
+      backgroundColor: el.getAttribute('background-color') ?? defaults.backgroundColor,
+    },
+  };
 }
 
 function parseColumnElement(el: Element): Column {
@@ -223,7 +430,7 @@ function parseTextBlock(el: Element): Block {
     id: generateBlockId(),
     type: 'text',
     properties: {
-      content: el.innerHTML?.trim() ?? '',
+      content: convertLegacyHtml(el.innerHTML?.trim() ?? ''),
       fontFamily: el.getAttribute('font-family') ?? defaults.fontFamily,
       fontSize: el.getAttribute('font-size') ?? defaults.fontSize,
       color: el.getAttribute('color') ?? defaults.color,

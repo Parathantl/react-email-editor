@@ -1,14 +1,14 @@
 import React, { useCallback, useState } from 'react';
 import { Section } from './Section';
 import { SectionDropZone } from './SectionDropZone';
-import { useEditor } from '../../context/EditorContext';
+import { useTemplateContext, useEditorDispatch } from '../../context/EditorContext';
 import { createSection, createSectionWithBlock } from '../../utils/factory';
 import { isDropAllowed, getBlockTypeFromDrop } from '../../utils/dnd';
 import styles from '../../styles/canvas.module.css';
 
 export function Canvas() {
-  const { state, dispatch } = useEditor();
-  const { template } = state;
+  const { template } = useTemplateContext();
+  const dispatch = useEditorDispatch();
   const [isDragOver, setIsDragOver] = useState(false);
 
   const handleAddSection = useCallback(() => {

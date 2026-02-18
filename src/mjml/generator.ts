@@ -40,9 +40,19 @@ export function generateMJML(template: EmailTemplate): string {
 }
 
 function generateSection(section: Section, indent: string): string {
+  // If section wraps a single hero block, output mj-hero instead of mj-section
+  if (
+    section.columns.length === 1 &&
+    section.columns[0].blocks.length === 1 &&
+    section.columns[0].blocks[0].type === 'hero'
+  ) {
+    return generateHeroAsSection(section.columns[0].blocks[0], indent);
+  }
+
   const { properties } = section;
+  const bgColor = properties.backgroundColor;
   const attrs = buildAttrs({
-    'background-color': properties.backgroundColor,
+    'background-color': bgColor && bgColor !== 'transparent' ? bgColor : undefined,
     padding: properties.padding,
     'border-radius': properties.borderRadius,
     'full-width': properties.fullWidth ? 'full-width' : undefined,
@@ -59,6 +69,51 @@ function generateSection(section: Section, indent: string): string {
   }
 
   lines.push(`${indent}</mj-section>`);
+  return lines.join('\n');
+}
+
+function generateHeroAsSection(block: Block, indent: string): string {
+  const p = block.properties;
+  const heroAttrs = buildAttrs({
+    'background-color': p.backgroundColor,
+    'background-url': p.backgroundImage || undefined,
+    padding: p.padding,
+  });
+
+  const lines: string[] = [];
+  lines.push(`${indent}<mj-hero${heroAttrs}>`);
+
+  if (p.heading) {
+    const headingAttrs = buildAttrs({
+      align: p.align,
+      color: p.headingColor,
+      'font-size': p.headingFontSize,
+      'font-weight': 'bold',
+    });
+    lines.push(`${indent}  <mj-text${headingAttrs}><h2 style="margin:0">${escapeHTML(p.heading)}</h2></mj-text>`);
+  }
+
+  if (p.subtext) {
+    const subtextAttrs = buildAttrs({
+      align: p.align,
+      color: p.subtextColor,
+      'font-size': p.subtextFontSize,
+    });
+    lines.push(`${indent}  <mj-text${subtextAttrs}>${escapeHTML(p.subtext)}</mj-text>`);
+  }
+
+  if (p.buttonText) {
+    const buttonAttrs = buildAttrs({
+      href: p.buttonHref,
+      'background-color': p.buttonBackgroundColor,
+      color: p.buttonColor,
+      'border-radius': p.buttonBorderRadius,
+      align: p.align,
+    });
+    lines.push(`${indent}  <mj-button${buttonAttrs}>${escapeHTML(p.buttonText)}</mj-button>`);
+  }
+
+  lines.push(`${indent}</mj-hero>`);
   return lines.join('\n');
 }
 

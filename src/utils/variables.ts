@@ -22,7 +22,7 @@ export function replaceVariables(
     const trimmedKey = key.trim();
     const variable = variables.find((v) => v.key === trimmedKey);
     if (!variable) return `{{ ${trimmedKey} }}`;
-    return useSample ? variable.sample : `{{ ${trimmedKey} }}`;
+    return useSample && variable.sample ? variable.sample : `{{ ${trimmedKey} }}`;
   });
 }
 

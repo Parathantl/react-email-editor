@@ -6,7 +6,7 @@ interface VideoBlockProps {
   block: Block;
 }
 
-export function VideoBlock({ block }: VideoBlockProps) {
+export const VideoBlock = React.memo(function VideoBlock({ block }: VideoBlockProps) {
   const p = block.properties;
   const alignClass = p.align === 'left' ? styles.videoBlockLeft
     : p.align === 'right' ? styles.videoBlockRight
@@ -40,7 +40,7 @@ export function VideoBlock({ block }: VideoBlockProps) {
       </div>
     </div>
   );
-}
+});
 
 function getAutoThumbnail(url: string): string {
   if (!url) return '';

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import type { Editor } from '@tiptap/core';
-import { useEditor } from '../../context/EditorContext';
+import { useEditorFonts } from '../../context/EditorContext';
 import { COLOR_PRESETS } from '../../constants';
 import styles from '../../styles/toolbar.module.css';
 
@@ -145,7 +145,7 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
 // ---- Font Family Select ----
 
 function FontFamilySelect({ editor }: { editor: Editor }) {
-  const { fontFamilies } = useEditor();
+  const { fontFamilies } = useEditorFonts();
   const currentFont = editor.getAttributes('textStyle').fontFamily || '';
 
   // Include current font if it's not in the predefined list
@@ -181,7 +181,7 @@ function FontFamilySelect({ editor }: { editor: Editor }) {
 // ---- Font Size Select ----
 
 function FontSizeSelect({ editor }: { editor: Editor }) {
-  const { fontSizes } = useEditor();
+  const { fontSizes } = useEditorFonts();
   const currentSize = editor.getAttributes('textStyle').fontSize || '';
 
   // Build size list, including current size if it's not in the predefined list

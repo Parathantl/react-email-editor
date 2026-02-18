@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import type { Block } from '../../../types';
-import { useEditor } from '../../../context/EditorContext';
+import { useEditorDispatch, useConfigContext } from '../../../context/EditorContext';
 import { TipTapEditor } from '../../../tiptap/TipTapEditor';
 import { RichTextToolbar } from '../../Toolbar/RichTextToolbar';
 import type { Editor } from '@tiptap/core';
@@ -19,7 +19,8 @@ const HEADING_FONT_SIZES: Record<string, string> = {
 };
 
 export function HeadingBlock({ block }: HeadingBlockProps) {
-  const { dispatch, setActiveEditor } = useEditor();
+  const dispatch = useEditorDispatch();
+  const { setActiveEditor } = useConfigContext();
   const editorRef = useRef<Editor | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -90,7 +91,7 @@ export function HeadingBlock({ block }: HeadingBlockProps) {
           lineHeight: p.lineHeight,
           padding: p.padding,
           fontWeight: p.fontWeight,
-          textTransform: p.textTransform as any,
+          textTransform: p.textTransform,
           letterSpacing: p.letterSpacing,
         }}
       >

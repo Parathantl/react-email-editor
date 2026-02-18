@@ -6,7 +6,7 @@ interface DividerBlockProps {
   block: Block;
 }
 
-export function DividerBlock({ block }: DividerBlockProps) {
+export const DividerBlock = React.memo(function DividerBlock({ block }: DividerBlockProps) {
   const p = block.properties;
 
   return (
@@ -20,4 +20,4 @@ export function DividerBlock({ block }: DividerBlockProps) {
       />
     </div>
   );
-}
+});

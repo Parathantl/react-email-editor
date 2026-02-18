@@ -159,6 +159,19 @@ describe('editorReducer', () => {
       expect(updatedBlock.properties.fontSize).toBe('20px');
       expect(updatedBlock.properties.fontFamily).toBe('Arial, sans-serif');
     });
+
+    it('does not push to history (debounced externally)', () => {
+      const state = makeState();
+      const blockId = state.template.sections[0].columns[0].blocks[0].id;
+
+      const result = editorReducer(state, {
+        type: 'UPDATE_BLOCK',
+        payload: { blockId, properties: { content: '<p>Updated</p>' } },
+      });
+
+      expect(result.historyIndex).toBe(state.historyIndex);
+      expect(result.isDirty).toBe(true);
+    });
   });
 
   describe('UPDATE_SECTION', () => {
@@ -172,6 +185,19 @@ describe('editorReducer', () => {
       });
 
       expect(result.template.sections[0].properties.backgroundColor).toBe('#ff0000');
+    });
+
+    it('does not push to history (debounced externally)', () => {
+      const state = makeState();
+      const sectionId = state.template.sections[0].id;
+
+      const result = editorReducer(state, {
+        type: 'UPDATE_SECTION',
+        payload: { sectionId, properties: { backgroundColor: '#ff0000' } },
+      });
+
+      expect(result.historyIndex).toBe(state.historyIndex);
+      expect(result.isDirty).toBe(true);
     });
   });
 
@@ -286,6 +312,49 @@ describe('editorReducer', () => {
       expect(result.template.globalStyles.backgroundColor).toBe('#000000');
       expect(result.template.globalStyles.width).toBe(800);
       expect(result.template.globalStyles.fontFamily).toBe('Arial, sans-serif');
+    });
+
+    it('does not push to history (debounced externally)', () => {
+      const state = makeState();
+      const result = editorReducer(state, {
+        type: 'UPDATE_GLOBAL_STYLES',
+        payload: { backgroundColor: '#000000' },
+      });
+      expect(result.historyIndex).toBe(state.historyIndex);
+      expect(result.isDirty).toBe(true);
+    });
+  });
+
+  describe('PUSH_HISTORY', () => {
+    it('snapshots current template into history', () => {
+      const state = makeState();
+      const blockId = state.template.sections[0].columns[0].blocks[0].id;
+
+      // UPDATE_BLOCK does not push history
+      let result = editorReducer(state, {
+        type: 'UPDATE_BLOCK',
+        payload: { blockId, properties: { content: '<p>Hello</p>' } },
+      });
+      expect(result.historyIndex).toBe(0);
+
+      // PUSH_HISTORY advances historyIndex
+      result = editorReducer(result, { type: 'PUSH_HISTORY' });
+      expect(result.historyIndex).toBe(1);
+      expect(result.history).toHaveLength(2);
+      expect(result.template.sections[0].columns[0].blocks[0].properties.content).toBe('<p>Hello</p>');
+    });
+  });
+
+  describe('UPDATE_HEAD_METADATA', () => {
+    it('does not push to history (debounced externally)', () => {
+      const state = makeState();
+      const result = editorReducer(state, {
+        type: 'UPDATE_HEAD_METADATA',
+        payload: { title: 'Test' },
+      });
+      expect(result.historyIndex).toBe(state.historyIndex);
+      expect(result.isDirty).toBe(true);
+      expect(result.template.headMetadata?.title).toBe('Test');
     });
   });
 

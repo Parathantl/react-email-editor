@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import type { Block, SocialBlockProperties, SocialElement } from '../../types';
+import { narrowBlock } from '../../types';
 import { useEditorDispatch } from '../../context/EditorContext';
 import { ColorPicker } from './controls/ColorPicker';
 import { PaddingInput } from './controls/PaddingInput';
@@ -13,7 +14,6 @@ interface SocialPropertiesProps {
 
 export function SocialProperties({ block }: SocialPropertiesProps) {
   const dispatch = useEditorDispatch();
-  const p = block.properties as SocialBlockProperties;
 
   const update = useCallback(
     (props: Partial<SocialBlockProperties>) => {
@@ -27,36 +27,39 @@ export function SocialProperties({ block }: SocialPropertiesProps) {
 
   const updateElement = useCallback(
     (index: number, changes: Partial<SocialElement>) => {
-      const elements = [...p.elements];
+      const elements = [...block.properties.elements];
       elements[index] = { ...elements[index], ...changes };
       update({ elements });
     },
-    [p.elements, update],
+    [block.properties.elements, update],
   );
 
   const addElement = useCallback(() => {
-    const elements = [...p.elements, { name: 'web', href: '#' }];
+    const elements = [...block.properties.elements, { name: 'web', href: '#' }];
     update({ elements });
-  }, [p.elements, update]);
+  }, [block.properties.elements, update]);
 
   const removeElement = useCallback(
     (index: number) => {
-      const elements = p.elements.filter((_: any, i: number) => i !== index);
+      const elements = block.properties.elements.filter((_: any, i: number) => i !== index);
       update({ elements });
     },
-    [p.elements, update],
+    [block.properties.elements, update],
   );
 
   const moveElement = useCallback(
     (index: number, direction: -1 | 1) => {
-      const elements = [...p.elements];
+      const elements = [...block.properties.elements];
       const newIndex = index + direction;
       if (newIndex < 0 || newIndex >= elements.length) return;
       [elements[index], elements[newIndex]] = [elements[newIndex], elements[index]];
       update({ elements });
     },
-    [p.elements, update],
+    [block.properties.elements, update],
   );
+
+  if (!narrowBlock(block, 'social')) return null;
+  const p = block.properties;
 
   return (
     <div className={styles.propertiesBody}>

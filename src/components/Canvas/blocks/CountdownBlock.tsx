@@ -16,7 +16,7 @@ function getTimeRemaining(targetDate: string) {
   };
 }
 
-export function CountdownBlock({ block }: CountdownBlockProps) {
+export const CountdownBlock = React.memo(function CountdownBlock({ block }: CountdownBlockProps) {
   const p = block.properties;
   const [time, setTime] = useState(() => getTimeRemaining(p.targetDate));
 
@@ -70,4 +70,4 @@ export function CountdownBlock({ block }: CountdownBlockProps) {
       </div>
     </div>
   );
-}
+});

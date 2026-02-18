@@ -6,7 +6,7 @@ interface ButtonBlockProps {
   block: Block;
 }
 
-export function ButtonBlock({ block }: ButtonBlockProps) {
+export const ButtonBlock = React.memo(function ButtonBlock({ block }: ButtonBlockProps) {
   const p = block.properties;
   const alignClass =
     p.align === 'left'
@@ -28,7 +28,7 @@ export function ButtonBlock({ block }: ButtonBlockProps) {
           padding: p.innerPadding,
           width: p.width !== 'auto' ? p.width : undefined,
           fontWeight: p.fontWeight,
-          textTransform: p.textTransform as any,
+          textTransform: p.textTransform,
           letterSpacing: p.letterSpacing,
         }}
       >
@@ -36,4 +36,4 @@ export function ButtonBlock({ block }: ButtonBlockProps) {
       </span>
     </div>
   );
-}
+});
