@@ -1,7 +1,83 @@
 import type { EmailTemplate, Section, Column, Block, GlobalStyles, HeadMetadata, SocialElement, MenuItem } from '../types';
-import { DEFAULT_GLOBAL_STYLES, DEFAULT_SECTION_PROPERTIES, DEFAULT_BLOCK_PROPERTIES, DEFAULT_HEAD_METADATA } from '../constants';
+import { DEFAULT_SECTION_PROPERTIES, DEFAULT_BLOCK_PROPERTIES, DEFAULT_HEAD_METADATA } from '../constants';
 import { generateSectionId, generateColumnId, generateBlockId } from '../utils/id';
 import { blockParserRegistry, registerBlockParser } from '../registry';
+
+/**
+ * MJML's official built-in defaults. Used as parser fallbacks so that
+ * round-tripping MJML preserves the original visual output.
+ * These are separate from DEFAULT_BLOCK_PROPERTIES (editor defaults for new blocks).
+ */
+const MJML_DEFAULTS = {
+  global: {
+    backgroundColor: '',
+    width: 600,
+    fontFamily: 'Ubuntu, Helvetica, Arial, sans-serif',
+  },
+  text: {
+    fontFamily: 'Ubuntu, Helvetica, Arial, sans-serif',
+    fontSize: '13px',
+    color: '#000000',
+    lineHeight: '1',
+    padding: '10px 25px',
+    align: 'left',
+    fontWeight: 'normal',
+    textTransform: 'none',
+    letterSpacing: 'normal',
+  },
+  button: {
+    text: 'Click me',
+    href: '#',
+    backgroundColor: '#414141',
+    color: '#ffffff',
+    fontFamily: 'Ubuntu, Helvetica, Arial, sans-serif',
+    fontSize: '13px',
+    borderRadius: '3px',
+    padding: '10px 25px',
+    innerPadding: '10px 25px',
+    align: 'center',
+    width: 'auto',
+    fontWeight: 'normal',
+    textTransform: 'none',
+    letterSpacing: 'normal',
+  },
+  image: {
+    src: '',
+    alt: '',
+    href: '',
+    width: '600px',
+    height: 'auto',
+    padding: '10px 25px',
+    align: 'center',
+  },
+  divider: {
+    borderColor: '#000000',
+    borderWidth: '4px',
+    borderStyle: 'solid',
+    padding: '10px 25px',
+    width: '100%',
+  },
+  spacer: {
+    height: '20px',
+  },
+  social: {
+    mode: 'horizontal',
+    align: 'center',
+    iconSize: '20px',
+    iconPadding: '5px',
+    padding: '10px 25px',
+    fontSize: '13px',
+    color: '#333333',
+    borderRadius: '3px',
+  },
+  menu: {
+    align: 'center',
+    fontFamily: 'Ubuntu, Helvetica, Arial, sans-serif',
+    fontSize: '13px',
+    color: '#333333',
+    padding: '10px 25px',
+  },
+} as const;
 
 export function parseMJML(mjmlString: string): EmailTemplate {
   const parser = new DOMParser();
@@ -104,7 +180,12 @@ function convertLegacyHtml(html: string): string {
 }
 
 function parseGlobalStyles(doc: Document): GlobalStyles {
-  const styles: GlobalStyles = { ...DEFAULT_GLOBAL_STYLES };
+  // Start from MJML's own defaults (not editor defaults) for faithful round-tripping
+  const styles: GlobalStyles = {
+    backgroundColor: MJML_DEFAULTS.global.backgroundColor,
+    width: MJML_DEFAULTS.global.width,
+    fontFamily: MJML_DEFAULTS.global.fontFamily,
+  };
   const mjBody = doc.querySelector('mj-body');
   if (mjBody) {
     const bgColor = mjBody.getAttribute('background-color');
@@ -219,7 +300,10 @@ function parseSectionElement(el: Element): Section {
       blocks: parseBlockElements(el),
     }];
   } else {
-    columns = columnEls.map(parseColumnElement);
+    // MJML auto-distributes columns when width isn't specified.
+    // Calculate the default width based on sibling count.
+    const autoWidth = `${Math.round((100 / columnEls.length) * 100) / 100}%`;
+    columns = columnEls.map((colEl) => parseColumnElement(colEl, autoWidth));
   }
 
   return { id, columns, properties };
@@ -371,10 +455,10 @@ function buildHeroBlock(el: Element): Block {
   };
 }
 
-function parseColumnElement(el: Element): Column {
+function parseColumnElement(el: Element, defaultWidth: string): Column {
   return {
     id: generateColumnId(),
-    width: el.getAttribute('width') ?? '100%',
+    width: el.getAttribute('width') ?? defaultWidth,
     blocks: parseBlockElements(el),
   };
 }
@@ -425,95 +509,96 @@ function parseBlockElements(parent: Element): Block[] {
 }
 
 function parseTextBlock(el: Element): Block {
-  const defaults = DEFAULT_BLOCK_PROPERTIES.text;
+  const d = MJML_DEFAULTS.text;
   return {
     id: generateBlockId(),
     type: 'text',
     properties: {
       content: convertLegacyHtml(el.innerHTML?.trim() ?? ''),
-      fontFamily: el.getAttribute('font-family') ?? defaults.fontFamily,
-      fontSize: el.getAttribute('font-size') ?? defaults.fontSize,
-      color: el.getAttribute('color') ?? defaults.color,
-      lineHeight: el.getAttribute('line-height') ?? defaults.lineHeight,
-      padding: resolvePadding(el, defaults.padding),
-      align: el.getAttribute('align') ?? defaults.align,
-      fontWeight: el.getAttribute('font-weight') ?? defaults.fontWeight,
-      textTransform: el.getAttribute('text-transform') ?? defaults.textTransform,
-      letterSpacing: el.getAttribute('letter-spacing') ?? defaults.letterSpacing,
+      fontFamily: el.getAttribute('font-family') ?? d.fontFamily,
+      fontSize: el.getAttribute('font-size') ?? d.fontSize,
+      color: el.getAttribute('color') ?? d.color,
+      lineHeight: el.getAttribute('line-height') ?? d.lineHeight,
+      padding: resolvePadding(el, d.padding),
+      align: el.getAttribute('align') ?? d.align,
+      fontWeight: el.getAttribute('font-weight') ?? d.fontWeight,
+      textTransform: el.getAttribute('text-transform') ?? d.textTransform,
+      letterSpacing: el.getAttribute('letter-spacing') ?? d.letterSpacing,
     },
   };
 }
 
 function parseButtonBlock(el: Element): Block {
-  const defaults = DEFAULT_BLOCK_PROPERTIES.button;
+  const d = MJML_DEFAULTS.button;
   return {
     id: generateBlockId(),
     type: 'button',
     properties: {
-      text: el.textContent?.trim() ?? defaults.text,
-      href: el.getAttribute('href') ?? defaults.href,
-      backgroundColor: el.getAttribute('background-color') ?? defaults.backgroundColor,
-      color: el.getAttribute('color') ?? defaults.color,
-      fontFamily: el.getAttribute('font-family') ?? defaults.fontFamily,
-      fontSize: el.getAttribute('font-size') ?? defaults.fontSize,
-      borderRadius: el.getAttribute('border-radius') ?? defaults.borderRadius,
-      padding: resolvePadding(el, defaults.padding),
-      innerPadding: el.getAttribute('inner-padding') ?? defaults.innerPadding,
-      align: el.getAttribute('align') ?? defaults.align,
-      width: el.getAttribute('width') ?? defaults.width,
-      fontWeight: el.getAttribute('font-weight') ?? defaults.fontWeight,
-      textTransform: el.getAttribute('text-transform') ?? defaults.textTransform,
-      letterSpacing: el.getAttribute('letter-spacing') ?? defaults.letterSpacing,
+      text: el.textContent?.trim() ?? d.text,
+      href: el.getAttribute('href') ?? d.href,
+      backgroundColor: el.getAttribute('background-color') ?? d.backgroundColor,
+      color: el.getAttribute('color') ?? d.color,
+      fontFamily: el.getAttribute('font-family') ?? d.fontFamily,
+      fontSize: el.getAttribute('font-size') ?? d.fontSize,
+      borderRadius: el.getAttribute('border-radius') ?? d.borderRadius,
+      padding: resolvePadding(el, d.padding),
+      innerPadding: el.getAttribute('inner-padding') ?? d.innerPadding,
+      align: el.getAttribute('align') ?? d.align,
+      width: el.getAttribute('width') ?? d.width,
+      fontWeight: el.getAttribute('font-weight') ?? d.fontWeight,
+      textTransform: el.getAttribute('text-transform') ?? d.textTransform,
+      letterSpacing: el.getAttribute('letter-spacing') ?? d.letterSpacing,
     },
   };
 }
 
 function parseImageBlock(el: Element): Block {
-  const defaults = DEFAULT_BLOCK_PROPERTIES.image;
+  const d = MJML_DEFAULTS.image;
   return {
     id: generateBlockId(),
     type: 'image',
     properties: {
-      src: el.getAttribute('src') ?? defaults.src,
-      alt: el.getAttribute('alt') ?? defaults.alt,
-      href: el.getAttribute('href') ?? defaults.href,
-      width: el.getAttribute('width') ?? defaults.width,
-      height: el.getAttribute('height') ?? defaults.height,
-      padding: resolvePadding(el, defaults.padding),
-      align: el.getAttribute('align') ?? defaults.align,
+      src: el.getAttribute('src') ?? d.src,
+      alt: el.getAttribute('alt') ?? d.alt,
+      href: el.getAttribute('href') ?? d.href,
+      width: el.getAttribute('width') ?? d.width,
+      height: el.getAttribute('height') ?? d.height,
+      padding: resolvePadding(el, d.padding),
+      align: el.getAttribute('align') ?? d.align,
       fluidOnMobile: el.getAttribute('fluid-on-mobile') === 'true',
     },
   };
 }
 
 function parseDividerBlock(el: Element): Block {
-  const defaults = DEFAULT_BLOCK_PROPERTIES.divider;
+  const d = MJML_DEFAULTS.divider;
   return {
     id: generateBlockId(),
     type: 'divider',
     properties: {
-      borderColor: el.getAttribute('border-color') ?? defaults.borderColor,
-      borderWidth: el.getAttribute('border-width') ?? defaults.borderWidth,
-      borderStyle: el.getAttribute('border-style') ?? defaults.borderStyle,
-      padding: resolvePadding(el, defaults.padding),
-      width: el.getAttribute('width') ?? defaults.width,
+      borderColor: el.getAttribute('border-color') ?? d.borderColor,
+      borderWidth: el.getAttribute('border-width') ?? d.borderWidth,
+      borderStyle: el.getAttribute('border-style') ?? d.borderStyle,
+      padding: resolvePadding(el, d.padding),
+      width: el.getAttribute('width') ?? d.width,
     },
   };
 }
 
 function parseSpacerBlock(el: Element): Block {
-  const defaults = DEFAULT_BLOCK_PROPERTIES.spacer;
+  const d = MJML_DEFAULTS.spacer;
   return {
     id: generateBlockId(),
     type: 'spacer',
     properties: {
-      height: el.getAttribute('height') ?? defaults.height,
+      height: el.getAttribute('height') ?? d.height,
     },
   };
 }
 
 function parseSocialBlock(el: Element): Block {
-  const defaults = DEFAULT_BLOCK_PROPERTIES.social;
+  const d = MJML_DEFAULTS.social;
+  const editorDefaults = DEFAULT_BLOCK_PROPERTIES.social;
 
   const elements: SocialElement[] = [];
   const childEls = el.querySelectorAll('mj-social-element');
@@ -538,21 +623,22 @@ function parseSocialBlock(el: Element): Block {
     id: generateBlockId(),
     type: 'social',
     properties: {
-      elements: elements.length > 0 ? elements : defaults.elements,
-      mode: el.getAttribute('mode') ?? defaults.mode,
-      align: el.getAttribute('align') ?? defaults.align,
-      iconSize: el.getAttribute('icon-size') ?? defaults.iconSize,
-      iconPadding: el.getAttribute('icon-padding') ?? defaults.iconPadding,
-      padding: resolvePadding(el, defaults.padding),
-      fontSize: el.getAttribute('font-size') ?? defaults.fontSize,
-      color: el.getAttribute('color') ?? defaults.color,
-      borderRadius: el.getAttribute('border-radius') ?? defaults.borderRadius,
+      elements: elements.length > 0 ? elements : editorDefaults.elements,
+      mode: el.getAttribute('mode') ?? d.mode,
+      align: el.getAttribute('align') ?? d.align,
+      iconSize: el.getAttribute('icon-size') ?? d.iconSize,
+      iconPadding: el.getAttribute('icon-padding') ?? d.iconPadding,
+      padding: resolvePadding(el, d.padding),
+      fontSize: el.getAttribute('font-size') ?? d.fontSize,
+      color: el.getAttribute('color') ?? d.color,
+      borderRadius: el.getAttribute('border-radius') ?? d.borderRadius,
     },
   };
 }
 
 function parseMenuBlock(el: Element): Block {
-  const defaults = DEFAULT_BLOCK_PROPERTIES.menu;
+  const d = MJML_DEFAULTS.menu;
+  const editorDefaults = DEFAULT_BLOCK_PROPERTIES.menu;
 
   const items: MenuItem[] = [];
   const linkEls = el.querySelectorAll('mj-navbar-link');
@@ -571,14 +657,14 @@ function parseMenuBlock(el: Element): Block {
     id: generateBlockId(),
     type: 'menu',
     properties: {
-      items: items.length > 0 ? items : defaults.items,
-      align: el.getAttribute('align') ?? defaults.align,
-      fontFamily: firstLink?.getAttribute('font-family') ?? defaults.fontFamily,
-      fontSize: firstLink?.getAttribute('font-size') ?? defaults.fontSize,
-      color: firstLink?.getAttribute('color') ?? defaults.color,
-      padding: resolvePadding(el, defaults.padding),
+      items: items.length > 0 ? items : editorDefaults.items,
+      align: el.getAttribute('align') ?? d.align,
+      fontFamily: firstLink?.getAttribute('font-family') ?? d.fontFamily,
+      fontSize: firstLink?.getAttribute('font-size') ?? d.fontSize,
+      color: firstLink?.getAttribute('color') ?? d.color,
+      padding: resolvePadding(el, d.padding),
       hamburger: el.getAttribute('hamburger') === 'hamburger',
-      iconColor: el.getAttribute('ico-color') ?? defaults.iconColor,
+      iconColor: el.getAttribute('ico-color') ?? editorDefaults.iconColor,
     },
   };
 }

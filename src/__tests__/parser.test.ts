@@ -145,6 +145,48 @@ describe('parseMJML', () => {
     expect(result.globalStyles.width).toBe(800);
   });
 
+  it('auto-calculates column widths when not specified', () => {
+    const mjml = `
+      <mjml>
+        <mj-body>
+          <mj-section>
+            <mj-column><mj-text>A</mj-text></mj-column>
+            <mj-column><mj-text>B</mj-text></mj-column>
+          </mj-section>
+          <mj-section>
+            <mj-column><mj-text>X</mj-text></mj-column>
+            <mj-column><mj-text>Y</mj-text></mj-column>
+            <mj-column><mj-text>Z</mj-text></mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `;
+    const result = parseMJML(mjml);
+    // 2-column section → 50% each
+    expect(result.sections[0].columns[0].width).toBe('50%');
+    expect(result.sections[0].columns[1].width).toBe('50%');
+    // 3-column section → 33.33% each
+    expect(result.sections[1].columns[0].width).toBe('33.33%');
+    expect(result.sections[1].columns[1].width).toBe('33.33%');
+    expect(result.sections[1].columns[2].width).toBe('33.33%');
+  });
+
+  it('preserves explicit column widths', () => {
+    const mjml = `
+      <mjml>
+        <mj-body>
+          <mj-section>
+            <mj-column width="33%"><mj-text>A</mj-text></mj-column>
+            <mj-column width="67%"><mj-text>B</mj-text></mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `;
+    const result = parseMJML(mjml);
+    expect(result.sections[0].columns[0].width).toBe('33%');
+    expect(result.sections[0].columns[1].width).toBe('67%');
+  });
+
   it('parses multiple sections', () => {
     const mjml = `
       <mjml>

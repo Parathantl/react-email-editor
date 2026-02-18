@@ -25,9 +25,11 @@ export function generateMJML(template: EmailTemplate): string {
     }
   }
   lines.push('  </mj-head>');
-  lines.push(
-    `  <mj-body background-color="${escapeAttr(globalStyles.backgroundColor)}" width="${globalStyles.width}px">`,
-  );
+  const bodyAttrs = buildAttrs({
+    'background-color': globalStyles.backgroundColor || undefined,
+    width: `${globalStyles.width}px`,
+  });
+  lines.push(`  <mj-body${bodyAttrs}>`);
 
   for (const section of sections) {
     lines.push(generateSection(section, '    '));
