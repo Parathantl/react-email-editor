@@ -1,0 +1,360 @@
+.toolbar {
+  display: flex;
+  align-items: center;
+  height: var(--ee-toolbar-height);
+  padding: 0 var(--ee-space-lg);
+  background: var(--ee-bg-toolbar);
+  border-bottom: 1px solid var(--ee-border-color);
+  gap: var(--ee-space-sm);
+  flex-shrink: 0;
+}
+
+.toolbarGroup {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toolbarSeparator {
+  width: 1px;
+  height: 24px;
+  background: var(--ee-border-color);
+  margin: 0 var(--ee-space-sm);
+}
+
+.toolbarSpacer {
+  flex: 1;
+}
+
+.toolbarBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ee-space-xs);
+  padding: 6px 10px;
+  font-size: var(--ee-font-size-sm);
+  font-family: var(--ee-font-family);
+  font-weight: var(--ee-font-weight-medium);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--ee-border-radius-sm);
+  cursor: pointer;
+  color: var(--ee-text-secondary);
+  transition: all var(--ee-transition-fast);
+  white-space: nowrap;
+}
+
+.toolbarBtn:hover {
+  background: var(--ee-bg-hover);
+  color: var(--ee-text-primary);
+  border-color: var(--ee-border-color);
+}
+
+.toolbarBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.toolbarBtnActive {
+  background: var(--ee-bg-selected);
+  color: var(--ee-color-primary);
+  border-color: var(--ee-color-primary);
+}
+
+.toolbarBtnPrimary {
+  background: var(--ee-color-primary);
+  color: var(--ee-text-inverse);
+  border-color: var(--ee-color-primary);
+}
+
+.toolbarBtnPrimary:hover {
+  background: var(--ee-color-primary-hover);
+  color: var(--ee-text-inverse);
+  border-color: var(--ee-color-primary-hover);
+}
+
+/* Tab bar within toolbar */
+.tabBar {
+  display: flex;
+  gap: 2px;
+  background: var(--ee-bg-app);
+  border-radius: var(--ee-border-radius);
+  padding: 2px;
+}
+
+.tabBtn {
+  padding: 4px 12px;
+  font-size: var(--ee-font-size-sm);
+  font-family: var(--ee-font-family);
+  font-weight: var(--ee-font-weight-medium);
+  background: transparent;
+  border: none;
+  border-radius: var(--ee-border-radius-sm);
+  cursor: pointer;
+  color: var(--ee-text-secondary);
+  transition: all var(--ee-transition-fast);
+}
+
+.tabBtn:hover {
+  color: var(--ee-text-primary);
+}
+
+.tabBtnActive {
+  background: var(--ee-bg-panel);
+  color: var(--ee-text-primary);
+  box-shadow: var(--ee-shadow-sm);
+}
+
+/* Panel toggle buttons (visible only on narrow screens via editor.module.css) */
+.panelToggleBtn {
+  composes: toolbarBtn;
+  font-size: var(--ee-font-size-lg);
+  padding: 4px 8px;
+  line-height: 1;
+}
+
+.panelToggleBtnActive {
+  background: var(--ee-bg-selected);
+  color: var(--ee-color-primary);
+  border-color: var(--ee-color-primary);
+}
+
+/* Rich text toolbar */
+.richTextToolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: var(--ee-space-xs) var(--ee-space-sm);
+  background: var(--ee-bg-panel);
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius);
+  box-shadow: var(--ee-shadow-sm);
+  flex-wrap: wrap;
+}
+
+.richTextBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-size: var(--ee-font-size-sm);
+  background: transparent;
+  border: none;
+  border-radius: var(--ee-border-radius-sm);
+  cursor: pointer;
+  color: var(--ee-text-secondary);
+  transition: all var(--ee-transition-fast);
+}
+
+.richTextBtn:hover {
+  background: var(--ee-bg-hover);
+  color: var(--ee-text-primary);
+}
+
+.richTextBtnActive {
+  background: var(--ee-bg-selected);
+  color: var(--ee-color-primary);
+}
+
+.richTextSeparator {
+  width: 1px;
+  height: 20px;
+  background: var(--ee-border-color);
+  margin: 0 2px;
+}
+
+/* Rich text select controls */
+.richTextSelect {
+  height: 28px;
+  padding: 0 4px;
+  font-size: var(--ee-font-size-xs);
+  font-family: var(--ee-font-family);
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius-sm);
+  background: var(--ee-bg-input);
+  color: var(--ee-text-primary);
+  outline: none;
+  cursor: pointer;
+  max-width: 110px;
+}
+
+.richTextSelect:focus {
+  border-color: var(--ee-border-focus);
+}
+
+.richTextSelectSmall {
+  composes: richTextSelect;
+  max-width: 64px;
+}
+
+/* Rich text inline color picker */
+.richTextColorWrapper {
+  position: relative;
+}
+
+.richTextColorLabel {
+  font-weight: var(--ee-font-weight-semibold);
+  font-size: var(--ee-font-size-sm);
+}
+
+.richTextColorIndicator {
+  display: block;
+  width: 16px;
+  height: 3px;
+  border-radius: 1px;
+  margin-top: 1px;
+}
+
+.richTextColorDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  padding: var(--ee-space-sm);
+  background: var(--ee-bg-panel);
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius);
+  box-shadow: var(--ee-shadow-md);
+  z-index: var(--ee-z-dropdown);
+  min-width: 176px;
+}
+
+.richTextColorGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+  margin-bottom: var(--ee-space-sm);
+}
+
+.richTextColorSwatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: all var(--ee-transition-fast);
+}
+
+.richTextColorSwatch:hover {
+  transform: scale(1.2);
+  border-color: var(--ee-border-color-strong);
+}
+
+.richTextColorActions {
+  display: flex;
+  align-items: center;
+  gap: var(--ee-space-sm);
+  border-top: 1px solid var(--ee-border-color);
+  padding-top: var(--ee-space-sm);
+}
+
+.richTextColorInput {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--ee-border-color);
+  border-radius: 3px;
+  cursor: pointer;
+  background: none;
+}
+
+.richTextColorClearBtn {
+  font-size: var(--ee-font-size-xs);
+  font-family: var(--ee-font-family);
+  color: var(--ee-text-secondary);
+  background: transparent;
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius-sm);
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: all var(--ee-transition-fast);
+}
+
+.richTextColorClearBtn:hover {
+  background: var(--ee-bg-hover);
+  color: var(--ee-text-primary);
+}
+
+/* Link editor popover */
+.richTextLinkDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  padding: var(--ee-space-sm);
+  background: var(--ee-bg-panel);
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius);
+  box-shadow: var(--ee-shadow-md);
+  z-index: var(--ee-z-dropdown);
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.richTextLinkLabel {
+  font-size: var(--ee-font-size-xs);
+  font-weight: var(--ee-font-weight-semibold);
+  color: var(--ee-text-secondary);
+}
+
+.richTextLinkInput {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: var(--ee-font-size-sm);
+  font-family: var(--ee-font-family);
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius-sm);
+  background: var(--ee-bg-input);
+  color: var(--ee-text-primary);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.richTextLinkInput:focus {
+  border-color: var(--ee-border-focus);
+}
+
+.richTextLinkActions {
+  display: flex;
+  gap: 6px;
+}
+
+.richTextLinkApply {
+  flex: 1;
+  padding: 4px 10px;
+  font-size: var(--ee-font-size-xs);
+  font-family: var(--ee-font-family);
+  font-weight: var(--ee-font-weight-medium);
+  color: var(--ee-text-inverse);
+  background: var(--ee-color-primary);
+  border: none;
+  border-radius: var(--ee-border-radius-sm);
+  cursor: pointer;
+  transition: background var(--ee-transition-fast);
+}
+
+.richTextLinkApply:hover {
+  background: var(--ee-color-primary-hover);
+}
+
+.richTextLinkRemove {
+  padding: 4px 10px;
+  font-size: var(--ee-font-size-xs);
+  font-family: var(--ee-font-family);
+  color: var(--ee-color-danger, #ef4444);
+  background: transparent;
+  border: 1px solid var(--ee-color-danger, #ef4444);
+  border-radius: var(--ee-border-radius-sm);
+  cursor: pointer;
+  transition: all var(--ee-transition-fast);
+}
+
+.richTextLinkRemove:hover {
+  background: var(--ee-color-danger, #ef4444);
+  color: #fff;
+}
+

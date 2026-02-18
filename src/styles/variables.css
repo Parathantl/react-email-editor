@@ -1,0 +1,91 @@
+:root {
+  /* Colors */
+  --ee-color-primary: #2563eb;
+  --ee-color-primary-hover: #1d4ed8;
+  --ee-color-primary-light: #dbeafe;
+  --ee-color-danger: #ef4444;
+  --ee-color-danger-hover: #dc2626;
+  --ee-color-success: #22c55e;
+  --ee-color-warning: #f59e0b;
+
+  /* Surfaces */
+  --ee-bg-app: #f3f4f6;
+  --ee-bg-panel: #ffffff;
+  --ee-bg-canvas: #e5e7eb;
+  --ee-bg-hover: #f9fafb;
+  --ee-bg-selected: #eff6ff;
+  --ee-bg-input: #ffffff;
+  --ee-bg-toolbar: #ffffff;
+
+  /* Borders */
+  --ee-border-color: #e5e7eb;
+  --ee-border-color-strong: #d1d5db;
+  --ee-border-focus: #2563eb;
+  --ee-border-selected: #3b82f6;
+  --ee-border-radius: 6px;
+  --ee-border-radius-sm: 4px;
+  --ee-border-radius-lg: 8px;
+
+  /* Text */
+  --ee-text-primary: #111827;
+  --ee-text-secondary: #6b7280;
+  --ee-text-muted: #9ca3af;
+  --ee-text-inverse: #ffffff;
+  --ee-text-link: #2563eb;
+
+  /* Spacing */
+  --ee-space-xs: 4px;
+  --ee-space-sm: 8px;
+  --ee-space-md: 12px;
+  --ee-space-lg: 16px;
+  --ee-space-xl: 24px;
+  --ee-space-2xl: 32px;
+
+  /* Typography */
+  --ee-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ee-font-size-xs: 11px;
+  --ee-font-size-sm: 12px;
+  --ee-font-size-md: 13px;
+  --ee-font-size-base: 14px;
+  --ee-font-size-lg: 16px;
+  --ee-font-size-xl: 18px;
+  --ee-font-weight-normal: 400;
+  --ee-font-weight-medium: 500;
+  --ee-font-weight-semibold: 600;
+
+  /* Layout */
+  --ee-sidebar-width: 260px;
+  --ee-properties-width: 280px;
+  --ee-toolbar-height: 48px;
+
+  /* Shadows */
+  --ee-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --ee-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --ee-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --ee-shadow-focus: 0 0 0 3px rgba(37, 99, 235, 0.15);
+
+  /* Transitions */
+  --ee-transition-fast: 150ms ease;
+  --ee-transition-normal: 200ms ease;
+
+  /* Z-index */
+  --ee-z-dropdown: 100;
+  --ee-z-toolbar: 200;
+  --ee-z-overlay: 250;
+  --ee-z-modal: 300;
+  --ee-z-tooltip: 400;
+
+  /* Overlay */
+  --ee-overlay-backdrop: rgba(0, 0, 0, 0.2);
+
+  /* Drop zone */
+  --ee-dropzone-color: #3b82f6;
+  --ee-dropzone-bg: rgba(59, 130, 246, 0.08);
+  --ee-dropzone-height: 4px;
+  --ee-dropzone-height-active: 40px;
+
+  /* Variable chips */
+  --ee-variable-bg: #dbeafe;
+  --ee-variable-color: #1e40af;
+  --ee-variable-border: #93c5fd;
+}

@@ -1,0 +1,375 @@
+/* Text Block */
+.textBlock {
+  min-height: 24px;
+  cursor: text;
+  position: relative;
+}
+
+.textBlockToolbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  margin-bottom: 4px;
+}
+
+/* Button Block */
+.buttonBlock {
+  display: flex;
+  padding: 10px 25px;
+}
+
+.buttonBlockLeft {
+  justify-content: flex-start;
+}
+
+.buttonBlockCenter {
+  justify-content: center;
+}
+
+.buttonBlockRight {
+  justify-content: flex-end;
+}
+
+.buttonPreview {
+  display: inline-block;
+  padding: 12px 24px;
+  font-weight: var(--ee-font-weight-medium);
+  text-decoration: none;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.4;
+  border: none;
+}
+
+/* Image Block */
+.imageBlock {
+  display: flex;
+  padding: 10px 25px;
+}
+
+.imageBlockLeft {
+  justify-content: flex-start;
+}
+
+.imageBlockCenter {
+  justify-content: center;
+}
+
+.imageBlockRight {
+  justify-content: flex-end;
+}
+
+.imagePreview {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.imagePlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ee-space-sm);
+  width: 100%;
+  min-height: 120px;
+  background: var(--ee-bg-app);
+  border: 2px dashed var(--ee-border-color);
+  border-radius: var(--ee-border-radius);
+  color: var(--ee-text-muted);
+  font-size: var(--ee-font-size-sm);
+  cursor: pointer;
+  transition: all var(--ee-transition-fast);
+}
+
+.imagePlaceholder:hover {
+  border-color: var(--ee-color-primary);
+  color: var(--ee-color-primary);
+  background: var(--ee-color-primary-light);
+}
+
+.imagePlaceholderIcon {
+  font-size: 32px;
+}
+
+.imageUploading {
+  position: relative;
+}
+
+.imageProgress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: var(--ee-color-primary);
+  border-radius: 2px;
+  transition: width 200ms ease;
+}
+
+.imageError {
+  color: var(--ee-color-danger);
+  font-size: var(--ee-font-size-xs);
+  padding: var(--ee-space-xs);
+  text-align: center;
+}
+
+/* Divider Block */
+.dividerBlock {
+  display: flex;
+  align-items: center;
+}
+
+.dividerLine {
+  height: 0;
+  border: none;
+  margin: 0;
+}
+
+/* Spacer Block */
+.spacerBlock {
+  position: relative;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 5px,
+    var(--ee-bg-app) 5px,
+    var(--ee-bg-app) 10px
+  );
+  opacity: 0.5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spacerLabel {
+  font-size: var(--ee-font-size-xs);
+  color: var(--ee-text-muted);
+  background: var(--ee-bg-panel);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+/* Social Block */
+.socialBlock {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-height: 30px;
+}
+
+.socialElement {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.socialIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.socialLabel {
+  white-space: nowrap;
+}
+
+.socialElementsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.socialElementItem {
+  padding: 8px;
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius-sm);
+  background: var(--ee-bg-app);
+}
+
+/* HTML Block */
+.htmlBlock {
+  min-height: 24px;
+  position: relative;
+}
+
+.htmlPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ee-space-sm);
+  width: 100%;
+  min-height: 80px;
+  background: var(--ee-bg-app);
+  border: 2px dashed var(--ee-border-color);
+  border-radius: var(--ee-border-radius);
+  color: var(--ee-text-muted);
+  font-size: var(--ee-font-size-sm);
+  font-family: monospace;
+}
+
+/* Video Block */
+.videoBlock {
+  display: flex;
+  padding: 10px 25px;
+}
+
+.videoBlockLeft {
+  justify-content: flex-start;
+}
+
+.videoBlockCenter {
+  justify-content: center;
+}
+
+.videoBlockRight {
+  justify-content: flex-end;
+}
+
+.videoPreview {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.playOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 24px;
+  pointer-events: none;
+}
+
+.videoPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ee-space-sm);
+  width: 100%;
+  min-height: 120px;
+  background: var(--ee-bg-app);
+  border: 2px dashed var(--ee-border-color);
+  border-radius: var(--ee-border-radius);
+  color: var(--ee-text-muted);
+  font-size: var(--ee-font-size-sm);
+}
+
+/* Heading Block */
+.headingBlock {
+  min-height: 24px;
+  cursor: text;
+  position: relative;
+}
+
+/* Countdown Block */
+.countdownBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.countdownLabel {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.countdownDigits {
+  display: flex;
+  gap: 12px;
+}
+
+.countdownUnit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.countdownDigitBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdownUnitLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Menu Block */
+.menuBlock {
+  display: flex;
+}
+
+.menuItems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.menuItem {
+  padding: 6px 12px;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.menuItemsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menuItemEntry {
+  padding: 8px;
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius-sm);
+  background: var(--ee-bg-app);
+}
+
+/* Hero Block */
+.heroBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.heroHeading {
+  margin: 0;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.heroSubtext {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.heroButton {
+  display: inline-block;
+  padding: 12px 28px;
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: none;
+  cursor: pointer;
+}

@@ -1,0 +1,280 @@
+.canvasWrapper {
+  display: flex;
+  justify-content: center;
+  padding: var(--ee-space-xl);
+}
+
+.canvasBody {
+  width: 600px;
+  min-height: 400px;
+  background: #ffffff;
+  box-shadow: var(--ee-shadow-lg);
+  border-radius: var(--ee-border-radius);
+  position: relative;
+  transition: box-shadow var(--ee-transition-fast);
+}
+
+.canvasBodyDragOver {
+  box-shadow: var(--ee-shadow-lg), 0 0 0 3px var(--ee-dropzone-color);
+}
+
+/* Section */
+.section {
+  position: relative;
+  border: 2px solid transparent;
+  transition: border-color var(--ee-transition-fast);
+  cursor: pointer;
+}
+
+.section:hover {
+  border-color: var(--ee-border-color-strong);
+}
+
+.sectionSelected {
+  border-color: var(--ee-border-selected) !important;
+}
+
+.sectionFullWidth {
+  border-left: 3px solid var(--ee-color-primary);
+}
+
+.sectionOverlay {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity var(--ee-transition-fast);
+  z-index: 10;
+}
+
+.section:hover .sectionOverlay {
+  opacity: 1;
+}
+
+.sectionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--ee-bg-panel);
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius-sm);
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--ee-text-secondary);
+  transition: all var(--ee-transition-fast);
+}
+
+.sectionBtn:hover {
+  background: var(--ee-color-danger);
+  color: var(--ee-text-inverse);
+  border-color: var(--ee-color-danger);
+}
+
+.sectionBtnDuplicate:hover {
+  background: var(--ee-color-primary);
+  color: var(--ee-text-inverse);
+  border-color: var(--ee-color-primary);
+}
+
+.sectionDragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--ee-bg-panel);
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius-sm);
+  cursor: grab;
+  font-size: 14px;
+  color: var(--ee-text-secondary);
+  transition: all var(--ee-transition-fast);
+  user-select: none;
+  line-height: 1;
+}
+
+.sectionDragHandle:hover {
+  background: var(--ee-color-primary);
+  color: var(--ee-text-inverse);
+  border-color: var(--ee-color-primary);
+}
+
+.sectionDragHandle:active {
+  cursor: grabbing;
+}
+
+.sectionContent {
+  display: flex;
+  min-height: 40px;
+}
+
+/* Column */
+.column {
+  flex: 1;
+  min-height: 40px;
+  padding: 4px;
+  position: relative;
+}
+
+/* Block */
+.blockWrapper {
+  position: relative;
+  border: 1px solid transparent;
+  border-radius: var(--ee-border-radius-sm);
+  transition: all var(--ee-transition-fast);
+  cursor: pointer;
+}
+
+.blockWrapper:hover {
+  border-color: var(--ee-border-color-strong);
+}
+
+.blockSelected {
+  border-color: var(--ee-border-selected) !important;
+  box-shadow: var(--ee-shadow-focus);
+}
+
+.blockOverlay {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity var(--ee-transition-fast);
+  z-index: 10;
+}
+
+.blockWrapper:hover .blockOverlay {
+  opacity: 1;
+}
+
+.blockBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: var(--ee-bg-panel);
+  border: 1px solid var(--ee-border-color);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 10px;
+  color: var(--ee-text-secondary);
+  transition: all var(--ee-transition-fast);
+}
+
+.blockBtn:hover {
+  background: var(--ee-color-danger);
+  color: var(--ee-text-inverse);
+  border-color: var(--ee-color-danger);
+}
+
+.blockBtnDuplicate:hover {
+  background: var(--ee-color-primary);
+  color: var(--ee-text-inverse);
+  border-color: var(--ee-color-primary);
+}
+
+/* Drop Zone */
+.dropZone {
+  min-height: 8px;
+  padding: 4px 0;
+  transition: all var(--ee-transition-fast);
+  position: relative;
+  margin: 0 4px;
+}
+
+.dropZoneActive {
+  min-height: var(--ee-dropzone-height-active);
+  background: var(--ee-dropzone-bg);
+  border: 2px dashed var(--ee-dropzone-color);
+  border-radius: var(--ee-border-radius-sm);
+}
+
+.dropZoneLabel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ee-font-size-xs);
+  color: var(--ee-dropzone-color);
+  font-weight: var(--ee-font-weight-medium);
+}
+
+/* Empty column */
+.emptyColumn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+  border: 2px dashed var(--ee-border-color);
+  border-radius: var(--ee-border-radius);
+  color: var(--ee-text-muted);
+  font-size: var(--ee-font-size-sm);
+  margin: var(--ee-space-sm);
+  transition: all var(--ee-transition-fast);
+  cursor: default;
+}
+
+.emptyColumnActive {
+  border-color: var(--ee-dropzone-color);
+  background: var(--ee-dropzone-bg);
+  color: var(--ee-dropzone-color);
+  font-weight: var(--ee-font-weight-medium);
+}
+
+/* Section Drop Zone */
+.sectionDropZone {
+  min-height: 4px;
+  transition: all var(--ee-transition-fast);
+  position: relative;
+}
+
+.sectionDropZoneActive {
+  min-height: 40px;
+  background: var(--ee-dropzone-bg);
+  border: 2px dashed var(--ee-dropzone-color);
+  border-radius: var(--ee-border-radius-sm);
+  margin: 2px 4px;
+}
+
+.sectionDropZoneLabel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ee-font-size-xs);
+  color: var(--ee-dropzone-color);
+  font-weight: var(--ee-font-weight-medium);
+}
+
+/* Add section button */
+.addSectionBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ee-space-sm);
+  padding: var(--ee-space-md);
+  margin: var(--ee-space-sm) var(--ee-space-lg);
+  border: 2px dashed var(--ee-border-color);
+  border-radius: var(--ee-border-radius);
+  background: transparent;
+  color: var(--ee-text-secondary);
+  font-size: var(--ee-font-size-sm);
+  cursor: pointer;
+  transition: all var(--ee-transition-fast);
+  width: calc(100% - 2 * var(--ee-space-lg));
+}
+
+.addSectionBtn:hover {
+  border-color: var(--ee-color-primary);
+  color: var(--ee-color-primary);
+  background: var(--ee-color-primary-light);
+}

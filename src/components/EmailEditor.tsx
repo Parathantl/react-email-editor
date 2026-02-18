@@ -1,0 +1,315 @@
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import type { EmailEditorProps, EmailEditorRef, BlockType } from '../types';
+import { EditorProvider, useEditor } from '../context/EditorContext';
+import { ErrorBoundary } from './ErrorBoundary';
+import { Toolbar } from './Toolbar/Toolbar';
+import { Sidebar } from './Sidebar/Sidebar';
+import { Canvas } from './Canvas/Canvas';
+import { PropertiesPanel } from './Properties/PropertiesPanel';
+import { PreviewPanel } from './Preview/PreviewPanel';
+import { SourceEditor } from './SourceEditor/SourceEditor';
+import { generateMJML } from '../mjml/generator';
+import { compileMJMLToHTML } from '../mjml/compiler';
+import { parseMJML } from '../mjml/parser';
+import { createSection, createBlock } from '../utils/factory';
+import { DEFAULT_GLOBAL_STYLES, DEFAULT_HEAD_METADATA } from '../constants';
+import { extractVariableKeys } from '../utils/variables';
+import editorStyles from '../styles/editor.module.css';
+import '../styles/variables.css';
+
+const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function EditorInner(
+  props,
+  ref,
+) {
+  const { state, dispatch, clearPersisted } = useEditor();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { onReady, onSave } = props;
+
+  // Panel toggle state for responsive layout
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [propertiesOpen, setPropertiesOpen] = useState(false);
+
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen((prev) => !prev);
+    setPropertiesOpen(false);
+  }, []);
+
+  const toggleProperties = useCallback(() => {
+    setPropertiesOpen((prev) => !prev);
+    setSidebarOpen(false);
+  }, []);
+
+  const closeOverlays = useCallback(() => {
+    setSidebarOpen(false);
+    setPropertiesOpen(false);
+  }, []);
+
+  // Auto-open properties panel when a block is selected (on narrow screens)
+  useEffect(() => {
+    if (state.selection.blockId) {
+      // Only auto-open if window is narrow (overlay mode)
+      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+        setPropertiesOpen(true);
+        setSidebarOpen(false);
+      }
+    }
+  }, [state.selection.blockId]);
+
+  // Feature 3: onReady — fire once on mount
+  useEffect(() => {
+    onReady?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Feature 5: Keyboard shortcuts
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const handler = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isEditing =
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable;
+
+      const mod = e.metaKey || e.ctrlKey;
+
+      // Ctrl/Cmd+S → save
+      if (mod && e.key === 's') {
+        e.preventDefault();
+        if (onSave) {
+          const mjml = generateMJML(state.template);
+          compileMJMLToHTML(mjml).then((result) => onSave(mjml, result.html));
+        }
+        return;
+      }
+
+      // Escape → deselect all
+      if (e.key === 'Escape') {
+        dispatch({ type: 'SELECT_BLOCK', payload: null });
+        (document.activeElement as HTMLElement)?.blur();
+        return;
+      }
+
+      // Skip remaining shortcuts while typing in inputs
+      if (isEditing) return;
+
+      // Ctrl/Cmd+Z → undo
+      if (mod && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        dispatch({ type: 'UNDO' });
+        return;
+      }
+
+      // Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y → redo
+      if (mod && ((e.key === 'z' && e.shiftKey) || e.key === 'y')) {
+        e.preventDefault();
+        dispatch({ type: 'REDO' });
+        return;
+      }
+
+      // Delete/Backspace → remove selected block or section
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        const { sectionId, columnId, blockId } = state.selection;
+        if (blockId && sectionId && columnId) {
+          e.preventDefault();
+          dispatch({ type: 'REMOVE_BLOCK', payload: { sectionId, columnId, blockId } });
+        } else if (sectionId) {
+          e.preventDefault();
+          dispatch({ type: 'REMOVE_SECTION', payload: { sectionId } });
+        }
+      }
+    };
+
+    el.addEventListener('keydown', handler);
+    return () => el.removeEventListener('keydown', handler);
+  }, [dispatch, state.template, state.selection, onSave]);
+
+  useImperativeHandle(ref, () => ({
+    getMJML: () => generateMJML(state.template),
+
+    getHTML: async () => {
+      const mjml = generateMJML(state.template);
+      const result = await compileMJMLToHTML(mjml);
+      return result.html;
+    },
+
+    getJSON: () => JSON.parse(JSON.stringify(state.template)),
+
+    loadMJML: (source: string) => {
+      const template = parseMJML(source);
+      dispatch({ type: 'SET_TEMPLATE', payload: template });
+    },
+
+    loadJSON: (template) => {
+      dispatch({ type: 'SET_TEMPLATE', payload: template });
+    },
+
+    insertBlock: (type: BlockType, sectionIdx?: number) => {
+      let targetSection = state.template.sections[sectionIdx ?? state.template.sections.length - 1];
+
+      if (!targetSection) {
+        targetSection = createSection();
+        dispatch({ type: 'ADD_SECTION', payload: { section: targetSection } });
+      }
+
+      const column = targetSection.columns[0];
+      const block = createBlock(type);
+
+      dispatch({
+        type: 'ADD_BLOCK',
+        payload: { sectionId: targetSection.id, columnId: column.id, block },
+      });
+    },
+
+    getVariables: () => {
+      const mjml = generateMJML(state.template);
+      return extractVariableKeys(mjml);
+    },
+
+    undo: () => dispatch({ type: 'UNDO' }),
+    redo: () => dispatch({ type: 'REDO' }),
+
+    reset: () => {
+      dispatch({
+        type: 'SET_TEMPLATE',
+        payload: { sections: [], globalStyles: { ...DEFAULT_GLOBAL_STYLES }, headMetadata: { ...DEFAULT_HEAD_METADATA, headStyles: [] } },
+      });
+    },
+
+    clearPersisted: () => clearPersisted(),
+
+    exportPDF: async () => {
+      const mjml = generateMJML(state.template);
+      const result = await compileMJMLToHTML(mjml);
+      const printStyles = `
+        <style>
+          @page { margin: 0; size: auto; }
+          @media print {
+            html, body { margin: 0; padding: 0; }
+          }
+        </style>
+      `;
+      const htmlWithPrintStyles = result.html.replace(
+        '</head>',
+        `${printStyles}</head>`,
+      );
+      const iframe = document.createElement('iframe');
+      iframe.style.position = 'fixed';
+      iframe.style.left = '-9999px';
+      document.body.appendChild(iframe);
+      const doc = iframe.contentDocument!;
+      doc.open();
+      doc.write(htmlWithPrintStyles);
+      doc.close();
+      iframe.contentWindow!.print();
+      setTimeout(() => document.body.removeChild(iframe), 1000);
+    },
+  }));
+
+  const sidebarClasses = [
+    editorStyles.editorPanel,
+    editorStyles.sidebarPanel,
+    sidebarOpen ? editorStyles.sidebarOpen : '',
+  ].filter(Boolean).join(' ');
+
+  const propertiesClasses = [
+    editorStyles.editorPanel,
+    editorStyles.propertiesPanel,
+    propertiesOpen ? editorStyles.propertiesOpen : '',
+  ].filter(Boolean).join(' ');
+
+  const overlayClasses = [
+    editorStyles.panelOverlay,
+    (sidebarOpen || propertiesOpen) ? editorStyles.panelOverlayVisible : '',
+  ].filter(Boolean).join(' ');
+
+  return (
+    <div ref={containerRef} className={editorStyles.editorContainer} tabIndex={-1}>
+      <Toolbar
+        sidebarOpen={sidebarOpen}
+        propertiesOpen={propertiesOpen}
+        onToggleSidebar={toggleSidebar}
+        onToggleProperties={toggleProperties}
+      />
+      <div className={editorStyles.editorBody}>
+        {state.activeTab === 'visual' && (
+          <>
+            <div className={sidebarClasses}>
+              <ErrorBoundary>
+                <Sidebar />
+              </ErrorBoundary>
+            </div>
+            <div className={`${editorStyles.editorPanel} ${editorStyles.canvasPanel}`}>
+              <ErrorBoundary>
+                <Canvas />
+              </ErrorBoundary>
+            </div>
+            <div className={propertiesClasses}>
+              <ErrorBoundary>
+                <PropertiesPanel />
+              </ErrorBoundary>
+            </div>
+            {/* Backdrop overlay for narrow screens */}
+            <div className={overlayClasses} onClick={closeOverlays} />
+          </>
+        )}
+        {state.activeTab === 'source' && (
+          <ErrorBoundary>
+            <SourceEditor />
+          </ErrorBoundary>
+        )}
+        {state.activeTab === 'preview' && (
+          <ErrorBoundary>
+            <PreviewPanel />
+          </ErrorBoundary>
+        )}
+      </div>
+    </div>
+  );
+});
+
+export const EmailEditor = forwardRef<EmailEditorRef, EmailEditorProps>(
+  function EmailEditor(props, ref) {
+    const {
+      initialTemplate,
+      initialMJML,
+      variables,
+      imageUploadAdapter,
+      onChange,
+      fontFamilies,
+      fontSizes,
+      persistenceKey,
+      persistenceAdapter,
+      className,
+      style,
+    } = props;
+
+    let template = initialTemplate;
+    if (!template && initialMJML) {
+      try {
+        template = parseMJML(initialMJML);
+      } catch {
+        template = undefined;
+      }
+    }
+
+    return (
+      <EditorProvider
+        initialTemplate={template}
+        variables={variables}
+        imageUploadAdapter={imageUploadAdapter}
+        onChange={onChange}
+        fontFamilies={fontFamilies}
+        fontSizes={fontSizes}
+        persistenceKey={persistenceKey}
+        persistenceAdapter={persistenceAdapter}
+      >
+        <div className={className} style={{ height: '100%', minHeight: 0, ...style }}>
+          <EditorInner ref={ref} {...props} />
+        </div>
+      </EditorProvider>
+    );
+  },
+);

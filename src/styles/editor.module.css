@@ -1,0 +1,119 @@
+.editorContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 500px;
+  font-family: var(--ee-font-family);
+  font-size: var(--ee-font-size-base);
+  color: var(--ee-text-primary);
+  background: var(--ee-bg-app);
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius-lg);
+  overflow: hidden;
+}
+
+.editorContainer:focus {
+  outline: none;
+}
+
+.editorBody {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.editorPanel {
+  min-height: 0;
+  max-height: 100%;
+}
+
+.sidebarPanel {
+  width: var(--ee-sidebar-width);
+  border-right: 1px solid var(--ee-border-color);
+  background: var(--ee-bg-panel);
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.canvasPanel {
+  flex: 1;
+  min-width: 0;
+  background: var(--ee-bg-canvas);
+  overflow-y: auto;
+}
+
+.propertiesPanel {
+  width: var(--ee-properties-width);
+  border-left: 1px solid var(--ee-border-color);
+  background: var(--ee-bg-panel);
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+/* Panel toggle buttons — hidden on desktop, shown on narrow screens */
+.panelToggle {
+  display: none;
+}
+
+/* Overlay backdrop */
+.panelOverlay {
+  display: none;
+}
+
+/* ---- Responsive: tablet / narrow screens ---- */
+@media (max-width: 1023px) {
+  .editorBody {
+    position: relative;
+  }
+
+  .sidebarPanel {
+    display: none;
+  }
+
+  .propertiesPanel {
+    display: none;
+  }
+
+  .panelToggle {
+    display: flex;
+  }
+
+  /* Sidebar overlay (open state) */
+  .sidebarPanel.sidebarOpen {
+    display: block;
+    position: absolute;
+    z-index: var(--ee-z-overlay);
+    left: 0;
+    top: 0;
+    bottom: 0;
+    box-shadow: var(--ee-shadow-lg);
+  }
+
+  /* Properties overlay (open state) */
+  .propertiesPanel.propertiesOpen {
+    display: block;
+    position: absolute;
+    z-index: var(--ee-z-overlay);
+    right: 0;
+    top: 0;
+    bottom: 0;
+    box-shadow: var(--ee-shadow-lg);
+  }
+
+  /* Backdrop when a panel is open */
+  .panelOverlay.panelOverlayVisible {
+    display: block;
+    position: absolute;
+    inset: 0;
+    background: var(--ee-overlay-backdrop);
+    z-index: calc(var(--ee-z-overlay) - 1);
+  }
+}
+
+/* ---- Responsive: mobile ---- */
+@media (max-width: 767px) {
+  .editorContainer {
+    min-height: 400px;
+  }
+}
