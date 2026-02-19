@@ -73,31 +73,29 @@ export function LinkInput({ label, value, onChange }: LinkInputProps) {
     : 'https://';
 
   return (
-    <div className={styles.fieldGroup}>
+    <div className={`ee-field-group ee-link-input ${styles.fieldGroup}`}>
       <label className={styles.fieldLabel}>{label}</label>
-      <div style={{ display: 'flex', gap: '4px' }}>
+      <div className={styles.fieldRowCompact}>
         <select
-          className={styles.fieldSelect}
+          className={styles.fieldSelectNarrow}
           value={type}
           onChange={(e) => handleTypeChange(e.target.value as LinkType)}
-          style={{ width: '90px', flexShrink: 0 }}
         >
           <option value="url">URL</option>
           <option value="email">Email</option>
           <option value="phone">Phone</option>
         </select>
         <input
-          className={styles.fieldInput}
+          className={styles.fieldInputFlex}
           value={rawValue}
           onChange={(e) => handleValueChange(e.target.value)}
           placeholder={placeholder}
-          style={{ flex: 1 }}
           aria-label={label}
           aria-invalid={!!validationError}
         />
       </div>
       {validationError && (
-        <span style={{ color: '#e53e3e', fontSize: '11px', marginTop: '2px' }} role="alert">
+        <span className={`ee-validation-error ${styles.validationError}`} role="alert">
           {validationError}
         </span>
       )}

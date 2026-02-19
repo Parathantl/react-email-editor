@@ -62,14 +62,13 @@ export function ImageProperties({ block }: ImagePropertiesProps) {
       {imageUploadAdapter && (
         <div className={styles.fieldGroup}>
           <button
-            className={styles.fieldInput}
+            className={`ee-upload-btn ${status === 'uploading' ? styles.fieldBtnUploadDisabled : styles.fieldBtnUpload}`}
             onClick={() => fileInputRef.current?.click()}
             disabled={status === 'uploading'}
-            style={{ cursor: status === 'uploading' ? 'wait' : 'pointer', textAlign: 'center' }}
           >
             {status === 'uploading' ? 'Uploading...' : 'Upload Image'}
           </button>
-          {error && <span style={{ color: '#ef4444', fontSize: '12px' }}>{error}</span>}
+          {error && <span className={`ee-upload-error ${styles.validationError}`}>{error}</span>}
           <input
             ref={fileInputRef}
             type="file"

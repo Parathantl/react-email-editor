@@ -1,0 +1,54 @@
+.sourceEditor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--ee-space-lg);
+  gap: var(--ee-space-sm);
+  box-sizing: border-box;
+}
+
+.sourceHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sourceLabel {
+  font-size: var(--ee-font-size-md);
+  font-weight: var(--ee-font-weight-semibold);
+  color: var(--ee-text-secondary);
+}
+
+.sourceApply {
+  padding: 6px 16px;
+  font-size: var(--ee-font-size-md);
+  font-weight: var(--ee-font-weight-medium);
+  background: var(--ee-color-primary);
+  color: var(--ee-text-inverse);
+  border: none;
+  border-radius: var(--ee-border-radius-sm);
+  cursor: pointer;
+}
+
+.sourceError {
+  padding: var(--ee-space-sm);
+  font-size: var(--ee-font-size-sm);
+  color: var(--ee-color-danger);
+  background: var(--ee-color-danger-light);
+  border-radius: var(--ee-border-radius-sm);
+}
+
+.sourceTextarea {
+  flex: 1;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--ee-font-size-md);
+  line-height: 1.5;
+  padding: var(--ee-space-md);
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius);
+  resize: none;
+  outline: none;
+  background: var(--ee-bg-input);
+  color: var(--ee-text-primary);
+  tab-size: 2;
+}

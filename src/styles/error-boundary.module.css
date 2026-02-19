@@ -1,0 +1,14 @@
+.errorBoundary {
+  padding: var(--ee-space-lg);
+  margin: var(--ee-space-sm);
+  background: var(--ee-color-danger-light);
+  border: 1px solid var(--ee-color-danger-border);
+  border-radius: var(--ee-border-radius);
+  color: var(--ee-color-danger);
+  font-size: var(--ee-font-size-md);
+}
+
+.errorMessage {
+  margin: var(--ee-space-sm) 0 0;
+  color: var(--ee-color-danger-hover);
+}

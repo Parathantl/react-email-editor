@@ -359,6 +359,8 @@ export interface EmailEditorProps {
   fontFamilies?: string[];
   /** Custom font size options for the rich text toolbar (e.g. ['12px', '14px', '16px']). Falls back to DEFAULT_FONT_SIZES constant. */
   fontSizes?: string[];
+  /** Custom block definitions for the sidebar palette. Override icons, labels, descriptions, or hide specific blocks. Falls back to BLOCK_DEFINITIONS constant. */
+  blockDefinitions?: import('./constants').BlockDefinition[];
   /** Key for auto-persisting the template. Different keys allow multiple editor instances to coexist. */
   persistenceKey?: string;
   /** Custom persistence adapter. Defaults to localStorage when persistenceKey is set. */

@@ -44,12 +44,11 @@ export function SectionProperties({ section }: SectionPropertiesProps) {
         />
       </div>
       <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>
+        <label className={`ee-checkbox-label ${styles.checkboxLabel}`}>
           <input
             type="checkbox"
             checked={properties.fullWidth || false}
             onChange={(e) => update({ fullWidth: e.target.checked })}
-            style={{ marginRight: 8 }}
           />
           Full Width
         </label>

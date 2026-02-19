@@ -166,7 +166,7 @@ export const Column = React.memo(function Column({ column, sectionId }: ColumnPr
 
   if (column.blocks.length === 0) {
     return (
-      <div className={styles.column} style={{ width: column.width }}>
+      <div className={`ee-column ${styles.column}`} style={{ width: column.width }}>
         <DropZone
           sectionId={sectionId}
           columnId={column.id}
@@ -178,12 +178,16 @@ export const Column = React.memo(function Column({ column, sectionId }: ColumnPr
   }
 
   return (
-    <div className={styles.column} style={{ width: column.width }}>
+    <div className={`ee-column ${styles.column}`} style={{ width: column.width }}>
       {column.blocks.map((block, index) => (
         <React.Fragment key={block.id}>
           <DropZone sectionId={sectionId} columnId={column.id} index={index} />
           <div
+            data-block-type={block.type}
             className={[
+              'ee-block',
+              `ee-block--${block.type}`,
+              selection.blockId === block.id && 'ee-block--selected',
               styles.blockWrapper,
               selection.blockId === block.id && styles.blockSelected,
               dropTarget?.blockId === block.id &&
@@ -224,9 +228,9 @@ export const Column = React.memo(function Column({ column, sectionId }: ColumnPr
               }
             }}
           >
-            <div className={styles.blockOverlay} role="group" aria-label="Block actions">
+            <div className={`ee-block-actions ${styles.blockOverlay}`} role="group" aria-label="Block actions">
               <button
-                className={`${styles.blockBtn} ${styles.blockBtnDuplicate}`}
+                className={`ee-block-duplicate ${styles.blockBtn} ${styles.blockBtnDuplicate}`}
                 onClick={(e) => handleDuplicateBlock(block.id, e)}
                 title="Duplicate block"
                 aria-label="Duplicate block"
@@ -234,7 +238,7 @@ export const Column = React.memo(function Column({ column, sectionId }: ColumnPr
                 ⧉
               </button>
               <button
-                className={styles.blockBtn}
+                className={`ee-block-remove ${styles.blockBtn}`}
                 onClick={(e) => handleRemoveBlock(block.id, e)}
                 title="Remove block"
                 aria-label="Remove block"

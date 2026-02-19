@@ -37,22 +37,22 @@ export function ImageUploader({ blockId, onUploadComplete }: ImageUploaderProps)
   return (
     <div>
       {status === 'uploading' ? (
-        <div className={styles.imageUploading}>
-          <div className={styles.imagePlaceholder}>
+        <div className={`ee-image-uploading ${styles.imageUploading}`}>
+          <div className={`ee-image-placeholder ${styles.imagePlaceholder}`}>
             <span>Uploading... {Math.round(progress)}%</span>
-            <button onClick={cancel} style={{ cursor: 'pointer' }}>
+            <button className="ee-upload-cancel" onClick={cancel}>
               Cancel
             </button>
           </div>
-          <div className={styles.imageProgress} style={{ width: `${progress}%` }} />
+          <div className={`ee-image-progress ${styles.imageProgress}`} style={{ width: `${progress}%` }} />
         </div>
       ) : (
-        <div className={styles.imagePlaceholder} onClick={handleClick}>
-          <span className={styles.imagePlaceholderIcon}>+</span>
+        <div className={`ee-image-placeholder ${styles.imagePlaceholder}`} onClick={handleClick}>
+          <span className={`ee-image-placeholder-icon ${styles.imagePlaceholderIcon}`}>+</span>
           <span>Click to upload image</span>
         </div>
       )}
-      {error && <div className={styles.imageError}>{error}</div>}
+      {error && <div className={`ee-image-error ${styles.imageError}`}>{error}</div>}
       <input
         ref={fileInputRef}
         type="file"

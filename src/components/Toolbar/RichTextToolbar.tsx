@@ -23,48 +23,48 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
   if (!editor) return null;
 
   return (
-    <div className={styles.richTextToolbar} onMouseDown={preventBlur}>
+    <div className={`ee-richtext-toolbar ${styles.richTextToolbar}`} onMouseDown={preventBlur}>
       {/* Font Family */}
       <FontFamilySelect editor={editor} />
 
-      <div className={styles.richTextSeparator} />
+      <div className={`ee-richtext-separator ${styles.richTextSeparator}`} />
 
       {/* Font Size */}
       <FontSizeSelect editor={editor} />
 
-      <div className={styles.richTextSeparator} />
+      <div className={`ee-richtext-separator ${styles.richTextSeparator}`} />
 
       {/* Bold / Italic / Underline */}
       <button
-        className={`${styles.richTextBtn} ${editor.isActive('bold') ? styles.richTextBtnActive : ''}`}
+        className={`ee-richtext-btn ee-richtext-bold ${styles.richTextBtn} ${editor.isActive('bold') ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().toggleBold().run()}
         title="Bold (Ctrl+B)"
       >
         <strong>B</strong>
       </button>
       <button
-        className={`${styles.richTextBtn} ${editor.isActive('italic') ? styles.richTextBtnActive : ''}`}
+        className={`ee-richtext-btn ee-richtext-italic ${styles.richTextBtn} ${editor.isActive('italic') ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().toggleItalic().run()}
         title="Italic (Ctrl+I)"
       >
         <em>I</em>
       </button>
       <button
-        className={`${styles.richTextBtn} ${editor.isActive('underline') ? styles.richTextBtnActive : ''}`}
+        className={`ee-richtext-btn ee-richtext-underline ${styles.richTextBtn} ${editor.isActive('underline') ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().toggleUnderline().run()}
         title="Underline (Ctrl+U)"
       >
         <u>U</u>
       </button>
       <button
-        className={`${styles.richTextBtn} ${editor.isActive('strike') ? styles.richTextBtnActive : ''}`}
+        className={`ee-richtext-btn ee-richtext-strike ${styles.richTextBtn} ${editor.isActive('strike') ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().toggleStrike().run()}
         title="Strikethrough (Ctrl+Shift+X)"
       >
         <s>S</s>
       </button>
 
-      <div className={styles.richTextSeparator} />
+      <div className={`ee-richtext-separator ${styles.richTextSeparator}`} />
 
       {/* Text Color */}
       <InlineColorPicker
@@ -82,57 +82,57 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
         label="H"
       />
 
-      <div className={styles.richTextSeparator} />
+      <div className={`ee-richtext-separator ${styles.richTextSeparator}`} />
 
       {/* Alignment */}
       <button
-        className={`${styles.richTextBtn} ${editor.isActive({ textAlign: 'left' }) ? styles.richTextBtnActive : ''}`}
+        className={`ee-richtext-btn ee-richtext-align-left ${styles.richTextBtn} ${editor.isActive({ textAlign: 'left' }) ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().setTextAlign('left').run()}
         title="Align Left"
       >
         L
       </button>
       <button
-        className={`${styles.richTextBtn} ${editor.isActive({ textAlign: 'center' }) ? styles.richTextBtnActive : ''}`}
+        className={`ee-richtext-btn ee-richtext-align-center ${styles.richTextBtn} ${editor.isActive({ textAlign: 'center' }) ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().setTextAlign('center').run()}
         title="Align Center"
       >
         C
       </button>
       <button
-        className={`${styles.richTextBtn} ${editor.isActive({ textAlign: 'right' }) ? styles.richTextBtnActive : ''}`}
+        className={`ee-richtext-btn ee-richtext-align-right ${styles.richTextBtn} ${editor.isActive({ textAlign: 'right' }) ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().setTextAlign('right').run()}
         title="Align Right"
       >
         R
       </button>
 
-      <div className={styles.richTextSeparator} />
+      <div className={`ee-richtext-separator ${styles.richTextSeparator}`} />
 
       {/* Lists */}
       <button
-        className={`${styles.richTextBtn} ${editor.isActive('bulletList') ? styles.richTextBtnActive : ''}`}
+        className={`ee-richtext-btn ee-richtext-bullet-list ${styles.richTextBtn} ${editor.isActive('bulletList') ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         title="Bullet List"
       >
         &#8226;
       </button>
       <button
-        className={`${styles.richTextBtn} ${editor.isActive('orderedList') ? styles.richTextBtnActive : ''}`}
+        className={`ee-richtext-btn ee-richtext-ordered-list ${styles.richTextBtn} ${editor.isActive('orderedList') ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         title="Ordered List"
       >
         1.
       </button>
 
-      <div className={styles.richTextSeparator} />
+      <div className={`ee-richtext-separator ${styles.richTextSeparator}`} />
 
       {/* Link */}
       <InlineLinkEditor editor={editor} />
 
       {/* Clear formatting */}
       <button
-        className={styles.richTextBtn}
+        className={`ee-richtext-btn ee-richtext-clear ${styles.richTextBtn}`}
         onClick={() => editor.chain().focus().unsetAllMarks().run()}
         title="Clear Formatting"
       >
@@ -156,7 +156,7 @@ function FontFamilySelect({ editor }: { editor: Editor }) {
 
   return (
     <select
-      className={styles.richTextSelect}
+      className={`ee-richtext-font-select ${styles.richTextSelect}`}
       value={currentFont}
       onChange={(e) => {
         const value = e.target.value;
@@ -193,7 +193,7 @@ function FontSizeSelect({ editor }: { editor: Editor }) {
 
   return (
     <select
-      className={styles.richTextSelectSmall}
+      className={`ee-richtext-size-select ${styles.richTextSelectSmall}`}
       value={currentSize}
       onChange={(e) => {
         const value = e.target.value;
@@ -279,31 +279,31 @@ function InlineLinkEditor({ editor }: { editor: Editor }) {
   );
 
   return (
-    <div className={styles.richTextColorWrapper} ref={wrapperRef}>
+    <div className={`ee-richtext-link ${styles.richTextColorWrapper}`} ref={wrapperRef}>
       <button
-        className={`${styles.richTextBtn} ${isActive ? styles.richTextBtnActive : ''}`}
+        className={`ee-richtext-btn ee-richtext-link-btn ${styles.richTextBtn} ${isActive ? styles.richTextBtnActive : ''}`}
         onClick={handleOpen}
         title="Link"
       >
         &#128279;
       </button>
       {isOpen && (
-        <div className={styles.richTextLinkDropdown}>
-          <label className={styles.richTextLinkLabel}>URL</label>
+        <div className={`ee-richtext-link-dropdown ${styles.richTextLinkDropdown}`}>
+          <label className={`ee-richtext-link-label ${styles.richTextLinkLabel}`}>URL</label>
           <input
             ref={inputRef}
-            className={styles.richTextLinkInput}
+            className={`ee-richtext-link-input ${styles.richTextLinkInput}`}
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="https://, mailto:, or tel:"
           />
-          <div className={styles.richTextLinkActions}>
-            <button className={styles.richTextLinkApply} onClick={handleApply}>
+          <div className={`ee-richtext-link-actions ${styles.richTextLinkActions}`}>
+            <button className={`ee-richtext-link-apply ${styles.richTextLinkApply}`} onClick={handleApply}>
               Apply
             </button>
             {isActive && (
-              <button className={styles.richTextLinkRemove} onClick={handleRemove}>
+              <button className={`ee-richtext-link-remove ${styles.richTextLinkRemove}`} onClick={handleRemove}>
                 Remove
               </button>
             )}
@@ -359,41 +359,41 @@ function InlineColorPicker({ editor, type, title, label }: InlineColorPickerProp
   const indicatorColor = type === 'color' ? currentColor : (currentColor || 'transparent');
 
   return (
-    <div className={styles.richTextColorWrapper} ref={wrapperRef}>
+    <div className={`ee-richtext-color ee-richtext-color--${type} ${styles.richTextColorWrapper}`} ref={wrapperRef}>
       <button
-        className={styles.richTextBtn}
+        className={`ee-richtext-btn ee-richtext-color-btn ${styles.richTextBtn}`}
         onClick={() => setIsOpen(!isOpen)}
         title={title}
       >
-        <span className={styles.richTextColorLabel}>{label}</span>
+        <span className={`ee-richtext-color-label ${styles.richTextColorLabel}`}>{label}</span>
         <span
-          className={styles.richTextColorIndicator}
+          className={`ee-richtext-color-indicator ${styles.richTextColorIndicator}`}
           style={{ backgroundColor: indicatorColor }}
         />
       </button>
       {isOpen && (
-        <div className={styles.richTextColorDropdown}>
-          <div className={styles.richTextColorGrid}>
+        <div className={`ee-richtext-color-dropdown ${styles.richTextColorDropdown}`}>
+          <div className={`ee-richtext-color-grid ${styles.richTextColorGrid}`}>
             {COLOR_PRESETS.map((color) => (
               <button
                 key={color}
-                className={styles.richTextColorSwatch}
+                className={`ee-richtext-color-swatch ${styles.richTextColorSwatch}`}
                 style={{ backgroundColor: color }}
                 onClick={() => applyColor(color)}
                 title={color}
               />
             ))}
           </div>
-          <div className={styles.richTextColorActions}>
+          <div className={`ee-richtext-color-actions ${styles.richTextColorActions}`}>
             <input
               type="color"
               value={currentColor || '#000000'}
               onChange={(e) => applyColor(e.target.value)}
-              className={styles.richTextColorInput}
+              className={`ee-richtext-color-input ${styles.richTextColorInput}`}
               title="Custom color"
             />
             <button
-              className={styles.richTextColorClearBtn}
+              className={`ee-richtext-color-clear ${styles.richTextColorClearBtn}`}
               onClick={clearColor}
             >
               Clear

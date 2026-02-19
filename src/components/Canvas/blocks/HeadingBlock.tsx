@@ -77,7 +77,7 @@ export function HeadingBlock({ block }: HeadingBlockProps) {
   const fontSize = p.fontSize || HEADING_FONT_SIZES[p.level] || '28px';
 
   return (
-    <div className={styles.headingBlock} ref={wrapperRef}>
+    <div className={`ee-block-heading ${styles.headingBlock}`} ref={wrapperRef}>
       {isFocused && (
         <div className={styles.textBlockToolbar}>
           <RichTextToolbar editor={editorRef.current} />

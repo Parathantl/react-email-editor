@@ -142,8 +142,7 @@ export function HeroProperties({ block }: HeroPropertiesProps) {
       {p.backgroundImage && (
         <div className={styles.fieldGroup}>
           <button
-            className={styles.fieldInput}
-            style={{ cursor: 'pointer', textAlign: 'center' }}
+            className={`ee-remove-bg ${styles.fieldBtnUpload}`}
             onClick={() => update({ backgroundImage: '' })}
           >
             Remove Background Image

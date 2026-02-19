@@ -53,10 +53,10 @@
   font-family: inherit;
   font-weight: inherit;
   font-style: inherit;
-  background: #dbeafe;
-  color: #1e40af;
-  border: 1px solid #93c5fd;
-  border-radius: 4px;
+  background: var(--ee-variable-bg);
+  color: var(--ee-variable-color);
+  border: 1px solid var(--ee-variable-border);
+  border-radius: var(--ee-border-radius-sm);
   vertical-align: baseline;
   user-select: none;
   white-space: nowrap;

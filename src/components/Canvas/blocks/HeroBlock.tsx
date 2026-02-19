@@ -20,7 +20,7 @@ export const HeroBlock = React.memo(function HeroBlock({ block }: HeroBlockProps
   };
 
   return (
-    <div className={styles.heroBlock} style={containerStyle}>
+    <div className={`ee-block-hero ${styles.heroBlock}`} style={containerStyle}>
       {p.heading && (
         <h2
           className={styles.heroHeading}

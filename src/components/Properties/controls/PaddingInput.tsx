@@ -37,7 +37,7 @@ export function PaddingInput({ label, value, onChange }: PaddingInputProps) {
   );
 
   return (
-    <div className={styles.fieldGroup}>
+    <div className={`ee-field-group ee-padding ${styles.fieldGroup}`}>
       <label className={styles.fieldLabel}>{label}</label>
       <div className={styles.paddingGrid}>
         <div className={styles.paddingField}>

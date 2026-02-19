@@ -37,15 +37,15 @@ export function ConfirmDialog({
   }, [handleKeyDown]);
 
   return createPortal(
-    <div className={styles.overlay} onClick={onCancel} role="dialog" aria-modal="true" aria-label={title}>
-      <div className={styles.dialog} onClick={(e) => e.stopPropagation()}>
-        <h3 className={styles.title}>{title}</h3>
-        <p className={styles.message}>{message}</p>
-        <div className={styles.actions}>
-          <button ref={cancelRef} className={styles.btnCancel} onClick={onCancel}>
+    <div className={`ee-dialog-overlay ${styles.overlay}`} onClick={onCancel} role="dialog" aria-modal="true" aria-label={title}>
+      <div className={`ee-dialog ${styles.dialog}`} onClick={(e) => e.stopPropagation()}>
+        <h3 className={`ee-dialog-title ${styles.title}`}>{title}</h3>
+        <p className={`ee-dialog-message ${styles.message}`}>{message}</p>
+        <div className={`ee-dialog-actions ${styles.actions}`}>
+          <button ref={cancelRef} className={`ee-dialog-cancel ${styles.btnCancel}`} onClick={onCancel}>
             {cancelLabel}
           </button>
-          <button className={styles.btnConfirm} onClick={onConfirm}>
+          <button className={`ee-dialog-confirm ${styles.btnConfirm}`} onClick={onConfirm}>
             {confirmLabel}
           </button>
         </div>

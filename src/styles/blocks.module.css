@@ -8,7 +8,7 @@
 .textBlockToolbar {
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: var(--ee-z-block-toolbar);
   margin-bottom: 4px;
 }
 
@@ -242,12 +242,12 @@
   transform: translate(-50%, -50%);
   width: 60px;
   height: 60px;
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--ee-overlay-dark);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--ee-text-inverse);
   font-size: 24px;
   pointer-events: none;
 }

@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useEditorState } from '../../context/EditorContext';
 import { generateMJML } from '../../mjml/generator';
 import { compileMJMLToHTML } from '../../mjml/compiler';
+import styles from '../../styles/preview.module.css';
 
 type PreviewMode = 'desktop' | 'mobile';
 
@@ -46,31 +47,11 @@ export function PreviewPanel() {
     }
   }, [html]);
 
-  const toggleBtnBase: React.CSSProperties = {
-    padding: '6px 16px',
-    border: '1px solid var(--ee-border-color)',
-    background: 'var(--ee-bg-panel)',
-    cursor: 'pointer',
-    fontSize: '13px',
-    color: 'var(--ee-text-secondary)',
-    transition: 'all 150ms ease',
-  };
-
-  const toggleBtnActive: React.CSSProperties = {
-    ...toggleBtnBase,
-    background: 'var(--ee-color-primary)',
-    color: '#fff',
-    borderColor: 'var(--ee-color-primary)',
-  };
-
   return (
-    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 0, padding: '12px 24px 0' }} role="group" aria-label="Preview size">
+    <div className={`ee-preview ${styles.preview}`}>
+      <div className={`ee-preview-toggles ${styles.previewToggles}`} role="group" aria-label="Preview size">
         <button
-          style={{
-            ...(previewMode === 'desktop' ? toggleBtnActive : toggleBtnBase),
-            borderRadius: 'var(--ee-border-radius-sm) 0 0 var(--ee-border-radius-sm)',
-          }}
+          className={`ee-preview-toggle ee-preview-toggle--desktop ${styles.previewToggle} ${styles.previewToggleDesktop} ${previewMode === 'desktop' ? `ee-preview-toggle--active ${styles.previewToggleActive}` : ''}`}
           onClick={() => setPreviewMode('desktop')}
           aria-pressed={previewMode === 'desktop'}
           aria-label="Desktop preview"
@@ -78,11 +59,7 @@ export function PreviewPanel() {
           Desktop
         </button>
         <button
-          style={{
-            ...(previewMode === 'mobile' ? toggleBtnActive : toggleBtnBase),
-            borderRadius: '0 var(--ee-border-radius-sm) var(--ee-border-radius-sm) 0',
-            borderLeft: 'none',
-          }}
+          className={`ee-preview-toggle ee-preview-toggle--mobile ${styles.previewToggle} ${styles.previewToggleMobile} ${previewMode === 'mobile' ? `ee-preview-toggle--active ${styles.previewToggleActive}` : ''}`}
           onClick={() => setPreviewMode('mobile')}
           aria-pressed={previewMode === 'mobile'}
           aria-label="Mobile preview"
@@ -90,18 +67,12 @@ export function PreviewPanel() {
           Mobile
         </button>
       </div>
-      <div style={{ flex: 1, display: 'flex', justifyContent: 'center', padding: 24, boxSizing: 'border-box' }}>
+      <div className={`ee-preview-container ${styles.previewContainer}`}>
         <iframe
+          className={`ee-preview-iframe ${styles.previewIframe}`}
           ref={iframeRef}
           title="Email Preview"
-          style={{
-            width: PREVIEW_WIDTHS[previewMode],
-            height: '100%',
-            border: '1px solid var(--ee-border-color)',
-            borderRadius: 'var(--ee-border-radius)',
-            background: '#ffffff',
-            transition: 'width 300ms ease',
-          }}
+          style={{ width: PREVIEW_WIDTHS[previewMode] }}
           sandbox="allow-same-origin"
         />
       </div>

@@ -38,7 +38,7 @@ export function HeadMetadataProperties() {
       <div className={styles.fieldGroup}>
         <label className={styles.fieldLabel}>Custom Styles</label>
         <textarea
-          className={styles.fieldInput}
+          className={`ee-head-styles-textarea ${styles.fieldTextareaCode}`}
           value={metadata.headStyles.join('\n\n')}
           onChange={(e) => {
             const value = e.target.value;
@@ -47,7 +47,6 @@ export function HeadMetadataProperties() {
           }}
           placeholder="Custom CSS (mj-style)"
           rows={6}
-          style={{ resize: 'vertical', fontFamily: 'monospace', fontSize: '12px' }}
         />
       </div>
     </div>

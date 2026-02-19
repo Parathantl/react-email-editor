@@ -69,9 +69,8 @@ export function VideoProperties({ block }: VideoPropertiesProps) {
         />
         {p.src && (
           <button
-            className={styles.fieldInput}
+            className={`ee-auto-thumbnail ${styles.fieldBtnUpload} ${styles.fieldInputStacked}`}
             onClick={handleAutoThumbnail}
-            style={{ cursor: 'pointer', textAlign: 'center', marginTop: '4px' }}
           >
             Auto-generate from URL
           </button>

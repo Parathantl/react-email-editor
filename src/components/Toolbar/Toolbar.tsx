@@ -118,10 +118,10 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
   );
 
   return (
-    <div className={styles.toolbar} role="toolbar" aria-label="Editor toolbar">
-      <div className={styles.toolbarGroup} role="group" aria-label="History">
+    <div className={`ee-toolbar ${styles.toolbar}`} role="toolbar" aria-label="Editor toolbar">
+      <div className={`ee-toolbar-history ${styles.toolbarGroup}`} role="group" aria-label="History">
         <button
-          className={styles.toolbarBtn}
+          className={`ee-toolbar-undo ${styles.toolbarBtn}`}
           onClick={handleUndo}
           disabled={!canUndo}
           title="Undo (Ctrl+Z)"
@@ -130,7 +130,7 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
           Undo
         </button>
         <button
-          className={styles.toolbarBtn}
+          className={`ee-toolbar-redo ${styles.toolbarBtn}`}
           onClick={handleRedo}
           disabled={!canRedo}
           title="Redo (Ctrl+Shift+Z)"
@@ -143,7 +143,7 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
       {/* Panel toggles — visible only on narrow screens via CSS */}
       <div className={editorStyles.panelToggle}>
         <button
-          className={`${styles.panelToggleBtn} ${sidebarOpen ? styles.panelToggleBtnActive : ''}`}
+          className={`ee-toolbar-toggle-sidebar ${styles.panelToggleBtn} ${sidebarOpen ? styles.panelToggleBtnActive : ''}`}
           onClick={onToggleSidebar}
           aria-label="Toggle sidebar"
           aria-pressed={sidebarOpen}
@@ -152,7 +152,7 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
           ☰
         </button>
         <button
-          className={`${styles.panelToggleBtn} ${propertiesOpen ? styles.panelToggleBtnActive : ''}`}
+          className={`ee-toolbar-toggle-properties ${styles.panelToggleBtn} ${propertiesOpen ? styles.panelToggleBtnActive : ''}`}
           onClick={onToggleProperties}
           aria-label="Toggle properties"
           aria-pressed={propertiesOpen}
@@ -162,15 +162,15 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
         </button>
       </div>
 
-      <div className={styles.toolbarSeparator} role="separator" />
+      <div className={`ee-toolbar-separator ${styles.toolbarSeparator}`} role="separator" />
 
-      <div className={styles.tabBar} role="tablist" aria-label="Editor views">
+      <div className={`ee-toolbar-tabs ${styles.tabBar}`} role="tablist" aria-label="Editor views">
         {(['visual', 'source', 'preview'] as ActiveTab[]).map((tab) => (
           <button
             key={tab}
             role="tab"
             aria-selected={activeTab === tab}
-            className={`${styles.tabBtn} ${activeTab === tab ? styles.tabBtnActive : ''}`}
+            className={`ee-toolbar-tab ee-toolbar-tab--${tab} ${styles.tabBtn} ${activeTab === tab ? styles.tabBtnActive : ''}`}
             onClick={() => handleTabChange(tab)}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -180,17 +180,17 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
 
       <div className={styles.toolbarSpacer} />
 
-      <div className={styles.toolbarGroup} role="group" aria-label="Import/Export">
+      <div className={`ee-toolbar-io ${styles.toolbarGroup}`} role="group" aria-label="Import/Export">
         <button
-          className={styles.toolbarBtn}
+          className={`ee-toolbar-import ${styles.toolbarBtn}`}
           onClick={() => fileInputRef.current?.click()}
           aria-label="Import MJML file"
         >
           Import
         </button>
-        <div className={styles.exportWrapper}>
+        <div className={`ee-toolbar-export ${styles.exportWrapper}`}>
           <button
-            className={styles.toolbarBtn}
+            className={`ee-toolbar-export-btn ${styles.toolbarBtn}`}
             onClick={(e) => { e.stopPropagation(); setExportOpen((prev) => !prev); }}
             aria-label="Export template"
             aria-expanded={exportOpen}
@@ -199,10 +199,10 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
             Export
           </button>
           {exportOpen && (
-            <div className={styles.exportDropdown} role="menu">
-              <button className={styles.exportDropdownItem} onClick={handleExportMJML} role="menuitem">MJML</button>
-              <button className={styles.exportDropdownItem} onClick={handleExportHTML} role="menuitem">HTML</button>
-              <button className={styles.exportDropdownItem} onClick={handleExportPDF} role="menuitem">PDF</button>
+            <div className={`ee-toolbar-export-dropdown ${styles.exportDropdown}`} role="menu">
+              <button className={`ee-toolbar-export-mjml ${styles.exportDropdownItem}`} onClick={handleExportMJML} role="menuitem">MJML</button>
+              <button className={`ee-toolbar-export-html ${styles.exportDropdownItem}`} onClick={handleExportHTML} role="menuitem">HTML</button>
+              <button className={`ee-toolbar-export-pdf ${styles.exportDropdownItem}`} onClick={handleExportPDF} role="menuitem">PDF</button>
             </div>
           )}
         </div>

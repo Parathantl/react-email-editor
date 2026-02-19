@@ -118,58 +118,47 @@ export function MenuProperties({ block }: MenuPropertiesProps) {
             <div key={index} className={blockStyles.menuItemEntry}>
               <div className={styles.fieldRow}>
                 <input
-                  className={styles.fieldInput}
+                  className={styles.fieldInputFlex}
                   value={item.text}
                   onChange={(e) => updateItem(index, { text: e.target.value })}
                   placeholder="Label"
-                  style={{ flex: 1 }}
                 />
                 <button
+                  className={`ee-item-move-up ${styles.itemActionBtn}`}
                   onClick={() => moveItem(index, -1)}
                   disabled={index === 0}
-                  style={{ padding: '4px 6px', cursor: 'pointer', border: '1px solid var(--ee-border-color)', borderRadius: '3px', background: 'var(--ee-bg-input)' }}
                   title="Move up"
                 >
                   ↑
                 </button>
                 <button
+                  className={`ee-item-move-down ${styles.itemActionBtn}`}
                   onClick={() => moveItem(index, 1)}
                   disabled={index === p.items.length - 1}
-                  style={{ padding: '4px 6px', cursor: 'pointer', border: '1px solid var(--ee-border-color)', borderRadius: '3px', background: 'var(--ee-bg-input)' }}
                   title="Move down"
                 >
                   ↓
                 </button>
                 <button
+                  className={`ee-item-remove ${styles.itemActionBtnDanger}`}
                   onClick={() => removeItem(index)}
-                  style={{ padding: '4px 6px', cursor: 'pointer', border: '1px solid var(--ee-border-color)', borderRadius: '3px', background: 'var(--ee-bg-input)', color: 'var(--ee-color-danger)' }}
                   title="Remove"
                 >
                   ×
                 </button>
               </div>
               <input
-                className={styles.fieldInput}
+                className={styles.fieldInputStacked}
                 value={item.href}
                 onChange={(e) => updateItem(index, { href: e.target.value })}
                 placeholder="URL"
-                style={{ marginTop: 4 }}
               />
             </div>
           ))}
         </div>
         <button
+          className={`ee-add-item ${styles.addItemBtn}`}
           onClick={addItem}
-          style={{
-            marginTop: 8,
-            padding: '6px 12px',
-            cursor: 'pointer',
-            border: '1px solid var(--ee-border-color)',
-            borderRadius: 'var(--ee-border-radius-sm)',
-            background: 'var(--ee-bg-input)',
-            fontSize: 'var(--ee-font-size-sm)',
-            width: '100%',
-          }}
         >
           + Add Item
         </button>

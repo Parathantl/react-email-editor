@@ -58,9 +58,9 @@ export function Canvas() {
   );
 
   return (
-    <div className={styles.canvasWrapper} onClick={handleCanvasClick} role="main" aria-label="Email canvas">
+    <div className={`ee-canvas-wrapper ${styles.canvasWrapper}`} onClick={handleCanvasClick} role="main" aria-label="Email canvas">
       <div
-        className={`${styles.canvasBody} ${isDragOver ? styles.canvasBodyDragOver : ''}`}
+        className={`ee-canvas-body ${styles.canvasBody} ${isDragOver ? styles.canvasBodyDragOver : ''}`}
         style={{
           width: template.globalStyles.width,
           backgroundColor: template.globalStyles.backgroundColor,
@@ -81,7 +81,7 @@ export function Canvas() {
         {template.sections.length > 0 && (
           <SectionDropZone index={template.sections.length} />
         )}
-        <button className={styles.addSectionBtn} onClick={handleAddSection} aria-label="Add new section">
+        <button className={`ee-add-section ${styles.addSectionBtn}`} onClick={handleAddSection} aria-label="Add new section">
           + Add Section
         </button>
       </div>

@@ -7,7 +7,7 @@
 .canvasBody {
   width: 600px;
   min-height: 400px;
-  background: #ffffff;
+  background: var(--ee-bg-email-body);
   box-shadow: var(--ee-shadow-lg);
   border-radius: var(--ee-border-radius);
   position: relative;
@@ -46,7 +46,7 @@
   gap: 2px;
   opacity: 0;
   transition: opacity var(--ee-transition-fast);
-  z-index: 10;
+  z-index: var(--ee-z-block-overlay);
 }
 
 .section:hover .sectionOverlay {
@@ -146,7 +146,7 @@
   gap: 2px;
   opacity: 0;
   transition: opacity var(--ee-transition-fast);
-  z-index: 10;
+  z-index: var(--ee-z-block-overlay);
 }
 
 .blockWrapper:hover .blockOverlay {

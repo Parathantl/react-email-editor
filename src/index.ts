@@ -98,3 +98,5 @@ export {
   COLOR_PRESETS,
   COLUMN_LAYOUTS,
 } from './constants';
+
+export type { BlockDefinition } from './constants';

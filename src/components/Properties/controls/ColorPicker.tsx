@@ -35,7 +35,7 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
   const isHex = /^#[0-9a-fA-F]{6}$/.test(value);
 
   return (
-    <div className={styles.fieldGroup}>
+    <div className={`ee-field-group ee-color-picker ${styles.fieldGroup}`}>
       <label className={styles.fieldLabel}>{label}</label>
       <div className={styles.colorPickerWrapper} ref={wrapperRef}>
         <div
@@ -51,12 +51,11 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
         {isOpen && (
           <div className={styles.colorPresets}>
             <button
-              className={`${styles.colorPresetBtn} ${styles.colorPresetBtnTransparent} ${
+              className={`ee-color-preset-transparent ${styles.colorPresetBtn} ${styles.colorPresetBtnTransparent} ${styles.colorPresetBtnFull} ${
                 value === 'transparent' ? styles.colorPresetBtnActive : ''
               }`}
               onClick={() => handlePresetClick('transparent')}
               title="transparent"
-              style={{ gridColumn: '1 / -1', width: '100%' }}
             >
               Transparent
             </button>
@@ -73,9 +72,9 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
             ))}
             <input
               type="color"
+              className={`ee-color-native-input ${styles.colorNativeInput}`}
               value={isHex ? value : '#ffffff'}
               onChange={(e) => onChange(e.target.value)}
-              style={{ width: '100%', gridColumn: '1 / -1', height: 28, cursor: 'pointer', border: 'none' }}
             />
           </div>
         )}

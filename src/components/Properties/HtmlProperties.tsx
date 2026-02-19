@@ -27,12 +27,11 @@ export function HtmlProperties({ block }: HtmlPropertiesProps) {
       <div className={styles.fieldGroup}>
         <label className={styles.fieldLabel}>HTML Content</label>
         <textarea
-          className={styles.fieldInput}
+          className={`ee-html-textarea ${styles.fieldTextareaCode}`}
           value={p.content}
           onChange={(e) => update({ content: e.target.value })}
           placeholder="<p>Enter raw HTML here...</p>"
           rows={10}
-          style={{ fontFamily: 'monospace', fontSize: '12px', resize: 'vertical' }}
         />
       </div>
       <PaddingInput

@@ -54,7 +54,7 @@ export const Section = React.memo(function Section({ section }: SectionProps) {
 
   return (
     <div
-      className={`${styles.section} ${isSelected ? styles.sectionSelected : ''} ${section.properties.fullWidth ? styles.sectionFullWidth : ''}`}
+      className={`ee-section ${isSelected ? 'ee-section--selected' : ''} ${section.properties.fullWidth ? 'ee-section--full-width' : ''} ${styles.section} ${isSelected ? styles.sectionSelected : ''} ${section.properties.fullWidth ? styles.sectionFullWidth : ''}`}
       style={{
         backgroundColor: section.properties.backgroundColor,
         padding: section.properties.padding,
@@ -68,9 +68,9 @@ export const Section = React.memo(function Section({ section }: SectionProps) {
       aria-label={`Email section${isSelected ? ' (selected)' : ''}`}
       aria-selected={isSelected}
     >
-      <div className={styles.sectionOverlay} role="group" aria-label="Section actions">
+      <div className={`ee-section-actions ${styles.sectionOverlay}`} role="group" aria-label="Section actions">
         <span
-          className={styles.sectionDragHandle}
+          className={`ee-section-drag ${styles.sectionDragHandle}`}
           draggable
           onDragStart={handleDragStart}
           title="Drag to reorder"
@@ -81,7 +81,7 @@ export const Section = React.memo(function Section({ section }: SectionProps) {
           ⠿
         </span>
         <button
-          className={`${styles.sectionBtn} ${styles.sectionBtnDuplicate}`}
+          className={`ee-section-duplicate ${styles.sectionBtn} ${styles.sectionBtnDuplicate}`}
           onClick={handleDuplicate}
           title="Duplicate section"
           aria-label="Duplicate section"
@@ -89,7 +89,7 @@ export const Section = React.memo(function Section({ section }: SectionProps) {
           ⧉
         </button>
         <button
-          className={styles.sectionBtn}
+          className={`ee-section-remove ${styles.sectionBtn}`}
           onClick={handleRemove}
           title="Remove section"
           aria-label="Remove section"

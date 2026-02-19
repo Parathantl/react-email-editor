@@ -244,7 +244,7 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
   ].filter(Boolean).join(' ');
 
   return (
-    <div ref={containerRef} className={editorStyles.editorContainer} tabIndex={-1}>
+    <div ref={containerRef} className={`ee-editor ${editorStyles.editorContainer}`} tabIndex={-1}>
       {pendingRemoval && (
         <ConfirmDialog
           title={pendingRemoval.type === 'block' ? 'Remove Block' : 'Remove Section'}
@@ -266,17 +266,17 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
       <div className={editorStyles.editorBody}>
         {state.activeTab === 'visual' && (
           <>
-            <div className={sidebarClasses}>
+            <div className={`ee-sidebar ${sidebarClasses}`}>
               <ErrorBoundary>
-                <Sidebar />
+                <Sidebar blockDefinitions={props.blockDefinitions} />
               </ErrorBoundary>
             </div>
-            <div className={`${editorStyles.editorPanel} ${editorStyles.canvasPanel}`}>
+            <div className={`ee-canvas ${editorStyles.editorPanel} ${editorStyles.canvasPanel}`}>
               <ErrorBoundary>
                 <Canvas />
               </ErrorBoundary>
             </div>
-            <div className={propertiesClasses}>
+            <div className={`ee-properties ${propertiesClasses}`}>
               <ErrorBoundary>
                 <PropertiesPanel />
               </ErrorBoundary>
@@ -286,13 +286,13 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
           </>
         )}
         {state.activeTab === 'source' && (
-          <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
-            <div style={{ flex: 1, minWidth: 0 }}>
+          <div className={`ee-source-layout ${editorStyles.sourceLayout}`}>
+            <div className={`ee-source-pane ${editorStyles.sourcePane}`}>
               <ErrorBoundary>
                 <SourceEditor />
               </ErrorBoundary>
             </div>
-            <div style={{ flex: 1, minWidth: 0, borderLeft: '1px solid var(--ee-border-color)' }}>
+            <div className={`ee-preview-pane ${editorStyles.sourcePaneDivider}`}>
               <ErrorBoundary>
                 <PreviewPanel />
               </ErrorBoundary>
@@ -347,7 +347,7 @@ export const EmailEditor = forwardRef<EmailEditorRef, EmailEditorProps>(
         persistenceKey={persistenceKey}
         persistenceAdapter={persistenceAdapter}
       >
-        <div className={className} style={{ height: '100%', minHeight: 0, ...style }}>
+        <div className={`ee-editor-wrapper ${editorStyles.editorWrapper} ${className || ''}`} style={style}>
           <EditorInner ref={ref} {...props} />
         </div>
       </EditorProvider>

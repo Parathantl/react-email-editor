@@ -28,7 +28,7 @@ export function SliderInput({
   );
 
   return (
-    <div className={styles.fieldGroup}>
+    <div className={`ee-field-group ee-slider ${styles.fieldGroup}`}>
       <label className={styles.fieldLabel}>{label}</label>
       <div className={styles.sliderWrapper}>
         <input

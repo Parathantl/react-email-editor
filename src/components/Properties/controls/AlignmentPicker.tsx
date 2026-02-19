@@ -22,7 +22,7 @@ export function AlignmentPicker({
   options = ['left', 'center', 'right'],
 }: AlignmentPickerProps) {
   return (
-    <div className={styles.fieldGroup}>
+    <div className={`ee-field-group ee-alignment ${styles.fieldGroup}`}>
       <label className={styles.fieldLabel}>{label}</label>
       <div className={styles.alignmentPicker}>
         {options.map((option) => (

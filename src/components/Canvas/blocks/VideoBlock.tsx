@@ -16,7 +16,7 @@ export const VideoBlock = React.memo(function VideoBlock({ block }: VideoBlockPr
 
   if (!thumbnailUrl && !p.src) {
     return (
-      <div className={`${styles.videoBlock} ${alignClass}`} style={{ padding: p.padding }}>
+      <div className={`ee-block-video ${styles.videoBlock} ${alignClass}`} style={{ padding: p.padding }}>
         <div className={styles.videoPlaceholder}>
           <span style={{ fontSize: '32px' }}>&#9654;</span>
           <span>Video Block</span>
@@ -26,7 +26,7 @@ export const VideoBlock = React.memo(function VideoBlock({ block }: VideoBlockPr
   }
 
   return (
-    <div className={`${styles.videoBlock} ${alignClass}`} style={{ padding: p.padding }}>
+    <div className={`ee-block-video ${styles.videoBlock} ${alignClass}`} style={{ padding: p.padding }}>
       <div className={styles.videoPreview}>
         {thumbnailUrl ? (
           <img src={thumbnailUrl} alt={p.alt} style={{ maxWidth: '100%', display: 'block' }} />

@@ -34,7 +34,7 @@ export const SocialBlock = React.memo(function SocialBlock({ block }: SocialBloc
 
   return (
     <div
-      className={styles.socialBlock}
+      className={`ee-block-social ${styles.socialBlock}`}
       style={{
         padding: p.padding,
         justifyContent: alignStyle,

@@ -90,7 +90,7 @@ export function DropZone({ sectionId, columnId, index, emptyPlaceholder }: DropZ
   if (emptyPlaceholder) {
     return (
       <div
-        className={`${styles.emptyColumn} ${isOver ? styles.emptyColumnActive : ''}`}
+        className={`ee-drop-zone ee-drop-zone--empty ${styles.emptyColumn} ${isOver ? styles.emptyColumnActive : ''}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -102,7 +102,7 @@ export function DropZone({ sectionId, columnId, index, emptyPlaceholder }: DropZ
 
   return (
     <div
-      className={`${styles.dropZone} ${isOver ? styles.dropZoneActive : ''}`}
+      className={`ee-drop-zone ${styles.dropZone} ${isOver ? styles.dropZoneActive : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}

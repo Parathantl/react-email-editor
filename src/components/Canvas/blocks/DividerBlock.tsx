@@ -10,7 +10,7 @@ export const DividerBlock = React.memo(function DividerBlock({ block }: DividerB
   const p = block.properties;
 
   return (
-    <div className={styles.dividerBlock} style={{ padding: p.padding }}>
+    <div className={`ee-block-divider ${styles.dividerBlock}`} style={{ padding: p.padding }}>
       <hr
         className={styles.dividerLine}
         style={{

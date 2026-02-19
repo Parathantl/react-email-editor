@@ -52,7 +52,7 @@ export function AddVariableForm() {
   if (!isOpen) {
     return (
       <button
-        className={styles.addVariableBtn}
+        className={`ee-add-variable-btn ${styles.addVariableBtn}`}
         onClick={() => setIsOpen(true)}
       >
         + Add Variable
@@ -61,11 +61,11 @@ export function AddVariableForm() {
   }
 
   return (
-    <form className={styles.addVariableForm} onSubmit={handleSubmit}>
-      <div className={styles.addVariableField}>
-        <label className={styles.addVariableLabel}>Key *</label>
+    <form className={`ee-add-variable-form ${styles.addVariableForm}`} onSubmit={handleSubmit}>
+      <div className={`ee-add-variable-field ${styles.addVariableField}`}>
+        <label className={`ee-add-variable-label ${styles.addVariableLabel}`}>Key *</label>
         <input
-          className={styles.addVariableInput}
+          className={`ee-add-variable-input ${styles.addVariableInput}`}
           value={key}
           onChange={(e) => {
             setKey(e.target.value);
@@ -75,30 +75,30 @@ export function AddVariableForm() {
           autoFocus
         />
       </div>
-      <div className={styles.addVariableField}>
-        <label className={styles.addVariableLabel}>Label</label>
+      <div className={`ee-add-variable-field ${styles.addVariableField}`}>
+        <label className={`ee-add-variable-label ${styles.addVariableLabel}`}>Label</label>
         <input
-          className={styles.addVariableInput}
+          className={`ee-add-variable-input ${styles.addVariableInput}`}
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           placeholder="e.g. Coupon Code"
         />
       </div>
-      <div className={styles.addVariableField}>
-        <label className={styles.addVariableLabel}>Group</label>
+      <div className={`ee-add-variable-field ${styles.addVariableField}`}>
+        <label className={`ee-add-variable-label ${styles.addVariableLabel}`}>Group</label>
         <input
-          className={styles.addVariableInput}
+          className={`ee-add-variable-input ${styles.addVariableInput}`}
           value={group}
           onChange={(e) => setGroup(e.target.value)}
           placeholder="Custom"
         />
       </div>
-      {error && <div className={styles.addVariableError}>{error}</div>}
-      <div className={styles.addVariableActions}>
-        <button type="button" className={styles.addVariableCancelBtn} onClick={handleCancel}>
+      {error && <div className={`ee-add-variable-error ${styles.addVariableError}`}>{error}</div>}
+      <div className={`ee-add-variable-actions ${styles.addVariableActions}`}>
+        <button type="button" className={`ee-add-variable-cancel ${styles.addVariableCancelBtn}`} onClick={handleCancel}>
           Cancel
         </button>
-        <button type="submit" className={styles.addVariableSubmitBtn}>
+        <button type="submit" className={`ee-add-variable-submit ${styles.addVariableSubmitBtn}`}>
           Add
         </button>
       </div>

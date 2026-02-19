@@ -69,7 +69,7 @@ export function TextBlock({ block }: TextBlockProps) {
   }, []);
 
   return (
-    <div className={styles.textBlock} ref={wrapperRef}>
+    <div className={`ee-block-text ${styles.textBlock}`} ref={wrapperRef}>
       {isFocused && (
         <div className={styles.textBlockToolbar}>
           <RichTextToolbar editor={editorRef.current} />

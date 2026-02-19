@@ -43,7 +43,7 @@ export const CountdownBlock = React.memo(function CountdownBlock({ block }: Coun
         : 'center';
 
   return (
-    <div className={styles.countdownBlock} style={{ padding: p.padding, justifyContent: alignStyle }}>
+    <div className={`ee-block-countdown ${styles.countdownBlock}`} style={{ padding: p.padding, justifyContent: alignStyle }}>
       {p.label && (
         <div className={styles.countdownLabel} style={{ color: p.labelColor, textAlign: p.align }}>
           {p.label}

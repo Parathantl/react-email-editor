@@ -392,6 +392,6 @@
 
 .richTextLinkRemove:hover {
   background: var(--ee-color-danger, #ef4444);
-  color: #fff;
+  color: var(--ee-text-inverse);
 }
 

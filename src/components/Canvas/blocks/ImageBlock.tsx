@@ -53,7 +53,7 @@ export function ImageBlock({ block }: ImageBlockProps) {
   }, []);
 
   return (
-    <div className={`${styles.imageBlock} ${alignClass}`} style={{ padding: p.padding }}>
+    <div className={`ee-block-image ${styles.imageBlock} ${alignClass}`} style={{ padding: p.padding }}>
       {p.src ? (
         <img
           src={p.src}

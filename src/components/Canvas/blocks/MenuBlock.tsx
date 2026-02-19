@@ -17,7 +17,7 @@ export const MenuBlock = React.memo(function MenuBlock({ block }: MenuBlockProps
         : 'center';
 
   return (
-    <div className={styles.menuBlock} style={{ padding: p.padding, justifyContent: alignStyle }}>
+    <div className={`ee-block-menu ${styles.menuBlock}`} style={{ padding: p.padding, justifyContent: alignStyle }}>
       <div className={styles.menuItems} style={{ justifyContent: alignStyle }}>
         {p.items.map((item: any, idx: number) => (
           <span

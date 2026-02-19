@@ -52,7 +52,7 @@ export function SectionDropZone({ index }: SectionDropZoneProps) {
 
   return (
     <div
-      className={`${styles.sectionDropZone} ${isOver ? styles.sectionDropZoneActive : ''}`}
+      className={`ee-section-drop-zone ${styles.sectionDropZone} ${isOver ? styles.sectionDropZoneActive : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}

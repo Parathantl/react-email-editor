@@ -20,7 +20,7 @@ export const HtmlBlock = React.memo(function HtmlBlock({ block }: HtmlBlockProps
 
   if (!p.content) {
     return (
-      <div className={styles.htmlBlock} style={{ padding: p.padding }}>
+      <div className={`ee-block-html ${styles.htmlBlock}`} style={{ padding: p.padding }}>
         <div className={styles.htmlPlaceholder}>
           <span>&lt;/&gt;</span>
           <span>Raw HTML Block</span>
@@ -31,7 +31,7 @@ export const HtmlBlock = React.memo(function HtmlBlock({ block }: HtmlBlockProps
 
   return (
     <div
-      className={styles.htmlBlock}
+      className={`ee-block-html ${styles.htmlBlock}`}
       style={{ padding: p.padding }}
       dangerouslySetInnerHTML={{ __html: sanitizedContent }}
     />

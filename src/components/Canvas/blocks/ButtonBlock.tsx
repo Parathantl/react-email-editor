@@ -16,7 +16,7 @@ export const ButtonBlock = React.memo(function ButtonBlock({ block }: ButtonBloc
         : styles.buttonBlockCenter;
 
   return (
-    <div className={`${styles.buttonBlock} ${alignClass}`} style={{ padding: p.padding }}>
+    <div className={`ee-block-button ${styles.buttonBlock} ${alignClass}`} style={{ padding: p.padding }}>
       <span
         className={styles.buttonPreview}
         style={{

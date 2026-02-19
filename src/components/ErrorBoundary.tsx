@@ -1,4 +1,5 @@
 import React, { Component, type ReactNode, type ErrorInfo } from 'react';
+import styles from '../styles/error-boundary.module.css';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -30,19 +31,11 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       if (this.props.fallback) return this.props.fallback;
       return (
         <div
-          style={{
-            padding: '16px',
-            margin: '8px',
-            background: '#fff5f5',
-            border: '1px solid #fed7d7',
-            borderRadius: '6px',
-            color: '#c53030',
-            fontSize: '13px',
-          }}
+          className={`ee-error-boundary ${styles.errorBoundary}`}
           role="alert"
         >
-          <strong>Something went wrong</strong>
-          <p style={{ margin: '8px 0 0', color: '#742a2a' }}>
+          <strong className="ee-error-title">Something went wrong</strong>
+          <p className={`ee-error-message ${styles.errorMessage}`}>
             {this.state.error?.message || 'An unexpected error occurred.'}
           </p>
         </div>

@@ -1,3 +1,8 @@
+.editorWrapper {
+  height: 100%;
+  min-height: 0;
+}
+
 .editorContainer {
   display: flex;
   flex-direction: column;
@@ -49,6 +54,24 @@
   background: var(--ee-bg-panel);
   overflow-y: auto;
   flex-shrink: 0;
+}
+
+/* Source tab split layout */
+.sourceLayout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.sourcePane {
+  flex: 1;
+  min-width: 0;
+}
+
+.sourcePaneDivider {
+  flex: 1;
+  min-width: 0;
+  border-left: 1px solid var(--ee-border-color);
 }
 
 /* Panel toggle buttons — hidden on desktop, shown on narrow screens */
