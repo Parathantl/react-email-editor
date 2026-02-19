@@ -12,3 +12,19 @@
   margin: var(--ee-space-sm) 0 0;
   color: var(--ee-color-danger-hover);
 }
+
+.retryBtn {
+  margin-top: var(--ee-space-md);
+  padding: var(--ee-space-sm) var(--ee-space-lg);
+  background: var(--ee-color-danger);
+  color: var(--ee-text-inverse);
+  border: none;
+  border-radius: var(--ee-border-radius-sm);
+  font-size: var(--ee-font-size-sm);
+  cursor: pointer;
+  transition: background var(--ee-transition-fast);
+}
+
+.retryBtn:hover {
+  background: var(--ee-color-danger-hover);
+}

@@ -20,6 +20,15 @@ interface ColumnProps {
   sectionId: string;
 }
 
+/** Read block ID and index from a block wrapper element's data attributes */
+function getBlockData(e: React.SyntheticEvent): { blockId: string; index: number } | null {
+  const el = (e.currentTarget as HTMLElement);
+  const blockId = el.dataset.blockId;
+  const index = el.dataset.blockIndex;
+  if (!blockId || index === undefined) return null;
+  return { blockId, index: Number(index) };
+}
+
 export const Column = React.memo(function Column({ column, sectionId }: ColumnProps) {
   const selection = useSelectionContext();
   const dispatch = useEditorDispatch();
@@ -42,39 +51,49 @@ export const Column = React.memo(function Column({ column, sectionId }: ColumnPr
     }
   }, [dispatch, sectionId, column.id, blockToRemove]);
 
+  // Single click handler — reads blockId from data attribute
   const handleBlockClick = useCallback(
-    (blockId: string, e: React.MouseEvent) => {
+    (e: React.MouseEvent) => {
       e.stopPropagation();
+      const data = getBlockData(e);
+      if (!data) return;
       dispatch({
         type: 'SELECT_BLOCK',
-        payload: { sectionId, columnId: column.id, blockId },
+        payload: { sectionId, columnId: column.id, blockId: data.blockId },
       });
     },
     [dispatch, sectionId, column.id],
   );
 
-  const handleRemoveBlock = useCallback(
-    (blockId: string, e: React.MouseEvent) => {
+  // Action button handlers use event delegation — walk up to find block wrapper
+  const handleRemoveClick = useCallback(
+    (e: React.MouseEvent) => {
       e.stopPropagation();
-      confirmRemoveBlock(blockId);
+      const wrapper = (e.currentTarget as HTMLElement).closest('[data-block-id]') as HTMLElement | null;
+      if (wrapper?.dataset.blockId) confirmRemoveBlock(wrapper.dataset.blockId);
     },
     [confirmRemoveBlock],
   );
 
-  const handleDuplicateBlock = useCallback(
-    (blockId: string, e: React.MouseEvent) => {
+  const handleDuplicateClick = useCallback(
+    (e: React.MouseEvent) => {
       e.stopPropagation();
-      dispatch({
-        type: 'DUPLICATE_BLOCK',
-        payload: { sectionId, columnId: column.id, blockId },
-      });
+      const wrapper = (e.currentTarget as HTMLElement).closest('[data-block-id]') as HTMLElement | null;
+      if (wrapper?.dataset.blockId) {
+        dispatch({
+          type: 'DUPLICATE_BLOCK',
+          payload: { sectionId, columnId: column.id, blockId: wrapper.dataset.blockId },
+        });
+      }
     },
     [dispatch, sectionId, column.id],
   );
 
   const handleBlockDragStart = useCallback(
-    (blockId: string, e: React.DragEvent) => {
-      setBlockMoveDragData(e, blockId, sectionId, column.id);
+    (e: React.DragEvent) => {
+      const data = getBlockData(e);
+      if (!data) return;
+      setBlockMoveDragData(e, data.blockId, sectionId, column.id);
     },
     [sectionId, column.id],
   );
@@ -86,19 +105,21 @@ export const Column = React.memo(function Column({ column, sectionId }: ColumnPr
   } | null>(null);
 
   const handleBlockDragOver = useCallback(
-    (e: React.DragEvent, blockId: string) => {
+    (e: React.DragEvent) => {
       if (!isDropAllowed(e)) return;
       e.preventDefault();
       e.stopPropagation();
       e.dataTransfer.dropEffect = e.dataTransfer.types.includes(DND_TYPES.BLOCK_ID)
         ? 'move'
         : 'copy';
+      const data = getBlockData(e);
+      if (!data) return;
       const rect = e.currentTarget.getBoundingClientRect();
       const midY = rect.top + rect.height / 2;
       const position: 'before' | 'after' = e.clientY < midY ? 'before' : 'after';
       setDropTarget((prev) => {
-        if (prev?.blockId === blockId && prev?.position === position) return prev;
-        return { blockId, position };
+        if (prev?.blockId === data.blockId && prev?.position === position) return prev;
+        return { blockId: data.blockId, position };
       });
     },
     [],
@@ -119,29 +140,27 @@ export const Column = React.memo(function Column({ column, sectionId }: ColumnPr
   }, []);
 
   const handleBlockDrop = useCallback(
-    (e: React.DragEvent, blockIndex: number) => {
+    (e: React.DragEvent) => {
       e.preventDefault();
       e.stopPropagation();
       setDropTarget(null);
 
+      const data = getBlockData(e);
+      if (!data) return;
       const rect = e.currentTarget.getBoundingClientRect();
       const midY = rect.top + rect.height / 2;
-      const insertIndex = e.clientY < midY ? blockIndex : blockIndex + 1;
+      const insertIndex = e.clientY < midY ? data.index : data.index + 1;
 
       const blockType = getBlockTypeFromDrop(e);
       if (blockType) {
         const newBlock = {
           id: generateBlockId(),
           type: blockType,
-          properties: { ...DEFAULT_BLOCK_PROPERTIES[blockType] },
+          properties: JSON.parse(JSON.stringify(DEFAULT_BLOCK_PROPERTIES[blockType])),
         };
         dispatch({
-          type: 'ADD_BLOCK',
+          type: 'ADD_BLOCK_AND_SELECT',
           payload: { sectionId, columnId: column.id, block: newBlock, index: insertIndex },
-        });
-        dispatch({
-          type: 'SELECT_BLOCK',
-          payload: { sectionId, columnId: column.id, blockId: newBlock.id },
         });
         return;
       }
@@ -164,6 +183,30 @@ export const Column = React.memo(function Column({ column, sectionId }: ColumnPr
     [dispatch, sectionId, column.id],
   );
 
+  const handleBlockKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.isContentEditable || target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        return;
+      }
+      const data = getBlockData(e);
+      if (!data) return;
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        e.stopPropagation();
+        dispatch({
+          type: 'SELECT_BLOCK',
+          payload: { sectionId, columnId: column.id, blockId: data.blockId },
+        });
+      } else if (e.key === 'Delete' || e.key === 'Backspace') {
+        e.preventDefault();
+        e.stopPropagation();
+        confirmRemoveBlock(data.blockId);
+      }
+    },
+    [dispatch, sectionId, column.id, confirmRemoveBlock],
+  );
+
   if (column.blocks.length === 0) {
     return (
       <div className={`ee-column ${styles.column}`} style={{ width: column.width }}>
@@ -184,6 +227,8 @@ export const Column = React.memo(function Column({ column, sectionId }: ColumnPr
           <DropZone sectionId={sectionId} columnId={column.id} index={index} />
           <div
             data-block-type={block.type}
+            data-block-id={block.id}
+            data-block-index={index}
             className={[
               'ee-block',
               `ee-block--${block.type}`,
@@ -199,39 +244,22 @@ export const Column = React.memo(function Column({ column, sectionId }: ColumnPr
             ]
               .filter(Boolean)
               .join(' ')}
-            onClick={(e) => handleBlockClick(block.id, e)}
+            onClick={handleBlockClick}
             draggable
-            onDragStart={(e) => handleBlockDragStart(block.id, e)}
-            onDragOver={(e) => handleBlockDragOver(e, block.id)}
+            onDragStart={handleBlockDragStart}
+            onDragOver={handleBlockDragOver}
             onDragLeave={handleBlockDragLeave}
-            onDrop={(e) => handleBlockDrop(e, index)}
+            onDrop={handleBlockDrop}
+            onKeyDown={handleBlockKeyDown}
             role="button"
             aria-label={`${block.type} block${selection.blockId === block.id ? ' (selected)' : ''}`}
             aria-selected={selection.blockId === block.id}
             tabIndex={0}
-            onKeyDown={(e) => {
-              const target = e.target as HTMLElement;
-              if (target.isContentEditable || target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
-                return;
-              }
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                e.stopPropagation();
-                dispatch({
-                  type: 'SELECT_BLOCK',
-                  payload: { sectionId, columnId: column.id, blockId: block.id },
-                });
-              } else if (e.key === 'Delete' || e.key === 'Backspace') {
-                e.preventDefault();
-                e.stopPropagation();
-                confirmRemoveBlock(block.id);
-              }
-            }}
           >
             <div className={`ee-block-actions ${styles.blockOverlay}`} role="group" aria-label="Block actions">
               <button
                 className={`ee-block-duplicate ${styles.blockBtn} ${styles.blockBtnDuplicate}`}
-                onClick={(e) => handleDuplicateBlock(block.id, e)}
+                onClick={handleDuplicateClick}
                 title="Duplicate block"
                 aria-label="Duplicate block"
               >
@@ -239,7 +267,7 @@ export const Column = React.memo(function Column({ column, sectionId }: ColumnPr
               </button>
               <button
                 className={`ee-block-remove ${styles.blockBtn}`}
-                onClick={(e) => handleRemoveBlock(block.id, e)}
+                onClick={handleRemoveClick}
                 title="Remove block"
                 aria-label="Remove block"
               >

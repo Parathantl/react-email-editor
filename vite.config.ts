@@ -7,7 +7,7 @@ export default defineConfig({
   root: 'examples/basic',
   resolve: {
     alias: {
-      '@keygraph/react-email-editor': path.resolve(__dirname, 'src/index.ts'),
+      '@parathantl/react-email-editor': path.resolve(__dirname, 'src/index.ts'),
     },
   },
   server: {

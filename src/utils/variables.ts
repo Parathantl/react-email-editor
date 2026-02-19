@@ -3,10 +3,12 @@ import type { Variable } from '../types';
 const VARIABLE_REGEX = /\{\{\s*([^}]+?)\s*\}\}/g;
 
 export function extractVariableKeys(text: string): string[] {
+  const seen = new Set<string>();
   const keys: string[] = [];
   for (const match of text.matchAll(VARIABLE_REGEX)) {
     const key = match[1].trim();
-    if (!keys.includes(key)) {
+    if (!seen.has(key)) {
+      seen.add(key);
       keys.push(key);
     }
   }

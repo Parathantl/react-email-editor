@@ -509,12 +509,31 @@ function parseBlockElements(parent: Element): Block[] {
 }
 
 function parseTextBlock(el: Element): Block {
+  const cssClass = el.getAttribute('css-class') ?? '';
+
+  // Detect heading block by css-class marker or content heuristic
+  if (cssClass.includes('ee-block-heading')) {
+    return parseHeadingFromMjText(el, cssClass);
+  }
+
+  // Detect countdown block by css-class marker
+  if (cssClass.includes('ee-block-countdown')) {
+    return parseCountdownFromMjText(el);
+  }
+
+  // Detect HTML block by css-class marker
+  if (cssClass.includes('ee-block-html')) {
+    return parseHtmlFromMjText(el);
+  }
+
+  const innerHTML = el.innerHTML?.trim() ?? '';
+
   const d = MJML_DEFAULTS.text;
   return {
     id: generateBlockId(),
     type: 'text',
     properties: {
-      content: convertLegacyHtml(el.innerHTML?.trim() ?? ''),
+      content: convertLegacyHtml(innerHTML),
       fontFamily: el.getAttribute('font-family') ?? d.fontFamily,
       fontSize: el.getAttribute('font-size') ?? d.fontSize,
       color: el.getAttribute('color') ?? d.color,
@@ -524,6 +543,93 @@ function parseTextBlock(el: Element): Block {
       fontWeight: el.getAttribute('font-weight') ?? d.fontWeight,
       textTransform: el.getAttribute('text-transform') ?? d.textTransform,
       letterSpacing: el.getAttribute('letter-spacing') ?? d.letterSpacing,
+    },
+  };
+}
+
+function parseHeadingFromMjText(el: Element, cssClass: string): Block {
+  const d = MJML_DEFAULTS.text;
+  const defaults = DEFAULT_BLOCK_PROPERTIES.heading;
+  const innerHTML = el.innerHTML?.trim() ?? '';
+
+  // Extract heading level from css-class (ee-heading-h1, ee-heading-h2, etc.)
+  const levelMatch = cssClass.match(/ee-heading-(h[1-4])/);
+  const level = levelMatch ? levelMatch[1] : 'h2';
+
+  // Extract content from heading tag wrapper
+  const contentMatch = innerHTML.match(new RegExp(`^<${level}[^>]*>([\\s\\S]*)<\\/${level}>$`, 'i'));
+  const content = contentMatch ? contentMatch[1].trim() : innerHTML;
+
+  return {
+    id: generateBlockId(),
+    type: 'heading',
+    properties: {
+      content,
+      level,
+      fontFamily: el.getAttribute('font-family') ?? defaults.fontFamily,
+      fontSize: el.getAttribute('font-size') ?? defaults.fontSize,
+      color: el.getAttribute('color') ?? defaults.color,
+      lineHeight: el.getAttribute('line-height') ?? defaults.lineHeight,
+      fontWeight: el.getAttribute('font-weight') ?? defaults.fontWeight,
+      padding: resolvePadding(el, defaults.padding),
+      align: el.getAttribute('align') ?? d.align,
+      textTransform: el.getAttribute('text-transform') ?? defaults.textTransform,
+      letterSpacing: el.getAttribute('letter-spacing') ?? defaults.letterSpacing,
+    },
+  };
+}
+
+function parseCountdownFromMjText(el: Element): Block {
+  const defaults = DEFAULT_BLOCK_PROPERTIES.countdown;
+  const innerHTML = el.innerHTML?.trim() ?? '';
+
+  // Extract metadata from embedded JSON comment
+  const metaMatch = innerHTML.match(/<!--ee-countdown:([\s\S]*?)-->/);
+
+  if (metaMatch) {
+    try {
+      // Decode HTML entities back to JSON (escapeAttr encodes &, ", <, >)
+      const raw = metaMatch[1].replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'");
+      const meta = JSON.parse(raw);
+      return {
+        id: generateBlockId(),
+        type: 'countdown',
+        properties: {
+          targetDate: meta.targetDate || defaults.targetDate,
+          label: meta.label ?? '',
+          digitBackgroundColor: meta.digitBackgroundColor || defaults.digitBackgroundColor,
+          digitColor: meta.digitColor || defaults.digitColor,
+          labelColor: meta.labelColor || defaults.labelColor,
+          fontSize: meta.fontSize || defaults.fontSize,
+          padding: resolvePadding(el, defaults.padding),
+          align: el.getAttribute('align') ?? defaults.align,
+        },
+      };
+    } catch {
+      // JSON parse failed — fall through to default
+    }
+  }
+
+  // Fallback: create a default countdown block
+  return {
+    id: generateBlockId(),
+    type: 'countdown',
+    properties: {
+      ...defaults,
+      padding: resolvePadding(el, defaults.padding),
+      align: el.getAttribute('align') ?? defaults.align,
+    },
+  };
+}
+
+function parseHtmlFromMjText(el: Element): Block {
+  const defaults = DEFAULT_BLOCK_PROPERTIES.html;
+  return {
+    id: generateBlockId(),
+    type: 'html',
+    properties: {
+      content: el.innerHTML?.trim() ?? '',
+      padding: resolvePadding(el, defaults.padding),
     },
   };
 }
@@ -553,6 +659,25 @@ function parseButtonBlock(el: Element): Block {
 }
 
 function parseImageBlock(el: Element): Block {
+  const cssClass = el.getAttribute('css-class') ?? '';
+  const href = el.getAttribute('href') ?? '';
+
+  // Detect video block by css-class marker or href heuristic (YouTube/Vimeo)
+  if (cssClass.includes('ee-block-video') || isVideoUrl(href)) {
+    const defaults = DEFAULT_BLOCK_PROPERTIES.video;
+    return {
+      id: generateBlockId(),
+      type: 'video',
+      properties: {
+        src: href || defaults.src,
+        thumbnailUrl: el.getAttribute('src') ?? defaults.thumbnailUrl,
+        alt: el.getAttribute('alt') ?? defaults.alt,
+        padding: resolvePadding(el, defaults.padding),
+        align: el.getAttribute('align') ?? defaults.align,
+      },
+    };
+  }
+
   const d = MJML_DEFAULTS.image;
   return {
     id: generateBlockId(),
@@ -560,7 +685,7 @@ function parseImageBlock(el: Element): Block {
     properties: {
       src: el.getAttribute('src') ?? d.src,
       alt: el.getAttribute('alt') ?? d.alt,
-      href: el.getAttribute('href') ?? d.href,
+      href: href || d.href,
       width: el.getAttribute('width') ?? d.width,
       height: el.getAttribute('height') ?? d.height,
       padding: resolvePadding(el, d.padding),
@@ -568,6 +693,11 @@ function parseImageBlock(el: Element): Block {
       fluidOnMobile: el.getAttribute('fluid-on-mobile') === 'true',
     },
   };
+}
+
+function isVideoUrl(url: string): boolean {
+  if (!url) return false;
+  return /(?:youtube\.com\/watch|youtu\.be\/|vimeo\.com\/)/i.test(url);
 }
 
 function parseDividerBlock(el: Element): Block {

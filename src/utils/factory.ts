@@ -15,7 +15,7 @@ export function cloneBlock(block: Block): Block {
 export function cloneSection(section: Section): Section {
   return {
     id: generateSectionId(),
-    properties: { ...section.properties },
+    properties: JSON.parse(JSON.stringify(section.properties)),
     columns: section.columns.map((col) => ({
       id: generateColumnId(),
       width: col.width,
@@ -29,7 +29,7 @@ export function createBlock<T extends BlockType>(type: T): Block<T> {
   return {
     id: generateBlockId(),
     type,
-    properties: { ...DEFAULT_BLOCK_PROPERTIES[type] },
+    properties: JSON.parse(JSON.stringify(DEFAULT_BLOCK_PROPERTIES[type])),
   };
 }
 

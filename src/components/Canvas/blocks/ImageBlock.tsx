@@ -8,7 +8,7 @@ interface ImageBlockProps {
   block: Block;
 }
 
-export function ImageBlock({ block }: ImageBlockProps) {
+const ImageBlockInner = function ImageBlock({ block }: ImageBlockProps) {
   const dispatch = useEditorDispatch();
   const { imageUploadAdapter } = useConfigContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -79,4 +79,6 @@ export function ImageBlock({ block }: ImageBlockProps) {
       />
     </div>
   );
-}
+};
+
+export const ImageBlock = React.memo(ImageBlockInner);

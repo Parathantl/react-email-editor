@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useEditorVariables } from '../../context/EditorContext';
 import { groupVariables } from '../../utils/variables';
 import styles from '../../styles/sidebar.module.css';
@@ -6,6 +6,14 @@ import styles from '../../styles/sidebar.module.css';
 export function VariableList() {
   const { variables, customVariables, insertVariable, removeCustomVariable } = useEditorVariables();
   const [flashKey, setFlashKey] = useState<string | null>(null);
+  const flashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup flash timer on unmount
+  useEffect(() => {
+    return () => {
+      if (flashTimerRef.current !== null) clearTimeout(flashTimerRef.current);
+    };
+  }, []);
 
   const customKeys = new Set(customVariables.map((v) => v.key));
 
@@ -14,7 +22,11 @@ export function VariableList() {
       const inserted = insertVariable(key);
       if (inserted) {
         setFlashKey(key);
-        setTimeout(() => setFlashKey(null), 400);
+        if (flashTimerRef.current !== null) clearTimeout(flashTimerRef.current);
+        flashTimerRef.current = setTimeout(() => {
+          flashTimerRef.current = null;
+          setFlashKey(null);
+        }, 400);
       }
     },
     [insertVariable],

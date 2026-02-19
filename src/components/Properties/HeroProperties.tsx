@@ -1,12 +1,9 @@
-import React, { useCallback } from 'react';
-import type { Block, HeroBlockProperties } from '../../types';
+import React from 'react';
+import type { Block } from '../../types';
 import { narrowBlock } from '../../types';
-import { useEditorDispatch } from '../../context/EditorContext';
+import { useBlockUpdate } from '../../hooks/useBlockUpdate';
 import { ImageUploader } from '../ImageUpload/ImageUploader';
-import { ColorPicker } from './controls/ColorPicker';
-import { PaddingInput } from './controls/PaddingInput';
-import { AlignmentPicker } from './controls/AlignmentPicker';
-import { LinkInput } from './controls/LinkInput';
+import { PropertyField, FieldSeparator } from './PropertyField';
 import styles from '../../styles/properties.module.css';
 
 interface HeroPropertiesProps {
@@ -14,125 +11,32 @@ interface HeroPropertiesProps {
 }
 
 export function HeroProperties({ block }: HeroPropertiesProps) {
-  const dispatch = useEditorDispatch();
-
-  const update = useCallback(
-    (props: Partial<HeroBlockProperties>) => {
-      dispatch({
-        type: 'UPDATE_BLOCK',
-        payload: { blockId: block.id, properties: props },
-      });
-    },
-    [dispatch, block.id],
-  );
+  const update = useBlockUpdate(block.id);
 
   if (!narrowBlock(block, 'hero')) return null;
   const p = block.properties;
 
   return (
     <div className={styles.propertiesBody}>
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Heading</label>
-        <input
-          className={styles.fieldInput}
-          value={p.heading}
-          onChange={(e) => update({ heading: e.target.value })}
-        />
-      </div>
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Subtext</label>
-        <textarea
-          className={styles.fieldTextarea}
-          value={p.subtext}
-          onChange={(e) => update({ subtext: e.target.value })}
-          rows={3}
-        />
-      </div>
-      <div className={styles.separator} />
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Button Text</label>
-        <input
-          className={styles.fieldInput}
-          value={p.buttonText}
-          onChange={(e) => update({ buttonText: e.target.value })}
-        />
-      </div>
-      <LinkInput
-        label="Button Link"
-        value={p.buttonHref}
-        onChange={(buttonHref) => update({ buttonHref })}
-      />
-      <div className={styles.separator} />
-      <ColorPicker
-        label="Heading Color"
-        value={p.headingColor}
-        onChange={(headingColor) => update({ headingColor })}
-      />
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Heading Font Size</label>
-        <input
-          className={styles.fieldInput}
-          value={p.headingFontSize}
-          onChange={(e) => update({ headingFontSize: e.target.value })}
-        />
-      </div>
-      <ColorPicker
-        label="Subtext Color"
-        value={p.subtextColor}
-        onChange={(subtextColor) => update({ subtextColor })}
-      />
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Subtext Font Size</label>
-        <input
-          className={styles.fieldInput}
-          value={p.subtextFontSize}
-          onChange={(e) => update({ subtextFontSize: e.target.value })}
-        />
-      </div>
-      <div className={styles.separator} />
-      <ColorPicker
-        label="Button Background"
-        value={p.buttonBackgroundColor}
-        onChange={(buttonBackgroundColor) => update({ buttonBackgroundColor })}
-      />
-      <ColorPicker
-        label="Button Text Color"
-        value={p.buttonColor}
-        onChange={(buttonColor) => update({ buttonColor })}
-      />
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Button Border Radius</label>
-        <input
-          className={styles.fieldInput}
-          value={p.buttonBorderRadius}
-          onChange={(e) => update({ buttonBorderRadius: e.target.value })}
-        />
-      </div>
-      <AlignmentPicker
-        label="Alignment"
-        value={p.align}
-        onChange={(align) => update({ align: align as 'left' | 'center' | 'right' })}
-      />
-      <PaddingInput
-        label="Padding"
-        value={p.padding}
-        onChange={(padding) => update({ padding })}
-      />
-      <div className={styles.separator} />
-      <ColorPicker
-        label="Background Color"
-        value={p.backgroundColor}
-        onChange={(backgroundColor) => update({ backgroundColor })}
-      />
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Background Image URL</label>
-        <input
-          className={styles.fieldInput}
-          value={p.backgroundImage}
-          onChange={(e) => update({ backgroundImage: e.target.value })}
-          placeholder="https://example.com/image.jpg"
-        />
-      </div>
+      <PropertyField type="text" label="Heading" value={p.heading} onChange={(v) => update({ heading: v })} />
+      <PropertyField type="textarea" label="Subtext" value={p.subtext} onChange={(v) => update({ subtext: v })} rows={3} />
+      <FieldSeparator />
+      <PropertyField type="text" label="Button Text" value={p.buttonText} onChange={(v) => update({ buttonText: v })} />
+      <PropertyField type="link" label="Button Link" value={p.buttonHref} onChange={(v) => update({ buttonHref: v })} />
+      <FieldSeparator />
+      <PropertyField type="color" label="Heading Color" value={p.headingColor} onChange={(v) => update({ headingColor: v })} />
+      <PropertyField type="text" label="Heading Font Size" value={p.headingFontSize} onChange={(v) => update({ headingFontSize: v })} />
+      <PropertyField type="color" label="Subtext Color" value={p.subtextColor} onChange={(v) => update({ subtextColor: v })} />
+      <PropertyField type="text" label="Subtext Font Size" value={p.subtextFontSize} onChange={(v) => update({ subtextFontSize: v })} />
+      <FieldSeparator />
+      <PropertyField type="color" label="Button Background" value={p.buttonBackgroundColor} onChange={(v) => update({ buttonBackgroundColor: v })} />
+      <PropertyField type="color" label="Button Text Color" value={p.buttonColor} onChange={(v) => update({ buttonColor: v })} />
+      <PropertyField type="text" label="Button Border Radius" value={p.buttonBorderRadius} onChange={(v) => update({ buttonBorderRadius: v })} />
+      <PropertyField type="alignment" label="Alignment" value={p.align} onChange={(v) => update({ align: v })} />
+      <PropertyField type="padding" label="Padding" value={p.padding} onChange={(v) => update({ padding: v })} />
+      <FieldSeparator />
+      <PropertyField type="color" label="Background Color" value={p.backgroundColor} onChange={(v) => update({ backgroundColor: v })} />
+      <PropertyField type="text" label="Background Image URL" value={p.backgroundImage} onChange={(v) => update({ backgroundImage: v })} placeholder="https://example.com/image.jpg" />
       {!p.backgroundImage && (
         <ImageUploader
           blockId={block.id}

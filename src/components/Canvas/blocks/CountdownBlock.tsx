@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import type { Block } from '../../../types';
 import styles from '../../../styles/blocks.module.css';
 
@@ -42,27 +42,45 @@ export const CountdownBlock = React.memo(function CountdownBlock({ block }: Coun
         ? 'flex-end'
         : 'center';
 
+  const wrapperStyle = useMemo(() => ({
+    padding: p.padding, justifyContent: alignStyle,
+  }), [p.padding, alignStyle]);
+
+  const labelStyle = useMemo(() => ({
+    color: p.labelColor, textAlign: p.align as React.CSSProperties['textAlign'],
+  }), [p.labelColor, p.align]);
+
+  const digitsContainerStyle = useMemo(() => ({
+    justifyContent: alignStyle,
+  }), [alignStyle]);
+
+  const digitBoxStyle = useMemo(() => ({
+    backgroundColor: p.digitBackgroundColor,
+    color: p.digitColor,
+    fontSize: p.fontSize,
+  }), [p.digitBackgroundColor, p.digitColor, p.fontSize]);
+
+  const unitLabelStyle = useMemo(() => ({
+    color: p.labelColor,
+  }), [p.labelColor]);
+
   return (
-    <div className={`ee-block-countdown ${styles.countdownBlock}`} style={{ padding: p.padding, justifyContent: alignStyle }}>
+    <div className={`ee-block-countdown ${styles.countdownBlock}`} style={wrapperStyle}>
       {p.label && (
-        <div className={styles.countdownLabel} style={{ color: p.labelColor, textAlign: p.align }}>
+        <div className={styles.countdownLabel} style={labelStyle}>
           {p.label}
         </div>
       )}
-      <div className={styles.countdownDigits} style={{ justifyContent: alignStyle }}>
-        {units.map((unit, idx) => (
-          <div key={idx} className={styles.countdownUnit}>
+      <div className={styles.countdownDigits} style={digitsContainerStyle}>
+        {units.map((unit) => (
+          <div key={unit.label} className={styles.countdownUnit}>
             <div
               className={styles.countdownDigitBox}
-              style={{
-                backgroundColor: p.digitBackgroundColor,
-                color: p.digitColor,
-                fontSize: p.fontSize,
-              }}
+              style={digitBoxStyle}
             >
               {String(unit.value).padStart(2, '0')}
             </div>
-            <div className={styles.countdownUnitLabel} style={{ color: p.labelColor }}>
+            <div className={styles.countdownUnitLabel} style={unitLabelStyle}>
               {unit.label}
             </div>
           </div>

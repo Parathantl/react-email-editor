@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import type { Section as SectionType } from '../../types';
 import { Column } from './Column';
 import { ConfirmDialog } from '../ConfirmDialog';
-import { useSelectionContext, useEditorDispatch } from '../../context/EditorContext';
+import { useSelectionContext, useEditorDispatch, useTemplateContext } from '../../context/EditorContext';
 import { setSectionMoveDragData } from '../../utils/dnd';
 import styles from '../../styles/canvas.module.css';
 
@@ -13,6 +13,7 @@ interface SectionProps {
 export const Section = React.memo(function Section({ section }: SectionProps) {
   const selection = useSelectionContext();
   const dispatch = useEditorDispatch();
+  const { template } = useTemplateContext();
   const isSelected = selection.sectionId === section.id && !selection.blockId;
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
 
@@ -52,6 +53,21 @@ export const Section = React.memo(function Section({ section }: SectionProps) {
     [section.id],
   );
 
+  const handleDragKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+      e.preventDefault();
+      e.stopPropagation();
+      const sections = template.sections;
+      const currentIndex = sections.findIndex((s) => s.id === section.id);
+      if (currentIndex === -1) return;
+      const toIndex = e.key === 'ArrowUp' ? currentIndex - 1 : currentIndex + 1;
+      if (toIndex < 0 || toIndex >= sections.length) return;
+      dispatch({ type: 'MOVE_SECTION', payload: { sectionId: section.id, toIndex } });
+    },
+    [dispatch, section.id, template.sections],
+  );
+
   return (
     <div
       className={`ee-section ${isSelected ? 'ee-section--selected' : ''} ${section.properties.fullWidth ? 'ee-section--full-width' : ''} ${styles.section} ${isSelected ? styles.sectionSelected : ''} ${section.properties.fullWidth ? styles.sectionFullWidth : ''}`}
@@ -73,9 +89,10 @@ export const Section = React.memo(function Section({ section }: SectionProps) {
           className={`ee-section-drag ${styles.sectionDragHandle}`}
           draggable
           onDragStart={handleDragStart}
-          title="Drag to reorder"
+          onKeyDown={handleDragKeyDown}
+          title="Drag to reorder (or use Arrow keys)"
           role="button"
-          aria-label="Drag to reorder section"
+          aria-label="Reorder section with Arrow Up/Down keys"
           tabIndex={0}
         >
           ⠿

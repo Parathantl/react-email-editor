@@ -30,8 +30,9 @@
   border-color: var(--ee-border-color-strong);
 }
 
-.sectionSelected {
-  border-color: var(--ee-border-selected) !important;
+.section.sectionSelected,
+.sectionSelected:hover {
+  border-color: var(--ee-border-selected);
 }
 
 .sectionFullWidth {
@@ -133,8 +134,9 @@
   border-color: var(--ee-border-color-strong);
 }
 
-.blockSelected {
-  border-color: var(--ee-border-selected) !important;
+.blockWrapper.blockSelected,
+.blockSelected:hover {
+  border-color: var(--ee-border-selected);
   box-shadow: var(--ee-shadow-focus);
 }
 
@@ -180,12 +182,12 @@
   border-color: var(--ee-color-primary);
 }
 
-.blockDropBefore {
-  box-shadow: 0 -2px 0 0 var(--ee-color-primary) !important;
+.blockWrapper.blockDropBefore {
+  box-shadow: 0 -2px 0 0 var(--ee-color-primary);
 }
 
-.blockDropAfter {
-  box-shadow: 0 2px 0 0 var(--ee-color-primary) !important;
+.blockWrapper.blockDropAfter {
+  box-shadow: 0 2px 0 0 var(--ee-color-primary);
 }
 
 /* Drop Zone */

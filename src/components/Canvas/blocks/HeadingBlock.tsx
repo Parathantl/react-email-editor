@@ -1,6 +1,6 @@
-import React, { useCallback, useRef, useState, useEffect } from 'react';
+import React, { useCallback, useRef, useState, useEffect, useReducer, useMemo } from 'react';
 import type { Block } from '../../../types';
-import { useEditorDispatch, useConfigContext } from '../../../context/EditorContext';
+import { useEditorDispatch, useMethodsContext } from '../../../context/EditorContext';
 import { TipTapEditor } from '../../../tiptap/TipTapEditor';
 import { RichTextToolbar } from '../../Toolbar/RichTextToolbar';
 import type { Editor } from '@tiptap/core';
@@ -18,27 +18,32 @@ const HEADING_FONT_SIZES: Record<string, string> = {
   h4: '18px',
 };
 
-export function HeadingBlock({ block }: HeadingBlockProps) {
+const HeadingBlockInner = function HeadingBlock({ block }: HeadingBlockProps) {
   const dispatch = useEditorDispatch();
-  const { setActiveEditor } = useConfigContext();
+  const { setActiveEditor } = useMethodsContext();
   const editorRef = useRef<Editor | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isFocused, setIsFocused] = useState(false);
-  const [, setTick] = useState(0);
+
+  // Track the editor instance in state so the effect has a proper dependency
+  const [editorInstance, setEditorInstance] = useState<Editor | null>(null);
+
+  // Force toolbar re-render when editor formatting state changes (selection/transaction)
+  const [, forceToolbarUpdate] = useReducer((c: number) => c + 1, 0);
 
   useEffect(() => {
-    const editor = editorRef.current;
-    if (!editor) return;
+    if (!editorInstance) return;
 
-    const onUpdate = () => setTick((n) => n + 1);
-    editor.on('selectionUpdate', onUpdate);
-    editor.on('transaction', onUpdate);
+    const onStateChange = () => forceToolbarUpdate();
+    editorInstance.on('selectionUpdate', onStateChange);
+    editorInstance.on('transaction', onStateChange);
 
     return () => {
-      editor.off('selectionUpdate', onUpdate);
-      editor.off('transaction', onUpdate);
+      editorInstance.off('selectionUpdate', onStateChange);
+      editorInstance.off('transaction', onStateChange);
     };
-  }, [editorRef.current]);
+  }, [editorInstance]);
 
   const handleUpdate = useCallback(
     (html: string) => {
@@ -55,8 +60,17 @@ export function HeadingBlock({ block }: HeadingBlockProps) {
     setIsFocused(true);
   }, [setActiveEditor]);
 
+  // Cleanup blur timer on unmount
+  useEffect(() => {
+    return () => {
+      if (blurTimerRef.current !== null) clearTimeout(blurTimerRef.current);
+    };
+  }, []);
+
   const handleBlur = useCallback(() => {
-    setTimeout(() => {
+    if (blurTimerRef.current !== null) clearTimeout(blurTimerRef.current);
+    blurTimerRef.current = setTimeout(() => {
+      blurTimerRef.current = null;
       const activeEl = document.activeElement;
       if (wrapperRef.current && wrapperRef.current.contains(activeEl)) {
         return;
@@ -70,31 +84,31 @@ export function HeadingBlock({ block }: HeadingBlockProps) {
 
   const handleEditorRef = useCallback((editor: Editor | null) => {
     editorRef.current = editor;
-    setTick((n) => n + 1);
+    setEditorInstance(editor);
   }, []);
 
   const p = block.properties;
   const fontSize = p.fontSize || HEADING_FONT_SIZES[p.level] || '28px';
 
+  const wrapperStyle = useMemo(() => ({
+    fontFamily: p.fontFamily,
+    fontSize,
+    color: p.color,
+    lineHeight: p.lineHeight,
+    padding: p.padding,
+    fontWeight: p.fontWeight,
+    textTransform: p.textTransform,
+    letterSpacing: p.letterSpacing,
+  }), [p.fontFamily, fontSize, p.color, p.lineHeight, p.padding, p.fontWeight, p.textTransform, p.letterSpacing]);
+
   return (
     <div className={`ee-block-heading ${styles.headingBlock}`} ref={wrapperRef}>
-      {isFocused && (
+      {isFocused && editorRef.current && (
         <div className={styles.textBlockToolbar}>
           <RichTextToolbar editor={editorRef.current} />
         </div>
       )}
-      <div
-        style={{
-          fontFamily: p.fontFamily,
-          fontSize,
-          color: p.color,
-          lineHeight: p.lineHeight,
-          padding: p.padding,
-          fontWeight: p.fontWeight,
-          textTransform: p.textTransform,
-          letterSpacing: p.letterSpacing,
-        }}
-      >
+      <div style={wrapperStyle}>
         <TipTapEditor
           content={p.content}
           onUpdate={handleUpdate}
@@ -107,4 +121,6 @@ export function HeadingBlock({ block }: HeadingBlockProps) {
       </div>
     </div>
   );
-}
+};
+
+export const HeadingBlock = React.memo(HeadingBlockInner);

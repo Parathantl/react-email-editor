@@ -1,7 +1,7 @@
-import React, { useCallback } from 'react';
-import type { Block, HtmlBlockProperties } from '../../types';
-import { useEditorDispatch } from '../../context/EditorContext';
-import { PaddingInput } from './controls/PaddingInput';
+import React from 'react';
+import type { Block } from '../../types';
+import { useBlockUpdate } from '../../hooks/useBlockUpdate';
+import { PropertyField } from './PropertyField';
 import styles from '../../styles/properties.module.css';
 
 interface HtmlPropertiesProps {
@@ -9,36 +9,13 @@ interface HtmlPropertiesProps {
 }
 
 export function HtmlProperties({ block }: HtmlPropertiesProps) {
-  const dispatch = useEditorDispatch();
+  const update = useBlockUpdate(block.id);
   const p = block.properties;
-
-  const update = useCallback(
-    (props: Partial<HtmlBlockProperties>) => {
-      dispatch({
-        type: 'UPDATE_BLOCK',
-        payload: { blockId: block.id, properties: props },
-      });
-    },
-    [dispatch, block.id],
-  );
 
   return (
     <div className={styles.propertiesBody}>
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>HTML Content</label>
-        <textarea
-          className={`ee-html-textarea ${styles.fieldTextareaCode}`}
-          value={p.content}
-          onChange={(e) => update({ content: e.target.value })}
-          placeholder="<p>Enter raw HTML here...</p>"
-          rows={10}
-        />
-      </div>
-      <PaddingInput
-        label="Padding"
-        value={p.padding}
-        onChange={(padding) => update({ padding })}
-      />
+      <PropertyField type="textarea" label="HTML Content" value={p.content} onChange={(v) => update({ content: v })} placeholder="<p>Enter raw HTML here...</p>" rows={10} code />
+      <PropertyField type="padding" label="Padding" value={p.padding} onChange={(v) => update({ padding: v })} />
     </div>
   );
 }

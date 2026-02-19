@@ -318,4 +318,177 @@ describe('parseMJML', () => {
     const mjml = '<not-mjml><unclosed>';
     expect(() => parseMJML(mjml)).toThrow('Invalid MJML');
   });
+
+  // ---- Round-trip block type preservation (heading, countdown, html, video) ----
+
+  it('parses heading block from css-class marker', () => {
+    const mjml = `
+      <mjml>
+        <mj-body>
+          <mj-section>
+            <mj-column>
+              <mj-text font-size="36px" color="#111" font-weight="bold" css-class="ee-block-heading ee-heading-h1"><h1>Welcome</h1></mj-text>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `;
+    const result = parseMJML(mjml);
+    const block = result.sections[0].columns[0].blocks[0];
+    expect(block.type).toBe('heading');
+    expect(block.properties.level).toBe('h1');
+    expect(block.properties.content).toBe('Welcome');
+    expect(block.properties.fontSize).toBe('36px');
+    expect(block.properties.fontWeight).toBe('bold');
+  });
+
+  it('does not false-positive heading detection without css-class marker', () => {
+    const mjml = `
+      <mjml>
+        <mj-body>
+          <mj-section>
+            <mj-column>
+              <mj-text font-size="28px"><h2>Title Here</h2></mj-text>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `;
+    const result = parseMJML(mjml);
+    const block = result.sections[0].columns[0].blocks[0];
+    // Without css-class marker, text blocks with heading HTML stay as text (no false positive)
+    expect(block.type).toBe('text');
+    expect(block.properties.content).toContain('Title Here');
+  });
+
+  it('parses html block from css-class marker', () => {
+    const mjml = `
+      <mjml>
+        <mj-body>
+          <mj-section>
+            <mj-column>
+              <mj-text padding="15px" css-class="ee-block-html"><div>Custom HTML</div></mj-text>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `;
+    const result = parseMJML(mjml);
+    const block = result.sections[0].columns[0].blocks[0];
+    expect(block.type).toBe('html');
+    expect(block.properties.content).toContain('Custom HTML');
+  });
+
+  it('parses countdown block from css-class and embedded JSON metadata', () => {
+    const meta = JSON.stringify({
+      targetDate: '2026-12-31T00:00',
+      label: 'Sale ends',
+      digitBackgroundColor: '#333',
+      digitColor: '#fff',
+      labelColor: '#666',
+      fontSize: '24px',
+    });
+    const escapedMeta = meta.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const mjml = `
+      <mjml>
+        <mj-body>
+          <mj-section>
+            <mj-column>
+              <mj-text padding="10px 25px" align="center" css-class="ee-block-countdown"><!--ee-countdown:${escapedMeta}--><div>countdown html</div></mj-text>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `;
+    const result = parseMJML(mjml);
+    const block = result.sections[0].columns[0].blocks[0];
+    expect(block.type).toBe('countdown');
+    expect(block.properties.targetDate).toBe('2026-12-31T00:00');
+    expect(block.properties.label).toBe('Sale ends');
+    expect(block.properties.digitBackgroundColor).toBe('#333');
+    expect(block.properties.digitColor).toBe('#fff');
+    expect(block.properties.labelColor).toBe('#666');
+    expect(block.properties.fontSize).toBe('24px');
+  });
+
+  it('countdown round-trip preserves label with pipe characters', () => {
+    const meta = JSON.stringify({
+      targetDate: '2026-06-15T12:00',
+      label: 'Sale | Limited Time | Hurry',
+      digitBackgroundColor: '#000',
+      digitColor: '#fff',
+      labelColor: '#999',
+      fontSize: '20px',
+    });
+    const escapedMeta = meta.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const mjml = `
+      <mjml>
+        <mj-body>
+          <mj-section>
+            <mj-column>
+              <mj-text padding="10px" css-class="ee-block-countdown"><!--ee-countdown:${escapedMeta}--><div>timer</div></mj-text>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `;
+    const result = parseMJML(mjml);
+    const block = result.sections[0].columns[0].blocks[0];
+    expect(block.type).toBe('countdown');
+    expect(block.properties.label).toBe('Sale | Limited Time | Hurry');
+  });
+
+  it('parses video block from css-class marker on mj-image', () => {
+    const mjml = `
+      <mjml>
+        <mj-body>
+          <mj-section>
+            <mj-column>
+              <mj-image src="https://img.youtube.com/vi/abc123/hqdefault.jpg" href="https://www.youtube.com/watch?v=abc123" alt="Video" css-class="ee-block-video" />
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `;
+    const result = parseMJML(mjml);
+    const block = result.sections[0].columns[0].blocks[0];
+    expect(block.type).toBe('video');
+    expect(block.properties.src).toBe('https://www.youtube.com/watch?v=abc123');
+    expect(block.properties.thumbnailUrl).toBe('https://img.youtube.com/vi/abc123/hqdefault.jpg');
+  });
+
+  it('parses video block from YouTube URL heuristic (no css-class)', () => {
+    const mjml = `
+      <mjml>
+        <mj-body>
+          <mj-section>
+            <mj-column>
+              <mj-image src="https://img.youtube.com/vi/xyz789/hqdefault.jpg" href="https://youtu.be/xyz789" alt="My Video" />
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `;
+    const result = parseMJML(mjml);
+    const block = result.sections[0].columns[0].blocks[0];
+    expect(block.type).toBe('video');
+    expect(block.properties.src).toBe('https://youtu.be/xyz789');
+  });
+
+  it('parses regular text block without heading promotion', () => {
+    const mjml = `
+      <mjml>
+        <mj-body>
+          <mj-section>
+            <mj-column>
+              <mj-text>Just some <strong>text</strong></mj-text>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `;
+    const result = parseMJML(mjml);
+    const block = result.sections[0].columns[0].blocks[0];
+    expect(block.type).toBe('text');
+  });
 });

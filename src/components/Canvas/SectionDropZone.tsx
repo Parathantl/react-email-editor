@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { isSectionDrop, getSectionMoveFromDrop } from '../../utils/dnd';
 import { useEditorDispatch } from '../../context/EditorContext';
 import styles from '../../styles/canvas.module.css';
@@ -7,16 +7,20 @@ interface SectionDropZoneProps {
   index: number;
 }
 
-export function SectionDropZone({ index }: SectionDropZoneProps) {
+export const SectionDropZone = React.memo(function SectionDropZone({ index }: SectionDropZoneProps) {
   const dispatch = useEditorDispatch();
   const [isOver, setIsOver] = useState(false);
+  const isOverRef = useRef(false);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     if (!isSectionDrop(e)) return;
     e.preventDefault();
     e.stopPropagation();
     e.dataTransfer.dropEffect = 'move';
-    setIsOver(true);
+    if (!isOverRef.current) {
+      isOverRef.current = true;
+      setIsOver(true);
+    }
   }, []);
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
@@ -30,6 +34,7 @@ export function SectionDropZone({ index }: SectionDropZoneProps) {
     ) {
       return;
     }
+    isOverRef.current = false;
     setIsOver(false);
   }, []);
 
@@ -37,6 +42,7 @@ export function SectionDropZone({ index }: SectionDropZoneProps) {
     (e: React.DragEvent) => {
       e.preventDefault();
       e.stopPropagation();
+      isOverRef.current = false;
       setIsOver(false);
 
       const sectionId = getSectionMoveFromDrop(e);
@@ -60,4 +66,4 @@ export function SectionDropZone({ index }: SectionDropZoneProps) {
       {isOver && <div className={styles.sectionDropZoneLabel}>Move section here</div>}
     </div>
   );
-}
+});

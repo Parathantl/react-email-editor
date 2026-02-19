@@ -1,4 +1,6 @@
-:root {
+/* Scoped to editor container and portal overlays (e.g. ConfirmDialog) */
+.ee-editor-wrapper,
+.ee-dialog-overlay {
   /* Colors */
   --ee-color-primary: #2563eb;
   --ee-color-primary-hover: #1d4ed8;
@@ -99,4 +101,13 @@
   --ee-variable-bg: #dbeafe;
   --ee-variable-color: #1e40af;
   --ee-variable-border: #93c5fd;
+}
+
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ee-editor-wrapper,
+  .ee-dialog-overlay {
+    --ee-transition-fast: 0ms;
+    --ee-transition-normal: 0ms;
+  }
 }

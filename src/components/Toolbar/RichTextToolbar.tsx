@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import type { Editor } from '@tiptap/core';
 import { useEditorFonts } from '../../context/EditorContext';
+import { isSafeURL } from '../../utils/sanitize';
 import { COLOR_PRESETS } from '../../constants';
 import styles from '../../styles/toolbar.module.css';
 
@@ -19,7 +20,7 @@ function preventBlur(e: React.MouseEvent) {
   e.preventDefault();
 }
 
-export function RichTextToolbar({ editor }: RichTextToolbarProps) {
+export const RichTextToolbar = React.memo(function RichTextToolbar({ editor }: RichTextToolbarProps) {
   if (!editor) return null;
 
   return (
@@ -39,6 +40,8 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
         className={`ee-richtext-btn ee-richtext-bold ${styles.richTextBtn} ${editor.isActive('bold') ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().toggleBold().run()}
         title="Bold (Ctrl+B)"
+        aria-label="Bold (Ctrl+B)"
+        aria-pressed={editor.isActive('bold')}
       >
         <strong>B</strong>
       </button>
@@ -46,6 +49,8 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
         className={`ee-richtext-btn ee-richtext-italic ${styles.richTextBtn} ${editor.isActive('italic') ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().toggleItalic().run()}
         title="Italic (Ctrl+I)"
+        aria-label="Italic (Ctrl+I)"
+        aria-pressed={editor.isActive('italic')}
       >
         <em>I</em>
       </button>
@@ -53,6 +58,8 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
         className={`ee-richtext-btn ee-richtext-underline ${styles.richTextBtn} ${editor.isActive('underline') ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().toggleUnderline().run()}
         title="Underline (Ctrl+U)"
+        aria-label="Underline (Ctrl+U)"
+        aria-pressed={editor.isActive('underline')}
       >
         <u>U</u>
       </button>
@@ -60,6 +67,8 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
         className={`ee-richtext-btn ee-richtext-strike ${styles.richTextBtn} ${editor.isActive('strike') ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().toggleStrike().run()}
         title="Strikethrough (Ctrl+Shift+X)"
+        aria-label="Strikethrough (Ctrl+Shift+X)"
+        aria-pressed={editor.isActive('strike')}
       >
         <s>S</s>
       </button>
@@ -89,6 +98,8 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
         className={`ee-richtext-btn ee-richtext-align-left ${styles.richTextBtn} ${editor.isActive({ textAlign: 'left' }) ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().setTextAlign('left').run()}
         title="Align Left"
+        aria-label="Align Left"
+        aria-pressed={editor.isActive({ textAlign: 'left' })}
       >
         L
       </button>
@@ -96,6 +107,8 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
         className={`ee-richtext-btn ee-richtext-align-center ${styles.richTextBtn} ${editor.isActive({ textAlign: 'center' }) ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().setTextAlign('center').run()}
         title="Align Center"
+        aria-label="Align Center"
+        aria-pressed={editor.isActive({ textAlign: 'center' })}
       >
         C
       </button>
@@ -103,6 +116,8 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
         className={`ee-richtext-btn ee-richtext-align-right ${styles.richTextBtn} ${editor.isActive({ textAlign: 'right' }) ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().setTextAlign('right').run()}
         title="Align Right"
+        aria-label="Align Right"
+        aria-pressed={editor.isActive({ textAlign: 'right' })}
       >
         R
       </button>
@@ -114,6 +129,8 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
         className={`ee-richtext-btn ee-richtext-bullet-list ${styles.richTextBtn} ${editor.isActive('bulletList') ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         title="Bullet List"
+        aria-label="Bullet List"
+        aria-pressed={editor.isActive('bulletList')}
       >
         &#8226;
       </button>
@@ -121,6 +138,8 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
         className={`ee-richtext-btn ee-richtext-ordered-list ${styles.richTextBtn} ${editor.isActive('orderedList') ? styles.richTextBtnActive : ''}`}
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         title="Ordered List"
+        aria-label="Ordered List"
+        aria-pressed={editor.isActive('orderedList')}
       >
         1.
       </button>
@@ -135,12 +154,13 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
         className={`ee-richtext-btn ee-richtext-clear ${styles.richTextBtn}`}
         onClick={() => editor.chain().focus().unsetAllMarks().run()}
         title="Clear Formatting"
+        aria-label="Clear Formatting"
       >
         &#10006;
       </button>
     </div>
   );
-}
+});
 
 // ---- Font Family Select ----
 
@@ -249,13 +269,22 @@ function InlineLinkEditor({ editor }: { editor: Editor }) {
 
   const handleOpen = useCallback(() => {
     setUrl(currentHref);
+    setUrlError('');
     setIsOpen(true);
     setTimeout(() => inputRef.current?.focus(), 50);
   }, [currentHref]);
 
+  const [urlError, setUrlError] = useState('');
+
   const handleApply = useCallback(() => {
-    if (url.trim()) {
-      editor.chain().focus().setLink({ href: url.trim() }).run();
+    const trimmed = url.trim();
+    if (trimmed) {
+      if (!isSafeURL(trimmed)) {
+        setUrlError('Only http, https, mailto, and tel URLs are allowed');
+        return;
+      }
+      setUrlError('');
+      editor.chain().focus().setLink({ href: trimmed }).run();
     }
     setIsOpen(false);
   }, [editor, url]);
@@ -284,6 +313,8 @@ function InlineLinkEditor({ editor }: { editor: Editor }) {
         className={`ee-richtext-btn ee-richtext-link-btn ${styles.richTextBtn} ${isActive ? styles.richTextBtnActive : ''}`}
         onClick={handleOpen}
         title="Link"
+        aria-label="Link"
+        aria-pressed={isActive}
       >
         &#128279;
       </button>
@@ -298,6 +329,7 @@ function InlineLinkEditor({ editor }: { editor: Editor }) {
             onKeyDown={handleKeyDown}
             placeholder="https://, mailto:, or tel:"
           />
+          {urlError && <div className={`ee-richtext-link-error ${styles.richTextLinkError}`}>{urlError}</div>}
           <div className={`ee-richtext-link-actions ${styles.richTextLinkActions}`}>
             <button className={`ee-richtext-link-apply ${styles.richTextLinkApply}`} onClick={handleApply}>
               Apply
@@ -364,6 +396,8 @@ function InlineColorPicker({ editor, type, title, label }: InlineColorPickerProp
         className={`ee-richtext-btn ee-richtext-color-btn ${styles.richTextBtn}`}
         onClick={() => setIsOpen(!isOpen)}
         title={title}
+        aria-label={title}
+        aria-expanded={isOpen}
       >
         <span className={`ee-richtext-color-label ${styles.richTextColorLabel}`}>{label}</span>
         <span

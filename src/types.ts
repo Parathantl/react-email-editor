@@ -258,9 +258,9 @@ export interface VariableChipStyle {
 // ---- Persistence ----
 
 export interface PersistenceAdapter {
-  save(key: string, template: EmailTemplate): void;
-  load(key: string): EmailTemplate | null;
-  remove(key: string): void;
+  save(key: string, template: EmailTemplate): void | Promise<void>;
+  load(key: string): EmailTemplate | null | Promise<EmailTemplate | null>;
+  remove(key: string): void | Promise<void>;
 }
 
 // ---- Image Upload ----
@@ -318,6 +318,7 @@ export interface EditorState {
   history: EmailTemplate[];
   historyIndex: number;
   isDirty: boolean;
+  blockIndex: Map<string, { sectionId: string; columnId: string }>;
 }
 
 // ---- Editor Actions ----
@@ -339,6 +340,9 @@ export type EditorAction =
   | { type: 'UPDATE_HEAD_METADATA'; payload: Partial<HeadMetadata> }
   | { type: 'DUPLICATE_BLOCK'; payload: { sectionId: string; columnId: string; blockId: string } }
   | { type: 'DUPLICATE_SECTION'; payload: { sectionId: string } }
+  | { type: 'ADD_BLOCK_AND_SELECT'; payload: { sectionId: string; columnId: string; block: Block; index?: number } }
+  | { type: 'ADD_SECTION_WITH_BLOCK'; payload: { section: Section; block: Block; index?: number } }
+  | { type: 'DESELECT_ALL' }
   | { type: 'UNDO' }
   | { type: 'REDO' }
   | { type: 'PUSH_HISTORY' };
@@ -367,6 +371,28 @@ export interface EmailEditorProps {
   persistenceAdapter?: PersistenceAdapter;
   className?: string;
   style?: React.CSSProperties;
+
+  // Event callbacks for host app integration
+  /** Called when a block is added to the template */
+  onBlockAdd?: (block: Block, sectionId: string, columnId: string) => void;
+  /** Called when a block is removed from the template */
+  onBlockRemove?: (blockId: string, sectionId: string, columnId: string) => void;
+  /** Called when block properties are updated */
+  onBlockUpdate?: (blockId: string, properties: Partial<BlockProperties>) => void;
+  /** Called when a block is moved to a new position */
+  onBlockMove?: (blockId: string, toSectionId: string, toColumnId: string, toIndex: number) => void;
+  /** Called when a section is added to the template */
+  onSectionAdd?: (section: Section, index?: number) => void;
+  /** Called when a section is removed from the template */
+  onSectionRemove?: (sectionId: string) => void;
+  /** Called when a section is moved to a new position */
+  onSectionMove?: (sectionId: string, toIndex: number) => void;
+  /** Called when the selection changes */
+  onSelectionChange?: (selection: SelectionState) => void;
+  /** Called when a template is loaded via SET_TEMPLATE */
+  onTemplateLoad?: (template: EmailTemplate) => void;
+  /** Called when history state changes (undo/redo) */
+  onHistoryChange?: (canUndo: boolean, canRedo: boolean) => void;
 }
 
 export interface EmailEditorRef {

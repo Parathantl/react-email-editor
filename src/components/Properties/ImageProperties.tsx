@@ -1,10 +1,9 @@
 import React, { useCallback, useRef } from 'react';
-import type { Block, ImageBlockProperties } from '../../types';
-import { useEditorDispatch, useImageAdapter } from '../../context/EditorContext';
+import type { Block } from '../../types';
+import { useImageAdapter } from '../../context/EditorContext';
+import { useBlockUpdate } from '../../hooks/useBlockUpdate';
 import { useImageUpload } from '../ImageUpload/useImageUpload';
-import { PaddingInput } from './controls/PaddingInput';
-import { AlignmentPicker } from './controls/AlignmentPicker';
-import { LinkInput } from './controls/LinkInput';
+import { PropertyField, FieldSeparator } from './PropertyField';
 import styles from '../../styles/properties.module.css';
 
 interface ImagePropertiesProps {
@@ -12,20 +11,10 @@ interface ImagePropertiesProps {
 }
 
 export function ImageProperties({ block }: ImagePropertiesProps) {
-  const dispatch = useEditorDispatch();
+  const update = useBlockUpdate(block.id);
   const { imageUploadAdapter } = useImageAdapter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const p = block.properties;
-
-  const update = useCallback(
-    (props: Partial<ImageBlockProperties>) => {
-      dispatch({
-        type: 'UPDATE_BLOCK',
-        payload: { blockId: block.id, properties: props },
-      });
-    },
-    [dispatch, block.id],
-  );
 
   const { upload, status, error } = useImageUpload({
     adapter: imageUploadAdapter,
@@ -50,15 +39,7 @@ export function ImageProperties({ block }: ImagePropertiesProps) {
 
   return (
     <div className={styles.propertiesBody}>
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Image URL</label>
-        <input
-          className={styles.fieldInput}
-          value={p.src}
-          onChange={(e) => update({ src: e.target.value })}
-          placeholder="https://..."
-        />
-      </div>
+      <PropertyField type="text" label="Image URL" value={p.src} onChange={(v) => update({ src: v })} placeholder="https://..." />
       {imageUploadAdapter && (
         <div className={styles.fieldGroup}>
           <button
@@ -78,63 +59,20 @@ export function ImageProperties({ block }: ImagePropertiesProps) {
           />
         </div>
       )}
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Alt Text</label>
-        <input
-          className={styles.fieldInput}
-          value={p.alt}
-          onChange={(e) => update({ alt: e.target.value })}
-          placeholder="Image description"
-        />
-      </div>
-      <LinkInput
-        label="Link URL"
-        value={p.href}
-        onChange={(href) => update({ href })}
-      />
-      <div className={styles.separator} />
+      <PropertyField type="text" label="Alt Text" value={p.alt} onChange={(v) => update({ alt: v })} placeholder="Image description" />
+      <PropertyField type="link" label="Link URL" value={p.href} onChange={(v) => update({ href: v })} />
+      <FieldSeparator />
       <div className={styles.fieldRow}>
         <div className={styles.fieldHalf}>
-          <div className={styles.fieldGroup}>
-            <label className={styles.fieldLabel}>Width</label>
-            <input
-              className={styles.fieldInput}
-              value={p.width}
-              onChange={(e) => update({ width: e.target.value })}
-            />
-          </div>
+          <PropertyField type="text" label="Width" value={p.width} onChange={(v) => update({ width: v })} />
         </div>
         <div className={styles.fieldHalf}>
-          <div className={styles.fieldGroup}>
-            <label className={styles.fieldLabel}>Height</label>
-            <input
-              className={styles.fieldInput}
-              value={p.height}
-              onChange={(e) => update({ height: e.target.value })}
-            />
-          </div>
+          <PropertyField type="text" label="Height" value={p.height} onChange={(v) => update({ height: v })} />
         </div>
       </div>
-      <AlignmentPicker
-        label="Alignment"
-        value={p.align}
-        onChange={(align) => update({ align })}
-      />
-      <PaddingInput
-        label="Padding"
-        value={p.padding}
-        onChange={(padding) => update({ padding })}
-      />
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>
-          <input
-            type="checkbox"
-            checked={p.fluidOnMobile}
-            onChange={(e) => update({ fluidOnMobile: e.target.checked })}
-          />{' '}
-          Fluid on Mobile
-        </label>
-      </div>
+      <PropertyField type="alignment" label="Alignment" value={p.align} onChange={(v) => update({ align: v })} />
+      <PropertyField type="padding" label="Padding" value={p.padding} onChange={(v) => update({ padding: v })} />
+      <PropertyField type="toggle" label="Fluid on Mobile" value={p.fluidOnMobile} onChange={(v) => update({ fluidOnMobile: v })} />
     </div>
   );
 }

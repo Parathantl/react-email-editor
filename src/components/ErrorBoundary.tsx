@@ -26,6 +26,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     this.props.onError?.(error, errorInfo);
   }
 
+  private handleRetry = () => {
+    this.setState({ hasError: false, error: null });
+  };
+
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) return this.props.fallback;
@@ -38,6 +42,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           <p className={`ee-error-message ${styles.errorMessage}`}>
             {this.state.error?.message || 'An unexpected error occurred.'}
           </p>
+          <button
+            className={`ee-error-retry ${styles.retryBtn}`}
+            onClick={this.handleRetry}
+            aria-label="Retry"
+          >
+            Try Again
+          </button>
         </div>
       );
     }

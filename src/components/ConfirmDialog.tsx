@@ -20,11 +20,35 @@ export function ConfirmDialog({
   onCancel,
 }: ConfirmDialogProps) {
   const cancelRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onCancel();
+        return;
+      }
+
+      // Focus trap: cycle Tab/Shift+Tab within dialog
+      if (e.key === 'Tab' && dialogRef.current) {
+        const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
       }
     },
     [onCancel],
@@ -38,7 +62,7 @@ export function ConfirmDialog({
 
   return createPortal(
     <div className={`ee-dialog-overlay ${styles.overlay}`} onClick={onCancel} role="dialog" aria-modal="true" aria-label={title}>
-      <div className={`ee-dialog ${styles.dialog}`} onClick={(e) => e.stopPropagation()}>
+      <div ref={dialogRef} className={`ee-dialog ${styles.dialog}`} onClick={(e) => e.stopPropagation()}>
         <h3 className={`ee-dialog-title ${styles.title}`}>{title}</h3>
         <p className={`ee-dialog-message ${styles.message}`}>{message}</p>
         <div className={`ee-dialog-actions ${styles.actions}`}>

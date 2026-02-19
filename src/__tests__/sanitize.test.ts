@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { sanitizeHTML, escapeHTML } from '../utils/sanitize';
+import { sanitizeHTML, escapeHTML, sanitizeStyle, isSafeURL } from '../utils/sanitize';
 
 describe('sanitizeHTML', () => {
   it('allows basic formatting tags', () => {
@@ -77,6 +77,66 @@ describe('sanitizeHTML', () => {
     expect(result).not.toContain('data-evil');
     expect(result).toContain('Text');
   });
+
+  it('sanitizes dangerous CSS in style attributes', () => {
+    const input = '<p style="color: red; background: expression(alert(1))">Text</p>';
+    const result = sanitizeHTML(input);
+    expect(result).toContain('color: red');
+    expect(result).not.toContain('expression');
+  });
+
+  it('strips url() with javascript scheme from styles', () => {
+    const input = '<div style="background: url(javascript:alert(1))">Text</div>';
+    const result = sanitizeHTML(input);
+    expect(result).not.toContain('javascript');
+    expect(result).not.toContain('url(');
+  });
+
+  it('strips disallowed CSS properties', () => {
+    const input = '<span style="color: red; position: fixed; top: 0">Text</span>';
+    const result = sanitizeHTML(input);
+    expect(result).toContain('color: red');
+    expect(result).not.toContain('position');
+    expect(result).not.toContain('top');
+  });
+
+  it('allows safe inline styles', () => {
+    const input = '<p style="color: #333; font-size: 16px; padding: 10px">Text</p>';
+    const result = sanitizeHTML(input);
+    expect(result).toContain('color: #333');
+    expect(result).toContain('font-size: 16px');
+    expect(result).toContain('padding: 10px');
+  });
+});
+
+describe('sanitizeStyle', () => {
+  it('allows safe CSS properties', () => {
+    expect(sanitizeStyle('color: red; font-size: 14px')).toBe('color: red; font-size: 14px');
+  });
+
+  it('strips expression() values', () => {
+    expect(sanitizeStyle('color: expression(alert(1))')).toBe('');
+  });
+
+  it('strips javascript: in url()', () => {
+    expect(sanitizeStyle('background: url(javascript:alert(1))')).toBe('');
+  });
+
+  it('strips url() entirely from values', () => {
+    expect(sanitizeStyle('background: url(https://evil.com/track.gif)')).toBe('');
+  });
+
+  it('strips disallowed properties like position', () => {
+    expect(sanitizeStyle('position: fixed; color: blue')).toBe('color: blue');
+  });
+
+  it('returns empty string for fully dangerous input', () => {
+    expect(sanitizeStyle('expression(alert(1))')).toBe('');
+  });
+
+  it('handles empty string', () => {
+    expect(sanitizeStyle('')).toBe('');
+  });
 });
 
 describe('escapeHTML', () => {
@@ -94,5 +154,67 @@ describe('escapeHTML', () => {
 
   it('handles normal text', () => {
     expect(escapeHTML('Hello World')).toBe('Hello World');
+  });
+});
+
+describe('isSafeURL', () => {
+  it('allows https URLs', () => {
+    expect(isSafeURL('https://example.com')).toBe(true);
+  });
+
+  it('allows http URLs', () => {
+    expect(isSafeURL('http://example.com')).toBe(true);
+  });
+
+  it('allows mailto URLs', () => {
+    expect(isSafeURL('mailto:test@example.com')).toBe(true);
+  });
+
+  it('allows tel URLs', () => {
+    expect(isSafeURL('tel:+1234567890')).toBe(true);
+  });
+
+  it('allows fragment URLs', () => {
+    expect(isSafeURL('#section')).toBe(true);
+  });
+
+  it('allows relative paths', () => {
+    expect(isSafeURL('/about')).toBe(true);
+  });
+
+  it('allows query-string URLs', () => {
+    expect(isSafeURL('?param=value')).toBe(true);
+  });
+
+  it('rejects javascript: URLs', () => {
+    expect(isSafeURL('javascript:alert(1)')).toBe(false);
+  });
+
+  it('rejects JavaScript: URLs (case insensitive)', () => {
+    expect(isSafeURL('JavaScript:void(0)')).toBe(false);
+  });
+
+  it('rejects data: URLs', () => {
+    expect(isSafeURL('data:text/html,<script>alert(1)</script>')).toBe(false);
+  });
+
+  it('rejects vbscript: URLs', () => {
+    expect(isSafeURL('vbscript:msgbox')).toBe(false);
+  });
+
+  it('rejects empty strings', () => {
+    expect(isSafeURL('')).toBe(false);
+  });
+
+  it('rejects whitespace-only strings', () => {
+    expect(isSafeURL('   ')).toBe(false);
+  });
+
+  it('trims whitespace before checking', () => {
+    expect(isSafeURL('  https://example.com  ')).toBe(true);
+  });
+
+  it('rejects javascript: with leading whitespace (trimmed)', () => {
+    expect(isSafeURL('  javascript:alert(1)  ')).toBe(false);
   });
 });

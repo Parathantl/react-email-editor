@@ -90,7 +90,9 @@ describe('generateMJML', () => {
 
     const mjml = generateMJML(makeTemplate([section]));
     expect(mjml).toContain('<mj-text');
-    expect(mjml).toContain('<table><tr><td>Custom</td></tr></table>');
+    // sanitizeHTML normalizes table structure (adds tbody)
+    expect(mjml).toContain('<table><tbody><tr><td>Custom</td></tr></tbody></table>');
+    expect(mjml).toContain('css-class="ee-block-html"');
   });
 
   it('generates mj-image for video blocks (thumbnail linked to video)', () => {
@@ -173,5 +175,97 @@ describe('generateMJML', () => {
 
     const mjml = generateMJML(makeTemplate([section]));
     expect(mjml).toContain('href="https://example.com?a=1&amp;b=2"');
+  });
+
+  it('escapes single quotes in attribute values', () => {
+    const section = createSection();
+    const block = createBlock('button');
+    block.properties.href = "https://example.com?q=it's";
+    section.columns[0].blocks.push(block);
+
+    const mjml = generateMJML(makeTemplate([section]));
+    expect(mjml).toContain('href="https://example.com?q=it&#39;s"');
+  });
+
+  it('replaces javascript: URL with # in button href', () => {
+    const section = createSection();
+    const block = createBlock('button');
+    block.properties.text = 'Click';
+    block.properties.href = 'javascript:alert(1)';
+    section.columns[0].blocks.push(block);
+
+    const mjml = generateMJML(makeTemplate([section]));
+    expect(mjml).not.toContain('javascript:');
+    expect(mjml).toContain('href="#"');
+  });
+
+  it('replaces data: URL with # in image href', () => {
+    const section = createSection();
+    const block = createBlock('image');
+    block.properties.src = 'https://example.com/img.png';
+    block.properties.href = 'data:text/html,<script>alert(1)</script>';
+    section.columns[0].blocks.push(block);
+
+    const mjml = generateMJML(makeTemplate([section]));
+    expect(mjml).not.toContain('data:text/html');
+    expect(mjml).toContain('href="#"');
+  });
+
+  it('replaces data: URL with # in image src', () => {
+    const section = createSection();
+    const block = createBlock('image');
+    block.properties.src = 'data:image/svg+xml,<svg onload="alert(1)">';
+    section.columns[0].blocks.push(block);
+
+    const mjml = generateMJML(makeTemplate([section]));
+    expect(mjml).not.toContain('data:image');
+    expect(mjml).toContain('src="#"');
+  });
+
+  it('preserves safe https URLs in button href', () => {
+    const section = createSection();
+    const block = createBlock('button');
+    block.properties.text = 'Click';
+    block.properties.href = 'https://safe.example.com';
+    section.columns[0].blocks.push(block);
+
+    const mjml = generateMJML(makeTemplate([section]));
+    expect(mjml).toContain('href="https://safe.example.com"');
+  });
+
+  it('strips variable chips using data-variable-key attribute', () => {
+    const section = createSection();
+    const block = createBlock('text');
+    block.properties.content = '<p>Hello <span class="ee-variable-chip" data-variable-key="name" contenteditable="false">{{ name }}</span></p>';
+    section.columns[0].blocks.push(block);
+
+    const mjml = generateMJML(makeTemplate([section]));
+    expect(mjml).toContain('Hello {{ name }}');
+    expect(mjml).not.toContain('ee-variable-chip');
+  });
+
+  it('strips variable chips even with nested HTML inside span', () => {
+    const section = createSection();
+    const block = createBlock('text');
+    block.properties.content = '<p>Hi <span class="ee-variable-chip" data-variable-key="user" contenteditable="false"><em>{{ user }}</em></span>!</p>';
+    section.columns[0].blocks.push(block);
+
+    const mjml = generateMJML(makeTemplate([section]));
+    expect(mjml).toContain('Hi {{ user }}!');
+    expect(mjml).not.toContain('ee-variable-chip');
+  });
+
+  it('generates countdown with JSON metadata (not pipe-delimited)', () => {
+    const section = createSection();
+    const block = createBlock('countdown');
+    block.properties.label = 'Sale | Limited Time';
+    block.properties.targetDate = '2026-12-31T00:00';
+    section.columns[0].blocks.push(block);
+
+    const mjml = generateMJML(makeTemplate([section]));
+    expect(mjml).toContain('css-class="ee-block-countdown"');
+    expect(mjml).toContain('<!--ee-countdown:');
+    // Should contain JSON (not pipe-delimited)
+    expect(mjml).toContain('Sale | Limited Time');
   });
 });

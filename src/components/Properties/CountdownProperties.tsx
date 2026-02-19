@@ -1,10 +1,8 @@
-import React, { useCallback } from 'react';
-import type { Block, CountdownBlockProperties } from '../../types';
+import React from 'react';
+import type { Block } from '../../types';
 import { narrowBlock } from '../../types';
-import { useEditorDispatch } from '../../context/EditorContext';
-import { ColorPicker } from './controls/ColorPicker';
-import { PaddingInput } from './controls/PaddingInput';
-import { AlignmentPicker } from './controls/AlignmentPicker';
+import { useBlockUpdate } from '../../hooks/useBlockUpdate';
+import { PropertyField, FieldSeparator } from './PropertyField';
 import styles from '../../styles/properties.module.css';
 
 interface CountdownPropertiesProps {
@@ -12,17 +10,7 @@ interface CountdownPropertiesProps {
 }
 
 export function CountdownProperties({ block }: CountdownPropertiesProps) {
-  const dispatch = useEditorDispatch();
-
-  const update = useCallback(
-    (props: Partial<CountdownBlockProperties>) => {
-      dispatch({
-        type: 'UPDATE_BLOCK',
-        payload: { blockId: block.id, properties: props },
-      });
-    },
-    [dispatch, block.id],
-  );
+  const update = useBlockUpdate(block.id);
 
   if (!narrowBlock(block, 'countdown')) return null;
   const p = block.properties;
@@ -38,48 +26,14 @@ export function CountdownProperties({ block }: CountdownPropertiesProps) {
           onChange={(e) => update({ targetDate: e.target.value })}
         />
       </div>
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Label</label>
-        <input
-          className={styles.fieldInput}
-          value={p.label}
-          onChange={(e) => update({ label: e.target.value })}
-        />
-      </div>
-      <div className={styles.separator} />
-      <ColorPicker
-        label="Digit Background"
-        value={p.digitBackgroundColor}
-        onChange={(digitBackgroundColor) => update({ digitBackgroundColor })}
-      />
-      <ColorPicker
-        label="Digit Color"
-        value={p.digitColor}
-        onChange={(digitColor) => update({ digitColor })}
-      />
-      <ColorPicker
-        label="Label Color"
-        value={p.labelColor}
-        onChange={(labelColor) => update({ labelColor })}
-      />
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Font Size</label>
-        <input
-          className={styles.fieldInput}
-          value={p.fontSize}
-          onChange={(e) => update({ fontSize: e.target.value })}
-        />
-      </div>
-      <AlignmentPicker
-        label="Alignment"
-        value={p.align}
-        onChange={(align) => update({ align: align as 'left' | 'center' | 'right' })}
-      />
-      <PaddingInput
-        label="Padding"
-        value={p.padding}
-        onChange={(padding) => update({ padding })}
-      />
+      <PropertyField type="text" label="Label" value={p.label} onChange={(v) => update({ label: v })} />
+      <FieldSeparator />
+      <PropertyField type="color" label="Digit Background" value={p.digitBackgroundColor} onChange={(v) => update({ digitBackgroundColor: v })} />
+      <PropertyField type="color" label="Digit Color" value={p.digitColor} onChange={(v) => update({ digitColor: v })} />
+      <PropertyField type="color" label="Label Color" value={p.labelColor} onChange={(v) => update({ labelColor: v })} />
+      <PropertyField type="text" label="Font Size" value={p.fontSize} onChange={(v) => update({ fontSize: v })} />
+      <PropertyField type="alignment" label="Alignment" value={p.align} onChange={(v) => update({ align: v })} />
+      <PropertyField type="padding" label="Padding" value={p.padding} onChange={(v) => update({ padding: v })} />
     </div>
   );
 }

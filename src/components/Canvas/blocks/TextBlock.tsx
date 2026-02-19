@@ -1,6 +1,6 @@
-import React, { useCallback, useRef, useState, useEffect } from 'react';
+import React, { useCallback, useRef, useState, useEffect, useReducer, useMemo } from 'react';
 import type { Block } from '../../../types';
-import { useEditorDispatch, useConfigContext } from '../../../context/EditorContext';
+import { useEditorDispatch, useMethodsContext } from '../../../context/EditorContext';
 import { TipTapEditor } from '../../../tiptap/TipTapEditor';
 import { RichTextToolbar } from '../../Toolbar/RichTextToolbar';
 import type { Editor } from '@tiptap/core';
@@ -11,28 +11,32 @@ interface TextBlockProps {
   block: Block;
 }
 
-export function TextBlock({ block }: TextBlockProps) {
+const TextBlockInner = function TextBlock({ block }: TextBlockProps) {
   const dispatch = useEditorDispatch();
-  const { setActiveEditor } = useConfigContext();
+  const { setActiveEditor } = useMethodsContext();
   const editorRef = useRef<Editor | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isFocused, setIsFocused] = useState(false);
-  const [, setTick] = useState(0);
 
-  // Attach/detach editor event listeners with proper cleanup
+  // Track the editor instance in state so the effect has a proper dependency
+  const [editorInstance, setEditorInstance] = useState<Editor | null>(null);
+
+  // Force toolbar re-render when editor formatting state changes (selection/transaction)
+  const [, forceToolbarUpdate] = useReducer((c: number) => c + 1, 0);
+
   useEffect(() => {
-    const editor = editorRef.current;
-    if (!editor) return;
+    if (!editorInstance) return;
 
-    const onUpdate = () => setTick((n) => n + 1);
-    editor.on('selectionUpdate', onUpdate);
-    editor.on('transaction', onUpdate);
+    const onStateChange = () => forceToolbarUpdate();
+    editorInstance.on('selectionUpdate', onStateChange);
+    editorInstance.on('transaction', onStateChange);
 
     return () => {
-      editor.off('selectionUpdate', onUpdate);
-      editor.off('transaction', onUpdate);
+      editorInstance.off('selectionUpdate', onStateChange);
+      editorInstance.off('transaction', onStateChange);
     };
-  }, [editorRef.current]);
+  }, [editorInstance]);
 
   const handleUpdate = useCallback(
     (html: string) => {
@@ -49,8 +53,17 @@ export function TextBlock({ block }: TextBlockProps) {
     setIsFocused(true);
   }, [setActiveEditor]);
 
+  // Cleanup blur timer on unmount
+  useEffect(() => {
+    return () => {
+      if (blurTimerRef.current !== null) clearTimeout(blurTimerRef.current);
+    };
+  }, []);
+
   const handleBlur = useCallback(() => {
-    setTimeout(() => {
+    if (blurTimerRef.current !== null) clearTimeout(blurTimerRef.current);
+    blurTimerRef.current = setTimeout(() => {
+      blurTimerRef.current = null;
       const activeEl = document.activeElement;
       if (wrapperRef.current && wrapperRef.current.contains(activeEl)) {
         return;
@@ -64,29 +77,29 @@ export function TextBlock({ block }: TextBlockProps) {
 
   const handleEditorRef = useCallback((editor: Editor | null) => {
     editorRef.current = editor;
-    // Trigger re-render so useEffect picks up the new editor
-    setTick((n) => n + 1);
+    setEditorInstance(editor);
   }, []);
+
+  const p = block.properties;
+  const wrapperStyle = useMemo(() => ({
+    fontFamily: p.fontFamily,
+    fontSize: p.fontSize,
+    color: p.color,
+    lineHeight: p.lineHeight,
+    padding: p.padding,
+    fontWeight: p.fontWeight,
+    textTransform: p.textTransform,
+    letterSpacing: p.letterSpacing,
+  }), [p.fontFamily, p.fontSize, p.color, p.lineHeight, p.padding, p.fontWeight, p.textTransform, p.letterSpacing]);
 
   return (
     <div className={`ee-block-text ${styles.textBlock}`} ref={wrapperRef}>
-      {isFocused && (
+      {isFocused && editorRef.current && (
         <div className={styles.textBlockToolbar}>
           <RichTextToolbar editor={editorRef.current} />
         </div>
       )}
-      <div
-        style={{
-          fontFamily: block.properties.fontFamily,
-          fontSize: block.properties.fontSize,
-          color: block.properties.color,
-          lineHeight: block.properties.lineHeight,
-          padding: block.properties.padding,
-          fontWeight: block.properties.fontWeight,
-          textTransform: block.properties.textTransform,
-          letterSpacing: block.properties.letterSpacing,
-        }}
-      >
+      <div style={wrapperStyle}>
         <TipTapEditor
           content={block.properties.content}
           onUpdate={handleUpdate}
@@ -99,4 +112,6 @@ export function TextBlock({ block }: TextBlockProps) {
       </div>
     </div>
   );
-}
+};
+
+export const TextBlock = React.memo(TextBlockInner);

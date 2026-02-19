@@ -1,29 +1,21 @@
 import React, { useCallback } from 'react';
-import type { Block, SocialBlockProperties, SocialElement } from '../../types';
+import type { Block, SocialElement } from '../../types';
 import { narrowBlock } from '../../types';
-import { useEditorDispatch } from '../../context/EditorContext';
-import { ColorPicker } from './controls/ColorPicker';
-import { PaddingInput } from './controls/PaddingInput';
-import { AlignmentPicker } from './controls/AlignmentPicker';
+import { useBlockUpdate } from '../../hooks/useBlockUpdate';
+import { PropertyField, FieldSeparator } from './PropertyField';
 import styles from '../../styles/properties.module.css';
 import blockStyles from '../../styles/blocks.module.css';
+
+const MODE_OPTIONS = [
+  { value: 'horizontal', label: 'Horizontal' }, { value: 'vertical', label: 'Vertical' },
+];
 
 interface SocialPropertiesProps {
   block: Block;
 }
 
 export function SocialProperties({ block }: SocialPropertiesProps) {
-  const dispatch = useEditorDispatch();
-
-  const update = useCallback(
-    (props: Partial<SocialBlockProperties>) => {
-      dispatch({
-        type: 'UPDATE_BLOCK',
-        payload: { blockId: block.id, properties: props },
-      });
-    },
-    [dispatch, block.id],
-  );
+  const update = useBlockUpdate(block.id);
 
   const updateElement = useCallback(
     (index: number, changes: Partial<SocialElement>) => {
@@ -63,65 +55,15 @@ export function SocialProperties({ block }: SocialPropertiesProps) {
 
   return (
     <div className={styles.propertiesBody}>
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Mode</label>
-        <select
-          className={styles.fieldSelect}
-          value={p.mode}
-          onChange={(e) => update({ mode: e.target.value as 'horizontal' | 'vertical' })}
-        >
-          <option value="horizontal">Horizontal</option>
-          <option value="vertical">Vertical</option>
-        </select>
-      </div>
-      <AlignmentPicker
-        label="Alignment"
-        value={p.align}
-        onChange={(align) => update({ align: align as 'left' | 'center' | 'right' })}
-      />
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Icon Size</label>
-        <input
-          className={styles.fieldInput}
-          value={p.iconSize}
-          onChange={(e) => update({ iconSize: e.target.value })}
-        />
-      </div>
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Icon Padding</label>
-        <input
-          className={styles.fieldInput}
-          value={p.iconPadding}
-          onChange={(e) => update({ iconPadding: e.target.value })}
-        />
-      </div>
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Border Radius</label>
-        <input
-          className={styles.fieldInput}
-          value={p.borderRadius}
-          onChange={(e) => update({ borderRadius: e.target.value })}
-        />
-      </div>
-      <ColorPicker
-        label="Text Color"
-        value={p.color}
-        onChange={(color) => update({ color })}
-      />
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Font Size</label>
-        <input
-          className={styles.fieldInput}
-          value={p.fontSize}
-          onChange={(e) => update({ fontSize: e.target.value })}
-        />
-      </div>
-      <PaddingInput
-        label="Padding"
-        value={p.padding}
-        onChange={(padding) => update({ padding })}
-      />
-      <div className={styles.separator} />
+      <PropertyField type="select" label="Mode" value={p.mode} onChange={(v) => update({ mode: v })} options={MODE_OPTIONS} />
+      <PropertyField type="alignment" label="Alignment" value={p.align} onChange={(v) => update({ align: v })} />
+      <PropertyField type="text" label="Icon Size" value={p.iconSize} onChange={(v) => update({ iconSize: v })} />
+      <PropertyField type="text" label="Icon Padding" value={p.iconPadding} onChange={(v) => update({ iconPadding: v })} />
+      <PropertyField type="text" label="Border Radius" value={p.borderRadius} onChange={(v) => update({ borderRadius: v })} />
+      <PropertyField type="color" label="Text Color" value={p.color} onChange={(v) => update({ color: v })} />
+      <PropertyField type="text" label="Font Size" value={p.fontSize} onChange={(v) => update({ fontSize: v })} />
+      <PropertyField type="padding" label="Padding" value={p.padding} onChange={(v) => update({ padding: v })} />
+      <FieldSeparator />
       <div className={styles.fieldGroup}>
         <label className={styles.fieldLabel}>Social Elements</label>
         <div className={blockStyles.socialElementsContainer}>
@@ -144,29 +86,9 @@ export function SocialProperties({ block }: SocialPropertiesProps) {
                   <option value="tiktok">TikTok</option>
                   <option value="web">Web</option>
                 </select>
-                <button
-                  className={`ee-item-move-up ${styles.itemActionBtn}`}
-                  onClick={() => moveElement(index, -1)}
-                  disabled={index === 0}
-                  title="Move up"
-                >
-                  ↑
-                </button>
-                <button
-                  className={`ee-item-move-down ${styles.itemActionBtn}`}
-                  onClick={() => moveElement(index, 1)}
-                  disabled={index === p.elements.length - 1}
-                  title="Move down"
-                >
-                  ↓
-                </button>
-                <button
-                  className={`ee-item-remove ${styles.itemActionBtnDanger}`}
-                  onClick={() => removeElement(index)}
-                  title="Remove"
-                >
-                  ×
-                </button>
+                <button className={`ee-item-move-up ${styles.itemActionBtn}`} onClick={() => moveElement(index, -1)} disabled={index === 0} title="Move up">↑</button>
+                <button className={`ee-item-move-down ${styles.itemActionBtn}`} onClick={() => moveElement(index, 1)} disabled={index === p.elements.length - 1} title="Move down">↓</button>
+                <button className={`ee-item-remove ${styles.itemActionBtnDanger}`} onClick={() => removeElement(index)} title="Remove">×</button>
               </div>
               <input
                 className={styles.fieldInputStacked}
@@ -183,12 +105,7 @@ export function SocialProperties({ block }: SocialPropertiesProps) {
             </div>
           ))}
         </div>
-        <button
-          className={`ee-add-item ${styles.addItemBtn}`}
-          onClick={addElement}
-        >
-          + Add Element
-        </button>
+        <button className={`ee-add-item ${styles.addItemBtn}`} onClick={addElement}>+ Add Element</button>
       </div>
     </div>
   );

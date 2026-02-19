@@ -1,9 +1,10 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
-import { useTemplateContext, useEditorDispatch } from '../../context/EditorContext';
+
+import { useTemplateContext, useEditorDispatch, useHistoryContext } from '../../context/EditorContext';
 import { generateMJML } from '../../mjml/generator';
 import { compileMJMLToHTML } from '../../mjml/compiler';
 import { parseMJML } from '../../mjml/parser';
-import type { ActiveTab } from '../../types';
+import type { ActiveTab, EmailTemplate } from '../../types';
 import styles from '../../styles/toolbar.module.css';
 import editorStyles from '../../styles/editor.module.css';
 
@@ -14,11 +15,22 @@ interface ToolbarProps {
   onToggleProperties?: () => void;
 }
 
-export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggleProperties }: ToolbarProps) {
-  const { template, activeTab, historyIndex, history } = useTemplateContext();
+/**
+ * Inner component that subscribes only to activeTab (not the full template).
+ * Template is accessed via ref for export operations to avoid re-renders on every edit.
+ */
+export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggleProperties }: ToolbarProps) {
+  const { template, activeTab } = useTemplateContext();
+  const { canUndo, canRedo } = useHistoryContext();
   const dispatch = useEditorDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [exportOpen, setExportOpen] = useState(false);
+
+  // Keep a ref to the current template so export callbacks don't need template as a dependency.
+  // Toolbar still re-renders on template changes (due to TemplateContext), but the export
+  // callbacks remain stable (empty deps), reducing unnecessary child re-renders.
+  const templateRef = useRef<EmailTemplate>(template);
+  templateRef.current = template;
 
   // Close export dropdown when clicking outside
   useEffect(() => {
@@ -27,9 +39,6 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
   }, [exportOpen]);
-  const canUndo = historyIndex > 0;
-  const canRedo = historyIndex < history.length - 1;
-
   const handleTabChange = useCallback(
     (tab: ActiveTab) => {
       dispatch({ type: 'SET_ACTIVE_TAB', payload: tab });
@@ -46,7 +55,7 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
   }, [dispatch]);
 
   const handleExportMJML = useCallback(() => {
-    const mjml = generateMJML(template);
+    const mjml = generateMJML(templateRef.current!);
     const blob = new Blob([mjml], { type: 'text/xml' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -54,10 +63,10 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
     a.download = 'template.mjml';
     a.click();
     URL.revokeObjectURL(url);
-  }, [template]);
+  }, []);
 
   const handleExportHTML = useCallback(async () => {
-    const mjml = generateMJML(template);
+    const mjml = generateMJML(templateRef.current!);
     const result = await compileMJMLToHTML(mjml);
     const blob = new Blob([result.html], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
@@ -66,10 +75,10 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
     a.download = 'template.html';
     a.click();
     URL.revokeObjectURL(url);
-  }, [template]);
+  }, []);
 
   const handleExportPDF = useCallback(async () => {
-    const mjml = generateMJML(template);
+    const mjml = generateMJML(templateRef.current!);
     const result = await compileMJMLToHTML(mjml);
     const printStyles = `
       <style>
@@ -79,7 +88,6 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
         }
       </style>
     `;
-    // Inject print styles into <head> to suppress browser headers/footers
     const htmlWithPrintStyles = result.html.replace(
       '</head>',
       `${printStyles}</head>`,
@@ -94,7 +102,7 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
     doc.close();
     iframe.contentWindow!.print();
     setTimeout(() => document.body.removeChild(iframe), 1000);
-  }, [template]);
+  }, []);
 
   const handleImportMJML = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -218,4 +226,4 @@ export function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggle
       />
     </div>
   );
-}
+});

@@ -1,5 +1,4 @@
 import { createContext, useContext } from 'react';
-import type { Editor } from '@tiptap/core';
 import type { Variable, VariableChipStyle, ImageUploadAdapter } from '../types';
 
 export interface ConfigContextValue {
@@ -7,9 +6,6 @@ export interface ConfigContextValue {
   predefinedVariables: Variable[];
   customVariables: Variable[];
   imageUploadAdapter?: ImageUploadAdapter;
-  setActiveEditor: (editor: Editor | null) => void;
-  getActiveEditor: () => Editor | null;
-  insertVariable: (key: string) => boolean;
   addCustomVariable: (variable: Variable) => void;
   removeCustomVariable: (key: string) => void;
   variableChipStyle: VariableChipStyle;

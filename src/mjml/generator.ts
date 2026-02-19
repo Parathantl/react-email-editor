@@ -1,6 +1,6 @@
 import type { EmailTemplate, Section, Column, Block } from '../types';
 import { blockGeneratorRegistry, registerBlockGenerator } from '../registry';
-import { escapeHTML } from '../utils/sanitize';
+import { escapeHTML, sanitizeHTML, isSafeURL } from '../utils/sanitize';
 
 export function generateMJML(template: EmailTemplate): string {
   const { globalStyles, sections } = template;
@@ -21,7 +21,9 @@ export function generateMJML(template: EmailTemplate): string {
   lines.push('    </mj-attributes>');
   if (headMetadata?.headStyles) {
     for (const style of headMetadata.headStyles) {
-      lines.push(`    <mj-style>${style}</mj-style>`);
+      // Sanitize: strip any closing mj-style tags to prevent MJML injection
+      const safe = style.replace(/<\/?mj-/gi, '');
+      lines.push(`    <mj-style>${safe}</mj-style>`);
     }
   }
   lines.push('  </mj-head>');
@@ -106,7 +108,7 @@ function generateHeroAsSection(block: Block, indent: string): string {
 
   if (p.buttonText) {
     const buttonAttrs = buildAttrs({
-      href: p.buttonHref,
+      href: safeHref(p.buttonHref),
       'background-color': p.buttonBackgroundColor,
       color: p.buttonColor,
       'border-radius': p.buttonBorderRadius,
@@ -172,7 +174,7 @@ function generateTextBlock(block: Block, indent: string): string {
 function generateButtonBlock(block: Block, indent: string): string {
   const p = block.properties;
   const attrs = buildAttrs({
-    href: p.href,
+    href: safeHref(p.href),
     'background-color': p.backgroundColor,
     color: p.color,
     'font-family': p.fontFamily,
@@ -193,9 +195,9 @@ function generateButtonBlock(block: Block, indent: string): string {
 function generateImageBlock(block: Block, indent: string): string {
   const p = block.properties;
   const attrs = buildAttrs({
-    src: p.src,
+    src: safeHref(p.src),
     alt: p.alt,
-    href: p.href || undefined,
+    href: p.href ? safeHref(p.href) : undefined,
     width: p.width,
     height: p.height !== 'auto' ? p.height : undefined,
     padding: p.padding,
@@ -244,8 +246,8 @@ function generateSocialBlock(block: Block, indent: string): string {
   for (const element of p.elements) {
     const elAttrs = buildAttrs({
       name: element.name,
-      href: element.href,
-      src: element.src,
+      href: safeHref(element.href),
+      src: element.src ? safeHref(element.src) : undefined,
       'background-color': element.backgroundColor,
       color: element.color,
     });
@@ -259,19 +261,21 @@ function generateSocialBlock(block: Block, indent: string): string {
 
 function generateHtmlBlock(block: Block, indent: string): string {
   const p = block.properties;
-  const attrs = buildAttrs({ padding: p.padding });
-  return `${indent}<mj-text${attrs}>${p.content || ''}</mj-text>`;
+  const attrs = buildAttrs({ padding: p.padding, 'css-class': 'ee-block-html' });
+  const content = sanitizeHTML(p.content || '');
+  return `${indent}<mj-text${attrs}>${content}</mj-text>`;
 }
 
 function generateVideoBlock(block: Block, indent: string): string {
   const p = block.properties;
   const thumbnailUrl = p.thumbnailUrl || getAutoThumbnail(p.src);
   const attrs = buildAttrs({
-    src: thumbnailUrl,
-    href: p.src,
+    src: safeHref(thumbnailUrl),
+    href: safeHref(p.src),
     alt: p.alt,
     padding: p.padding,
     align: p.align,
+    'css-class': 'ee-block-video',
   });
   return `${indent}<mj-image${attrs} />`;
 }
@@ -296,6 +300,7 @@ function generateHeadingBlock(block: Block, indent: string): string {
     'font-weight': p.fontWeight && p.fontWeight !== 'normal' ? p.fontWeight : undefined,
     'text-transform': p.textTransform && p.textTransform !== 'none' ? p.textTransform : undefined,
     'letter-spacing': p.letterSpacing && p.letterSpacing !== 'normal' ? p.letterSpacing : undefined,
+    'css-class': `ee-block-heading ee-heading-${level}`,
   });
 
   const content = stripVariableChips(p.content || '');
@@ -335,8 +340,22 @@ function generateCountdownBlock(block: Block, indent: string): string {
   }
   html += `<table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto"><tr>${cells}</tr></table>`;
 
-  const attrs = buildAttrs({ padding: p.padding, align: p.align });
-  return `${indent}<mj-text${attrs}>${html}</mj-text>`;
+  // Embed countdown metadata as data attributes for round-trip parsing
+  const attrs = buildAttrs({
+    padding: p.padding,
+    align: p.align,
+    'css-class': 'ee-block-countdown',
+  });
+  const metaJson = JSON.stringify({
+    targetDate: p.targetDate,
+    label: p.label,
+    digitBackgroundColor: p.digitBackgroundColor,
+    digitColor: p.digitColor,
+    labelColor: p.labelColor,
+    fontSize: p.fontSize,
+  });
+  const meta = `<!--ee-countdown:${escapeAttr(metaJson)}-->`;
+  return `${indent}<mj-text${attrs}>${meta}${html}</mj-text>`;
 }
 
 function generateMenuBlock(block: Block, indent: string): string {
@@ -353,7 +372,7 @@ function generateMenuBlock(block: Block, indent: string): string {
 
   for (const item of p.items) {
     const linkAttrs = buildAttrs({
-      href: item.href,
+      href: safeHref(item.href),
       color: p.color,
       'font-family': p.fontFamily,
       'font-size': p.fontSize,
@@ -376,7 +395,7 @@ function generateHeroBlock(block: Block, indent: string): string {
     html += `<p style="color:${escapeAttr(p.subtextColor)};font-size:${escapeAttr(p.subtextFontSize)};line-height:1.5;margin:0 0 24px">${escapeHTML(p.subtext)}</p>`;
   }
   if (p.buttonText) {
-    html += `<a href="${escapeAttr(p.buttonHref)}" style="display:inline-block;background-color:${escapeAttr(p.buttonBackgroundColor)};color:${escapeAttr(p.buttonColor)};border-radius:${escapeAttr(p.buttonBorderRadius)};padding:12px 28px;font-weight:600;font-size:16px;text-decoration:none">${escapeHTML(p.buttonText)}</a>`;
+    html += `<a href="${escapeAttr(safeHref(p.buttonHref))}" style="display:inline-block;background-color:${escapeAttr(p.buttonBackgroundColor)};color:${escapeAttr(p.buttonColor)};border-radius:${escapeAttr(p.buttonBorderRadius)};padding:12px 28px;font-weight:600;font-size:16px;text-decoration:none">${escapeHTML(p.buttonText)}</a>`;
   }
 
   const attrs = buildAttrs({ padding: p.padding, align: p.align });
@@ -389,11 +408,12 @@ function generateHeroBlock(block: Block, indent: string): string {
  * Strip TipTap variable chip wrappers from content HTML.
  * Converts `<span class="ee-variable-chip" data-variable-key="name" contenteditable="false">{{ name }}</span>`
  * to plain `{{ name }}`.
+ * Uses data-variable-key attribute as source of truth to handle any inner HTML.
  */
 function stripVariableChips(html: string): string {
   return html.replace(
-    /<span[^>]*class="ee-variable-chip"[^>]*>([^<]*)<\/span>/g,
-    (_match, text) => text.trim(),
+    /<span[^>]*data-variable-key="([^"]*)"[^>]*>[\s\S]*?<\/span>/g,
+    (_match, key) => `{{ ${key} }}`,
   );
 }
 
@@ -408,5 +428,11 @@ function buildAttrs(obj: Record<string, string | undefined>): string {
 }
 
 function escapeAttr(str: string): string {
-  return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+/** Sanitize href: return '#' for dangerous URL schemes, pass through safe ones. */
+function safeHref(url: string | undefined): string {
+  if (!url) return '#';
+  return isSafeURL(url) ? url : '#';
 }

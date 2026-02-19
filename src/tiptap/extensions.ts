@@ -12,7 +12,9 @@ import { FontFamily } from './FontFamily';
 
 export function getExtensions(placeholder?: string) {
   return [
-    StarterKit,
+    StarterKit.configure({
+      history: false,
+    }),
     Underline,
     TextAlign.configure({
       types: ['heading', 'paragraph'],

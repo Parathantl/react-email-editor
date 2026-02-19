@@ -4,7 +4,6 @@ export { EmailEditor } from './components/EmailEditor';
 // Context & hooks
 export {
   EditorProvider,
-  useEditor,
   useEditorState,
   useEditorDispatch,
   useSelectedBlock,
@@ -16,6 +15,9 @@ export {
   useSelectionContext,
   useDispatchContext,
   useConfigContext,
+  useMethodsContext,
+  useHistoryContext,
+  useBlockIndexContext,
 } from './context/EditorContext';
 
 // Type guard
@@ -58,6 +60,9 @@ export type {
   MenuItem,
   MenuBlockProperties,
   HeroBlockProperties,
+  HtmlBlockProperties,
+  VideoBlockProperties,
+  HeadingBlockProperties,
   PersistenceAdapter,
 } from './types';
 
@@ -73,7 +78,9 @@ export { VariableNode } from './tiptap/VariableNode';
 // Utilities
 export { generateId, generateBlockId, generateSectionId, generateColumnId } from './utils/id';
 export { extractVariableKeys, replaceVariables, groupVariables } from './utils/variables';
-export { sanitizeHTML, escapeHTML } from './utils/sanitize';
+export { sanitizeHTML, escapeHTML, isSafeURL } from './utils/sanitize';
+export { validateTemplate, sanitizeTemplate } from './utils/validate';
+export type { ValidationResult } from './utils/validate';
 export { localStorageAdapter } from './utils/persistence';
 
 // Block type registries (for extending with custom block types)
@@ -82,6 +89,7 @@ export {
   registerBlockProperties,
   registerBlockGenerator,
   registerBlockParser,
+  getRegisteredBlockTypes,
 } from './registry';
 
 // Constants

@@ -1,8 +1,7 @@
 import React, { useCallback } from 'react';
 import type { Block, VideoBlockProperties } from '../../types';
-import { useEditorDispatch } from '../../context/EditorContext';
-import { PaddingInput } from './controls/PaddingInput';
-import { AlignmentPicker } from './controls/AlignmentPicker';
+import { useBlockUpdate } from '../../hooks/useBlockUpdate';
+import { PropertyField } from './PropertyField';
 import styles from '../../styles/properties.module.css';
 
 interface VideoPropertiesProps {
@@ -17,23 +16,12 @@ function getAutoThumbnail(url: string): string {
 }
 
 export function VideoProperties({ block }: VideoPropertiesProps) {
-  const dispatch = useEditorDispatch();
+  const update = useBlockUpdate(block.id);
   const p = block.properties;
-
-  const update = useCallback(
-    (props: Partial<VideoBlockProperties>) => {
-      dispatch({
-        type: 'UPDATE_BLOCK',
-        payload: { blockId: block.id, properties: props },
-      });
-    },
-    [dispatch, block.id],
-  );
 
   const handleVideoUrlChange = useCallback(
     (src: string) => {
       const updates: Partial<VideoBlockProperties> = { src };
-      // Auto-generate thumbnail if not manually set
       if (!p.thumbnailUrl) {
         const auto = getAutoThumbnail(src);
         if (auto) updates.thumbnailUrl = auto;
@@ -76,25 +64,9 @@ export function VideoProperties({ block }: VideoPropertiesProps) {
           </button>
         )}
       </div>
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Alt Text</label>
-        <input
-          className={styles.fieldInput}
-          value={p.alt}
-          onChange={(e) => update({ alt: e.target.value })}
-          placeholder="Video description"
-        />
-      </div>
-      <AlignmentPicker
-        label="Alignment"
-        value={p.align}
-        onChange={(align) => update({ align })}
-      />
-      <PaddingInput
-        label="Padding"
-        value={p.padding}
-        onChange={(padding) => update({ padding })}
-      />
+      <PropertyField type="text" label="Alt Text" value={p.alt} onChange={(v) => update({ alt: v })} placeholder="Video description" />
+      <PropertyField type="alignment" label="Alignment" value={p.align} onChange={(v) => update({ align: v })} />
+      <PropertyField type="padding" label="Padding" value={p.padding} onChange={(v) => update({ padding: v })} />
     </div>
   );
 }

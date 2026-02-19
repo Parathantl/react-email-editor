@@ -355,6 +355,12 @@
   border-color: var(--ee-border-focus);
 }
 
+.richTextLinkError {
+  color: var(--ee-color-danger, #dc2626);
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+
 .richTextLinkActions {
   display: flex;
   gap: 6px;

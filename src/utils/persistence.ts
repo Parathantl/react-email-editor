@@ -1,4 +1,5 @@
 import type { PersistenceAdapter, EmailTemplate } from '../types';
+import { sanitizeTemplate } from './validate';
 
 /**
  * Default persistence adapter using localStorage.
@@ -17,7 +18,11 @@ export const localStorageAdapter: PersistenceAdapter = {
   load(key: string): EmailTemplate | null {
     try {
       const data = localStorage.getItem(key);
-      return data ? JSON.parse(data) : null;
+      if (!data) return null;
+      const parsed = JSON.parse(data);
+      // Basic schema validation: must have sections array
+      if (!parsed || !Array.isArray(parsed.sections)) return null;
+      return sanitizeTemplate(parsed);
     } catch {
       return null;
     }

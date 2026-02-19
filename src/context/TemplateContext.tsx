@@ -3,8 +3,6 @@ import type { EmailTemplate, ActiveTab } from '../types';
 
 export interface TemplateContextValue {
   template: EmailTemplate;
-  history: EmailTemplate[];
-  historyIndex: number;
   isDirty: boolean;
   activeTab: ActiveTab;
 }

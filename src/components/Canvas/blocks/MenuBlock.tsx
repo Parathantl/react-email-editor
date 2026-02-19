@@ -1,5 +1,5 @@
-import React from 'react';
-import type { Block } from '../../../types';
+import React, { useMemo } from 'react';
+import type { Block, MenuItem } from '../../../types';
 import styles from '../../../styles/blocks.module.css';
 
 interface MenuBlockProps {
@@ -16,18 +16,28 @@ export const MenuBlock = React.memo(function MenuBlock({ block }: MenuBlockProps
         ? 'flex-end'
         : 'center';
 
+  const wrapperStyle = useMemo(() => ({
+    padding: p.padding, justifyContent: alignStyle,
+  }), [p.padding, alignStyle]);
+
+  const itemsStyle = useMemo(() => ({
+    justifyContent: alignStyle,
+  }), [alignStyle]);
+
+  const itemStyle = useMemo(() => ({
+    fontFamily: p.fontFamily,
+    fontSize: p.fontSize,
+    color: p.color,
+  }), [p.fontFamily, p.fontSize, p.color]);
+
   return (
-    <div className={`ee-block-menu ${styles.menuBlock}`} style={{ padding: p.padding, justifyContent: alignStyle }}>
-      <div className={styles.menuItems} style={{ justifyContent: alignStyle }}>
-        {p.items.map((item: any, idx: number) => (
+    <div className={`ee-block-menu ${styles.menuBlock}`} style={wrapperStyle}>
+      <div className={styles.menuItems} style={itemsStyle}>
+        {p.items.map((item: MenuItem) => (
           <span
-            key={idx}
+            key={`${item.text}-${item.href}`}
             className={styles.menuItem}
-            style={{
-              fontFamily: p.fontFamily,
-              fontSize: p.fontSize,
-              color: p.color,
-            }}
+            style={itemStyle}
           >
             {item.text}
           </span>

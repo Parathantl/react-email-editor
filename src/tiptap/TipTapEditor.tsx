@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useMemo, useEffect, useRef } from 'react';
 import { useEditor as useTipTapEditor, EditorContent } from '@tiptap/react';
 import type { Editor } from '@tiptap/core';
 import { getExtensions } from './extensions';
@@ -25,8 +25,21 @@ export function TipTapEditor({
   editorRef,
   placeholder,
 }: TipTapEditorProps) {
+  // Memoize extensions to prevent TipTap editor re-creation on every render
+  const extensions = useMemo(() => getExtensions(placeholder), [placeholder]);
+
+  // Use refs for callbacks to avoid stale closures in TipTap event handlers
+  const onUpdateRef = useRef(onUpdate);
+  onUpdateRef.current = onUpdate;
+  const onFocusRef = useRef(onFocus);
+  onFocusRef.current = onFocus;
+  const onBlurRef = useRef(onBlur);
+  onBlurRef.current = onBlur;
+  const editorRefCb = useRef(editorRef);
+  editorRefCb.current = editorRef;
+
   const editor = useTipTapEditor({
-    extensions: getExtensions(placeholder),
+    extensions,
     content,
     editable,
     editorProps: {
@@ -35,17 +48,28 @@ export function TipTapEditor({
       },
     },
     onUpdate: ({ editor: e }) => {
-      onUpdate(e.getHTML());
+      onUpdateRef.current(e.getHTML());
     },
-    onFocus: () => onFocus?.(),
-    onBlur: () => onBlur?.(),
+    onFocus: () => onFocusRef.current?.(),
+    onBlur: () => onBlurRef.current?.(),
     onCreate: ({ editor: e }) => {
-      editorRef?.(e);
+      editorRefCb.current?.(e);
     },
     onDestroy: () => {
-      editorRef?.(null);
+      editorRefCb.current?.(null);
     },
   });
+
+  // Sync content from external changes (undo/redo, loadJSON, loadMJML)
+  // Only update if the editor is not focused (user is not actively editing)
+  useEffect(() => {
+    if (!editor || editor.isDestroyed) return;
+    if (editor.isFocused) return;
+    const currentHTML = editor.getHTML();
+    if (currentHTML !== content) {
+      editor.commands.setContent(content, false);
+    }
+  }, [editor, content]);
 
   return (
     <div className={className}>

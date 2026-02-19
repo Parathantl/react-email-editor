@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import type { HeadMetadata } from '../../types';
 import { useTemplateContext, useEditorDispatch } from '../../context/EditorContext';
+import { PropertyField } from './PropertyField';
 import styles from '../../styles/properties.module.css';
 
 export function HeadMetadataProperties() {
@@ -17,38 +18,20 @@ export function HeadMetadataProperties() {
 
   return (
     <div className={styles.propertiesBody}>
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Email Title</label>
-        <input
-          className={styles.fieldInput}
-          value={metadata.title}
-          onChange={(e) => update({ title: e.target.value })}
-          placeholder="Email title (mj-title)"
-        />
-      </div>
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Preview Text</label>
-        <input
-          className={styles.fieldInput}
-          value={metadata.previewText}
-          onChange={(e) => update({ previewText: e.target.value })}
-          placeholder="Preview text shown in inbox (mj-preview)"
-        />
-      </div>
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Custom Styles</label>
-        <textarea
-          className={`ee-head-styles-textarea ${styles.fieldTextareaCode}`}
-          value={metadata.headStyles.join('\n\n')}
-          onChange={(e) => {
-            const value = e.target.value;
-            const headStyles = value.trim() ? [value] : [];
-            update({ headStyles });
-          }}
-          placeholder="Custom CSS (mj-style)"
-          rows={6}
-        />
-      </div>
+      <PropertyField type="text" label="Email Title" value={metadata.title} onChange={(v) => update({ title: v })} placeholder="Email title (mj-title)" />
+      <PropertyField type="text" label="Preview Text" value={metadata.previewText} onChange={(v) => update({ previewText: v })} placeholder="Preview text shown in inbox (mj-preview)" />
+      <PropertyField
+        type="textarea"
+        label="Custom Styles"
+        value={metadata.headStyles.join('\n\n')}
+        onChange={(v) => {
+          const headStyles = v.trim() ? [v] : [];
+          update({ headStyles });
+        }}
+        placeholder="Custom CSS (mj-style)"
+        rows={6}
+        code
+      />
     </div>
   );
 }

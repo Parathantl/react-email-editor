@@ -6,7 +6,7 @@ import { createSection, createSectionWithBlock } from '../../utils/factory';
 import { isDropAllowed, getBlockTypeFromDrop } from '../../utils/dnd';
 import styles from '../../styles/canvas.module.css';
 
-export function Canvas() {
+export const Canvas = React.memo(function Canvas() {
   const { template } = useTemplateContext();
   const dispatch = useEditorDispatch();
   const [isDragOver, setIsDragOver] = useState(false);
@@ -16,8 +16,7 @@ export function Canvas() {
   }, [dispatch]);
 
   const handleCanvasClick = useCallback(() => {
-    dispatch({ type: 'SELECT_BLOCK', payload: null });
-    dispatch({ type: 'SELECT_SECTION', payload: null });
+    dispatch({ type: 'DESELECT_ALL' });
   }, [dispatch]);
 
   const handleBodyDragOver = useCallback((e: React.DragEvent) => {
@@ -53,6 +52,8 @@ export function Canvas() {
         type: 'SELECT_BLOCK',
         payload: { sectionId: section.id, columnId: column.id, blockId: block.id },
       });
+      // Note: ADD_SECTION must happen first so the section exists before selection.
+      // These are both cheap (SELECT_BLOCK is UI-only, no history push).
     },
     [dispatch],
   );
@@ -87,4 +88,4 @@ export function Canvas() {
       </div>
     </div>
   );
-}
+});

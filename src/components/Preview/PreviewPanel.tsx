@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { useEditorState } from '../../context/EditorContext';
+import { useTemplateContext } from '../../context/EditorContext';
 import { generateMJML } from '../../mjml/generator';
 import { compileMJMLToHTML } from '../../mjml/compiler';
 import styles from '../../styles/preview.module.css';
@@ -12,7 +12,7 @@ const PREVIEW_WIDTHS: Record<PreviewMode, number> = {
 };
 
 export function PreviewPanel() {
-  const state = useEditorState();
+  const { template } = useTemplateContext();
   const [html, setHtml] = useState('');
   const [previewMode, setPreviewMode] = useState<PreviewMode>('desktop');
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -22,7 +22,7 @@ export function PreviewPanel() {
     let cancelled = false;
     const timer = setTimeout(() => {
       async function compile() {
-        const mjml = generateMJML(state.template);
+        const mjml = generateMJML(template);
         const result = await compileMJMLToHTML(mjml);
         if (!cancelled) {
           setHtml(result.html);
@@ -34,7 +34,7 @@ export function PreviewPanel() {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [state.template]);
+  }, [template]);
 
   useEffect(() => {
     if (iframeRef.current && html) {

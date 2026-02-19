@@ -1,9 +1,9 @@
 import React from 'react';
-import type { Block } from '../../types';
+import type { Block, BlockType } from '../../types';
 import { useSelectedBlock, useSelectedSection } from '../../context/EditorContext';
+import { blockPropertiesRegistry } from '../../registry';
 import { SectionProperties } from './SectionProperties';
 import { HeadMetadataProperties } from './HeadMetadataProperties';
-import { blockPropertiesRegistry, registerBlockProperties } from '../../registry';
 import { TextProperties } from './TextProperties';
 import { ButtonProperties } from './ButtonProperties';
 import { ImageProperties } from './ImageProperties';
@@ -18,19 +18,28 @@ import { MenuProperties } from './MenuProperties';
 import { HeroProperties } from './HeroProperties';
 import styles from '../../styles/properties.module.css';
 
-// Register built-in property panels
-registerBlockProperties('text', TextProperties as React.ComponentType<{ block: Block }>);
-registerBlockProperties('button', ButtonProperties as React.ComponentType<{ block: Block }>);
-registerBlockProperties('image', ImageProperties as React.ComponentType<{ block: Block }>);
-registerBlockProperties('divider', DividerProperties as React.ComponentType<{ block: Block }>);
-registerBlockProperties('spacer', SpacerProperties as React.ComponentType<{ block: Block }>);
-registerBlockProperties('social', SocialProperties as React.ComponentType<{ block: Block }>);
-registerBlockProperties('html', HtmlProperties as React.ComponentType<{ block: Block }>);
-registerBlockProperties('video', VideoProperties as React.ComponentType<{ block: Block }>);
-registerBlockProperties('heading', HeadingProperties as React.ComponentType<{ block: Block }>);
-registerBlockProperties('countdown', CountdownProperties as React.ComponentType<{ block: Block }>);
-registerBlockProperties('menu', MenuProperties as React.ComponentType<{ block: Block }>);
-registerBlockProperties('hero', HeroProperties as React.ComponentType<{ block: Block }>);
+type BlockPanelComponent = React.ComponentType<{ block: Block }>;
+
+/** Static lookup for built-in block property panels — no module-level side effects */
+const BUILT_IN_PANELS: Record<string, BlockPanelComponent> = {
+  text: TextProperties as BlockPanelComponent,
+  button: ButtonProperties as BlockPanelComponent,
+  image: ImageProperties as BlockPanelComponent,
+  divider: DividerProperties as BlockPanelComponent,
+  spacer: SpacerProperties as BlockPanelComponent,
+  social: SocialProperties as BlockPanelComponent,
+  html: HtmlProperties as BlockPanelComponent,
+  video: VideoProperties as BlockPanelComponent,
+  heading: HeadingProperties as BlockPanelComponent,
+  countdown: CountdownProperties as BlockPanelComponent,
+  menu: MenuProperties as BlockPanelComponent,
+  hero: HeroProperties as BlockPanelComponent,
+};
+
+function getBlockPanel(type: string): BlockPanelComponent | undefined {
+  // Custom-registered panels take precedence over built-in ones
+  return blockPropertiesRegistry[type] ?? BUILT_IN_PANELS[type];
+}
 
 export function PropertiesPanel() {
   const selectedBlock = useSelectedBlock();
@@ -38,7 +47,7 @@ export function PropertiesPanel() {
 
   if (selectedBlock) {
     const title = selectedBlock.type.charAt(0).toUpperCase() + selectedBlock.type.slice(1);
-    const Component = blockPropertiesRegistry[selectedBlock.type];
+    const Component = getBlockPanel(selectedBlock.type);
     return (
       <div className={`ee-properties-panel ${styles.propertiesPanel}`}>
         <div className={`ee-properties-header ${styles.propertiesHeader}`}>{title} Properties</div>

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { isDropAllowed, getBlockTypeFromDrop, getBlockMoveFromDrop, DND_TYPES } from '../../utils/dnd';
 import { useEditorDispatch } from '../../context/EditorContext';
 import { generateBlockId } from '../../utils/id';
@@ -13,9 +13,10 @@ interface DropZoneProps {
   emptyPlaceholder?: boolean;
 }
 
-export function DropZone({ sectionId, columnId, index, emptyPlaceholder }: DropZoneProps) {
+export const DropZone = React.memo(function DropZone({ sectionId, columnId, index, emptyPlaceholder }: DropZoneProps) {
   const dispatch = useEditorDispatch();
   const [isOver, setIsOver] = useState(false);
+  const isOverRef = useRef(false);
 
   const handleDragOver = useCallback(
     (e: React.DragEvent) => {
@@ -23,7 +24,10 @@ export function DropZone({ sectionId, columnId, index, emptyPlaceholder }: DropZ
       e.preventDefault();
       e.stopPropagation();
       e.dataTransfer.dropEffect = e.dataTransfer.types.includes(DND_TYPES.BLOCK_ID) ? 'move' : 'copy';
-      setIsOver(true);
+      if (!isOverRef.current) {
+        isOverRef.current = true;
+        setIsOver(true);
+      }
     },
     [],
   );
@@ -40,6 +44,7 @@ export function DropZone({ sectionId, columnId, index, emptyPlaceholder }: DropZ
     ) {
       return;
     }
+    isOverRef.current = false;
     setIsOver(false);
   }, []);
 
@@ -47,6 +52,7 @@ export function DropZone({ sectionId, columnId, index, emptyPlaceholder }: DropZ
     (e: React.DragEvent) => {
       e.preventDefault();
       e.stopPropagation();
+      isOverRef.current = false;
       setIsOver(false);
 
       // Check for new block from palette
@@ -55,15 +61,11 @@ export function DropZone({ sectionId, columnId, index, emptyPlaceholder }: DropZ
         const block = {
           id: generateBlockId(),
           type: blockType,
-          properties: { ...DEFAULT_BLOCK_PROPERTIES[blockType] },
+          properties: JSON.parse(JSON.stringify(DEFAULT_BLOCK_PROPERTIES[blockType])),
         };
         dispatch({
-          type: 'ADD_BLOCK',
+          type: 'ADD_BLOCK_AND_SELECT',
           payload: { sectionId, columnId, block, index },
-        });
-        dispatch({
-          type: 'SELECT_BLOCK',
-          payload: { sectionId, columnId, blockId: block.id },
         });
         return;
       }
@@ -110,4 +112,4 @@ export function DropZone({ sectionId, columnId, index, emptyPlaceholder }: DropZ
       {isOver && <div className={styles.dropZoneLabel}>Drop here</div>}
     </div>
   );
-}
+});

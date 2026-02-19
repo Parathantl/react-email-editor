@@ -22,18 +22,32 @@ export const blockParserRegistry: Record<string, (el: Element) => Block> = {};
 
 // ---- Registration helpers ----
 
-export function registerBlockRenderer(type: BlockType, component: ComponentType<{ block: Block }>) {
+/**
+ * Register a block renderer. Accepts BlockType for built-in types, or any string for custom blocks.
+ */
+export function registerBlockRenderer(type: BlockType | (string & {}), component: ComponentType<{ block: Block }>) {
   blockRendererRegistry[type] = component;
 }
 
-export function registerBlockProperties(type: BlockType, component: ComponentType<{ block: Block }>) {
+/**
+ * Register a block properties panel. Accepts BlockType for built-in types, or any string for custom blocks.
+ */
+export function registerBlockProperties(type: BlockType | (string & {}), component: ComponentType<{ block: Block }>) {
   blockPropertiesRegistry[type] = component;
 }
 
-export function registerBlockGenerator(type: BlockType, generator: (block: Block, indent: string) => string) {
+/**
+ * Register a MJML generator. Accepts BlockType for built-in types, or any string for custom blocks.
+ */
+export function registerBlockGenerator(type: BlockType | (string & {}), generator: (block: Block, indent: string) => string) {
   blockGeneratorRegistry[type] = generator;
 }
 
 export function registerBlockParser(mjmlTag: string, parser: (el: Element) => Block) {
   blockParserRegistry[mjmlTag] = parser;
+}
+
+/** Returns set of all registered block types (built-in + custom). */
+export function getRegisteredBlockTypes(): Set<string> {
+  return new Set(Object.keys(blockRendererRegistry));
 }

@@ -1,5 +1,5 @@
-import React from 'react';
-import type { Block } from '../../../types';
+import React, { useMemo } from 'react';
+import type { Block, SocialElement } from '../../../types';
 import styles from '../../../styles/blocks.module.css';
 
 interface SocialBlockProps {
@@ -32,25 +32,35 @@ export const SocialBlock = React.memo(function SocialBlock({ block }: SocialBloc
 
   const iconSizeNum = parseInt(p.iconSize, 10) || 20;
 
+  const wrapperStyle = useMemo(() => ({
+    padding: p.padding,
+    justifyContent: alignStyle,
+    flexDirection: (isVertical ? 'column' : 'row') as React.CSSProperties['flexDirection'],
+    alignItems: isVertical ? alignStyle : 'center',
+  }), [p.padding, alignStyle, isVertical]);
+
+  const elementPaddingStyle = useMemo(() => ({
+    padding: p.iconPadding,
+  }), [p.iconPadding]);
+
+  const labelStyle = useMemo(() => ({
+    fontSize: p.fontSize, color: p.color,
+  }), [p.fontSize, p.color]);
+
   return (
     <div
       className={`ee-block-social ${styles.socialBlock}`}
-      style={{
-        padding: p.padding,
-        justifyContent: alignStyle,
-        flexDirection: isVertical ? 'column' : 'row',
-        alignItems: isVertical ? alignStyle : 'center',
-      }}
+      style={wrapperStyle}
     >
-      {p.elements.map((element: any, idx: number) => {
+      {p.elements.map((element: SocialElement) => {
         const bgColor = element.backgroundColor || PLATFORM_COLORS[element.name] || '#999999';
         const initial = element.name.charAt(0).toUpperCase();
 
         return (
           <div
-            key={idx}
+            key={`${element.name}-${element.href}`}
             className={styles.socialElement}
-            style={{ padding: p.iconPadding }}
+            style={elementPaddingStyle}
           >
             <span
               className={styles.socialIcon}
@@ -68,7 +78,7 @@ export const SocialBlock = React.memo(function SocialBlock({ block }: SocialBloc
             {element.content && (
               <span
                 className={styles.socialLabel}
-                style={{ fontSize: p.fontSize, color: p.color }}
+                style={labelStyle}
               >
                 {element.content}
               </span>
