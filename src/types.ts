@@ -56,6 +56,7 @@ export interface SpacerBlockProperties {
 }
 
 export interface SocialElement {
+  id?: string;
   name: string;
   href: string;
   src?: string;
@@ -115,6 +116,7 @@ export interface CountdownBlockProperties {
 }
 
 export interface MenuItem {
+  id?: string;
   text: string;
   href: string;
 }

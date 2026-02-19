@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import type { Block, MenuItem } from '../../types';
 import { narrowBlock } from '../../types';
 import { useBlockUpdate } from '../../hooks/useBlockUpdate';
+import { generateId } from '../../utils/id';
 import { PropertyField, FieldSeparator } from './PropertyField';
 import styles from '../../styles/properties.module.css';
 import blockStyles from '../../styles/blocks.module.css';
@@ -27,7 +28,7 @@ export function MenuProperties({ block }: MenuPropertiesProps) {
   );
 
   const addItem = useCallback(() => {
-    const items = [...block.properties.items, { text: 'Link', href: '#' }];
+    const items = [...block.properties.items, { id: generateId('mi'), text: 'Link', href: '#' }];
     update({ items });
   }, [block.properties.items, update]);
 
@@ -69,7 +70,7 @@ export function MenuProperties({ block }: MenuPropertiesProps) {
         <label className={styles.fieldLabel}>Menu Items</label>
         <div className={blockStyles.menuItemsContainer}>
           {p.items.map((item: MenuItem, index: number) => (
-            <div key={index} className={blockStyles.menuItemEntry}>
+            <div key={item.id ?? `mi-${index}`} className={blockStyles.menuItemEntry}>
               <div className={styles.fieldRow}>
                 <input
                   className={styles.fieldInputFlex}

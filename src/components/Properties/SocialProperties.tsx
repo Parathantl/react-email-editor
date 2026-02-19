@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import type { Block, SocialElement } from '../../types';
 import { narrowBlock } from '../../types';
 import { useBlockUpdate } from '../../hooks/useBlockUpdate';
+import { generateId } from '../../utils/id';
 import { PropertyField, FieldSeparator } from './PropertyField';
 import styles from '../../styles/properties.module.css';
 import blockStyles from '../../styles/blocks.module.css';
@@ -27,7 +28,7 @@ export function SocialProperties({ block }: SocialPropertiesProps) {
   );
 
   const addElement = useCallback(() => {
-    const elements = [...block.properties.elements, { name: 'web', href: '#' }];
+    const elements = [...block.properties.elements, { id: generateId('se'), name: 'web', href: '#' }];
     update({ elements });
   }, [block.properties.elements, update]);
 
@@ -68,7 +69,7 @@ export function SocialProperties({ block }: SocialPropertiesProps) {
         <label className={styles.fieldLabel}>Social Elements</label>
         <div className={blockStyles.socialElementsContainer}>
           {p.elements.map((element: SocialElement, index: number) => (
-            <div key={index} className={blockStyles.socialElementItem}>
+            <div key={element.id ?? `se-${index}`} className={blockStyles.socialElementItem}>
               <div className={styles.fieldRow}>
                 <select
                   className={`${styles.fieldSelect} ${styles.fieldInputFlex}`}

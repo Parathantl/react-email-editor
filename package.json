@@ -1,6 +1,6 @@
 {
   "name": "@parathantl/react-email-editor",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "A visual MJML email template editor for React",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
