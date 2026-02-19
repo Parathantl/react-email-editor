@@ -49,7 +49,7 @@ export function PropertiesPanel() {
     const title = selectedBlock.type.charAt(0).toUpperCase() + selectedBlock.type.slice(1);
     const Component = getBlockPanel(selectedBlock.type);
     return (
-      <div className={`ee-properties-panel ${styles.propertiesPanel}`}>
+      <div className={`ee-properties-panel ${styles.propertiesInner}`}>
         <div className={`ee-properties-header ${styles.propertiesHeader}`}>{title} Properties</div>
         {Component ? <Component block={selectedBlock} /> : null}
       </div>
@@ -58,7 +58,7 @@ export function PropertiesPanel() {
 
   if (selectedSection) {
     return (
-      <div className={`ee-properties-panel ${styles.propertiesPanel}`}>
+      <div className={`ee-properties-panel ${styles.propertiesInner}`}>
         <div className={`ee-properties-header ${styles.propertiesHeader}`}>Section Properties</div>
         <SectionProperties section={selectedSection} />
       </div>
@@ -66,7 +66,7 @@ export function PropertiesPanel() {
   }
 
   return (
-    <div className={`ee-properties-panel ${styles.propertiesPanel}`}>
+    <div className={`ee-properties-panel ${styles.propertiesInner}`}>
       <div className={`ee-properties-header ${styles.propertiesHeader}`}>Email Settings</div>
       <HeadMetadataProperties />
     </div>
