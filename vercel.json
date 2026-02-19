@@ -1,0 +1,5 @@
+{
+  "buildCommand": "npm run build:app",
+  "outputDirectory": "examples/basic/dist",
+  "framework": "vite"
+}

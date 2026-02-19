@@ -25,6 +25,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "dev:app": "vite",
+    "build:app": "vite build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"
