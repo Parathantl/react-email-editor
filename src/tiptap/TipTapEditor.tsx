@@ -52,13 +52,17 @@ export function TipTapEditor({
     },
     onFocus: () => onFocusRef.current?.(),
     onBlur: () => onBlurRef.current?.(),
-    onCreate: ({ editor: e }) => {
-      editorRefCb.current?.(e);
-    },
-    onDestroy: () => {
-      editorRefCb.current?.(null);
-    },
   });
+
+  // Notify parent when the editor instance changes.
+  // Using useEffect instead of onCreate/onDestroy avoids timing issues
+  // with @tiptap/react's internal scheduleDestroy mechanism.
+  useEffect(() => {
+    editorRefCb.current?.(editor ?? null);
+    return () => {
+      editorRefCb.current?.(null);
+    };
+  }, [editor]);
 
   // Sync content from external changes (undo/redo, loadJSON, loadMJML)
   // Only update if the editor is not focused (user is not actively editing)

@@ -103,9 +103,9 @@ const HeadingBlockInner = function HeadingBlock({ block }: HeadingBlockProps) {
 
   return (
     <div className={`ee-block-heading ${styles.headingBlock}`} ref={wrapperRef}>
-      {isFocused && editorRef.current && (
+      {isFocused && editorInstance && (
         <div className={styles.textBlockToolbar}>
-          <RichTextToolbar editor={editorRef.current} />
+          <RichTextToolbar editor={editorInstance} />
         </div>
       )}
       <div style={wrapperStyle}>

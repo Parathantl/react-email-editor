@@ -82,13 +82,37 @@ function patchCssModules() {
   }
 }
 
+/**
+ * Strip CSS module `:global()` wrappers from the dist CSS.
+ * tsup/esbuild extracts CSS modules but preserves `:global()` syntax
+ * which browsers don't understand. This converts e.g.
+ *   `.tiptapWrapper :global(.ProseMirror)` → `.tiptapWrapper .ProseMirror`
+ */
+function stripCssGlobals() {
+  const cssPath = resolve(__dirname, 'dist/index.css');
+  try {
+    let css = readFileSync(cssPath, 'utf8');
+    // Replace :global(.className) with .className
+    css = css.replace(/:global\(([^)]+)\)/g, '$1');
+    writeFileSync(cssPath, css);
+  } catch {
+    // dist/index.css may not exist
+  }
+}
+
 export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
   dts: true,
   sourcemap: true,
   clean: true,
-  external: ['react', 'react-dom', 'mjml-browser'],
+  external: ['react', 'react-dom', 'react/jsx-runtime', 'mjml-browser', 'nanoid'],
+  // Bundle @tiptap/* and other deps so consumers don't hit version conflicts
+  // (e.g. webapp uses @blocknote with @tiptap v3, this library needs @tiptap v2)
+  noExternal: [/^@tiptap/, 'dompurify'],
+  // Replace process.env.NODE_ENV so bundled use-sync-external-store shim
+  // works in the browser without relying on the consumer's bundler
+  env: { NODE_ENV: 'production' },
   outExtension({ format }) {
     return {
       js: format === 'cjs' ? '.cjs' : '.js',
@@ -96,5 +120,6 @@ export default defineConfig({
   },
   async onSuccess() {
     patchCssModules();
+    stripCssGlobals();
   },
 });

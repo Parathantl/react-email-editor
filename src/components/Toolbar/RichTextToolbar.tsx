@@ -20,7 +20,7 @@ function preventBlur(e: React.MouseEvent) {
   e.preventDefault();
 }
 
-export const RichTextToolbar = React.memo(function RichTextToolbar({ editor }: RichTextToolbarProps) {
+export function RichTextToolbar({ editor }: RichTextToolbarProps) {
   if (!editor) return null;
 
   return (
@@ -160,7 +160,7 @@ export const RichTextToolbar = React.memo(function RichTextToolbar({ editor }: R
       </button>
     </div>
   );
-});
+}
 
 // ---- Font Family Select ----
 
