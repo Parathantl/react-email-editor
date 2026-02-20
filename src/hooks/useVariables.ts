@@ -4,6 +4,7 @@ import { DEFAULT_VARIABLE_CHIP_STYLE } from '../constants';
 
 interface UseVariablesOptions {
   predefinedVariables: Variable[];
+  initialCustomVariables?: Variable[];
   onVariablesChange?: (customVariables: Variable[]) => void;
 }
 
@@ -18,9 +19,10 @@ interface UseVariablesResult {
 
 export function useVariables({
   predefinedVariables,
+  initialCustomVariables,
   onVariablesChange,
 }: UseVariablesOptions): UseVariablesResult {
-  const [customVariables, setCustomVariables] = useState<Variable[]>([]);
+  const [customVariables, setCustomVariables] = useState<Variable[]>(initialCustomVariables ?? []);
   const [variableChipStyle, setVariableChipStyle] = useState<VariableChipStyle>({ ...DEFAULT_VARIABLE_CHIP_STYLE });
 
   const addCustomVariable = useCallback((variable: Variable) => {
@@ -49,7 +51,7 @@ export function useVariables({
     return merged;
   }, [predefinedVariables, customVariables]);
 
-  // Notify parent when custom variables change
+  // Notify parent when custom variables change (strict-mode safe)
   const onVariablesChangeRef = useRef(onVariablesChange);
   onVariablesChangeRef.current = onVariablesChange;
   const isFirstVariablesRender = useRef(true);
@@ -59,6 +61,10 @@ export function useVariables({
       return;
     }
     onVariablesChangeRef.current?.(customVariables);
+    // Reset flag on cleanup so strict-mode remount skips the callback again
+    return () => {
+      isFirstVariablesRender.current = true;
+    };
   }, [customVariables]);
 
   return {

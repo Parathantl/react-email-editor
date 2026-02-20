@@ -2,6 +2,7 @@ import type { EmailTemplate, Section, Column, Block, GlobalStyles, HeadMetadata,
 import { DEFAULT_SECTION_PROPERTIES, DEFAULT_BLOCK_PROPERTIES, DEFAULT_HEAD_METADATA } from '../constants';
 import { generateSectionId, generateColumnId, generateBlockId } from '../utils/id';
 import { blockParserRegistry, registerBlockParser } from '../registry';
+import { convertVariablesToChips } from '../utils/variables';
 
 /**
  * MJML's official built-in defaults. Used as parser fallbacks so that
@@ -533,7 +534,7 @@ function parseTextBlock(el: Element): Block {
     id: generateBlockId(),
     type: 'text',
     properties: {
-      content: convertLegacyHtml(innerHTML),
+      content: convertVariablesToChips(convertLegacyHtml(innerHTML)),
       fontFamily: el.getAttribute('font-family') ?? d.fontFamily,
       fontSize: el.getAttribute('font-size') ?? d.fontSize,
       color: el.getAttribute('color') ?? d.color,
@@ -564,7 +565,7 @@ function parseHeadingFromMjText(el: Element, cssClass: string): Block {
     id: generateBlockId(),
     type: 'heading',
     properties: {
-      content,
+      content: convertVariablesToChips(content),
       level,
       fontFamily: el.getAttribute('font-family') ?? defaults.fontFamily,
       fontSize: el.getAttribute('font-size') ?? defaults.fontSize,

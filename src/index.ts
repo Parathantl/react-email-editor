@@ -77,7 +77,7 @@ export { VariableNode } from './tiptap/VariableNode';
 
 // Utilities
 export { generateId, generateBlockId, generateSectionId, generateColumnId } from './utils/id';
-export { extractVariableKeys, replaceVariables, groupVariables } from './utils/variables';
+export { extractVariableKeys, replaceVariables, groupVariables, convertVariablesToChips } from './utils/variables';
 export { sanitizeHTML, escapeHTML, isSafeURL } from './utils/sanitize';
 export { validateTemplate, sanitizeTemplate } from './utils/validate';
 export type { ValidationResult } from './utils/validate';

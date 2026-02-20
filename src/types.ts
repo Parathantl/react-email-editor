@@ -355,6 +355,8 @@ export interface EmailEditorProps {
   initialTemplate?: EmailTemplate;
   initialMJML?: string;
   variables?: Variable[];
+  /** Initial custom variables to pre-populate (e.g. from a saved template). These appear as user-managed variables with delete buttons. */
+  initialCustomVariables?: Variable[];
   imageUploadAdapter?: ImageUploadAdapter;
   onChange?: (template: EmailTemplate) => void;
   onSave?: (mjml: string, html: string) => void;

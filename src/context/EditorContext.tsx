@@ -47,6 +47,7 @@ interface EditorProviderProps {
   children: ReactNode;
   initialTemplate?: EmailTemplate;
   variables?: Variable[];
+  initialCustomVariables?: Variable[];
   imageUploadAdapter?: ImageUploadAdapter;
   onChange?: (template: EmailTemplate) => void;
   onVariablesChange?: (customVariables: Variable[]) => void;
@@ -71,6 +72,7 @@ export function EditorProvider({
   children,
   initialTemplate,
   variables: predefinedVariables = EMPTY_VARIABLES,
+  initialCustomVariables,
   imageUploadAdapter,
   onChange,
   onVariablesChange,
@@ -255,7 +257,7 @@ export function EditorProvider({
     addCustomVariable,
     removeCustomVariable,
     updateVariableChipStyle,
-  } = useVariables({ predefinedVariables, onVariablesChange });
+  } = useVariables({ predefinedVariables, initialCustomVariables, onVariablesChange });
 
   const { setActiveEditor, getActiveEditor, insertVariable } = useTipTapTracking();
 

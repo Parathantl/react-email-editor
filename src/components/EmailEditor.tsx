@@ -327,6 +327,7 @@ export const EmailEditor = forwardRef<EmailEditorRef, EmailEditorProps>(
       initialTemplate,
       initialMJML,
       variables,
+      initialCustomVariables,
       imageUploadAdapter,
       onChange,
       onVariablesChange,
@@ -359,6 +360,7 @@ export const EmailEditor = forwardRef<EmailEditorRef, EmailEditorProps>(
       <EditorProvider
         initialTemplate={template}
         variables={variables}
+        initialCustomVariables={initialCustomVariables}
         imageUploadAdapter={imageUploadAdapter}
         onChange={onChange}
         onVariablesChange={onVariablesChange}
