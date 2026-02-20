@@ -19,6 +19,8 @@ export function generateMJML(template: EmailTemplate): string {
   lines.push('    <mj-attributes>');
   lines.push(`      <mj-all font-family="${escapeAttr(globalStyles.fontFamily)}" />`);
   lines.push('    </mj-attributes>');
+  // Reset browser default margins on block elements so preview matches canvas
+  lines.push('    <mj-style>p, h1, h2, h3, h4, ul, ol, blockquote { margin: 0; } ul, ol { padding-left: 1.5em; }</mj-style>');
   if (headMetadata?.headStyles) {
     for (const style of headMetadata.headStyles) {
       // Sanitize: strip any closing mj-style tags to prevent MJML injection
@@ -167,7 +169,7 @@ function generateTextBlock(block: Block, indent: string): string {
     'letter-spacing': p.letterSpacing && p.letterSpacing !== 'normal' ? p.letterSpacing : undefined,
   });
 
-  const content = stripVariableChips(p.content || '');
+  const content = resetBlockMargins(stripVariableChips(p.content || ''));
   return `${indent}<mj-text${attrs}>${content}</mj-text>`;
 }
 
@@ -303,7 +305,7 @@ function generateHeadingBlock(block: Block, indent: string): string {
     'css-class': `ee-block-heading ee-heading-${level}`,
   });
 
-  const content = stripVariableChips(p.content || '');
+  const content = resetBlockMargins(stripVariableChips(p.content || ''));
   return `${indent}<mj-text${attrs}><${level}>${content}</${level}></mj-text>`;
 }
 
@@ -414,6 +416,22 @@ function stripVariableChips(html: string): string {
   return html.replace(
     /<span[^>]*data-variable-key="([^"]*)"[^>]*>[\s\S]*?<\/span>/g,
     (_match, key) => `{{ ${key} }}`,
+  );
+}
+
+/**
+ * Add inline `margin:0` to block-level HTML elements that have browser default margins.
+ * Targets: p, h1-h4, ul, ol, blockquote.
+ * Inline styles override any CSS rule regardless of specificity.
+ */
+function resetBlockMargins(html: string): string {
+  // Match opening tags for elements with default browser margins
+  return html.replace(
+    /<(p|h[1-4]|ul|ol|blockquote)(\s+style=")/gi,
+    '<$1$2margin:0;',
+  ).replace(
+    /<(p|h[1-4]|ul|ol|blockquote)(\s*>)/gi,
+    '<$1 style="margin:0"$2',
   );
 }
 

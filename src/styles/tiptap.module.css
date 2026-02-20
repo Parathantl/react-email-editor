@@ -10,30 +10,26 @@
 }
 
 .tiptapWrapper :global(.ProseMirror) p {
-  margin: 0 0 0.5em 0;
-}
-
-.tiptapWrapper :global(.ProseMirror) p:last-child {
-  margin-bottom: 0;
+  margin: 0;
 }
 
 .tiptapWrapper :global(.ProseMirror) h1,
 .tiptapWrapper :global(.ProseMirror) h2,
 .tiptapWrapper :global(.ProseMirror) h3,
 .tiptapWrapper :global(.ProseMirror) h4 {
-  margin: 0 0 0.5em 0;
+  margin: 0;
   line-height: 1.3;
 }
 
 .tiptapWrapper :global(.ProseMirror) ul,
 .tiptapWrapper :global(.ProseMirror) ol {
-  margin: 0 0 0.5em 0;
+  margin: 0;
   padding-left: 1.5em;
 }
 
 .tiptapWrapper :global(.ProseMirror) blockquote {
   border-left: 3px solid var(--ee-border-color-strong);
-  margin: 0 0 0.5em 0;
+  margin: 0;
   padding-left: 1em;
   color: var(--ee-text-secondary);
 }

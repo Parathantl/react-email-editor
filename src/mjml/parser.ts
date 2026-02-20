@@ -225,7 +225,9 @@ function parseHeadMetadata(doc: Document): HeadMetadata {
   const styleEls = mjHead.querySelectorAll('mj-style');
   for (let i = 0; i < styleEls.length; i++) {
     const content = styleEls[i].textContent ?? '';
-    if (content.trim()) {
+    // Skip the auto-injected margin reset — it's re-added by the generator
+    const trimmed = content.trim();
+    if (trimmed && !trimmed.startsWith('p, h1, h2, h3, h4') && trimmed !== 'p { margin: 0; }') {
       metadata.headStyles.push(content);
     }
   }
