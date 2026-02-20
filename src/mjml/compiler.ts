@@ -14,7 +14,15 @@ let mjmlBrowser: any = null;
 async function loadMjmlBrowser(): Promise<any> {
   if (mjmlBrowser) return mjmlBrowser;
   try {
-    mjmlBrowser = (await import('mjml-browser')).default;
+    const mod: any = await import('mjml-browser');
+    // Handle both ESM default export and CJS interop
+    const fn = mod.default ?? mod;
+    if (typeof fn === 'function') {
+      mjmlBrowser = fn;
+    } else if (fn && typeof fn.default === 'function') {
+      // Double-wrapped default (some bundlers do this)
+      mjmlBrowser = fn.default;
+    }
     return mjmlBrowser;
   } catch {
     return null;
