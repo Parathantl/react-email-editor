@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import type { Block, SocialElement } from '../../../types';
 import styles from '../../../styles/blocks.module.css';
+import { getSocialIcon } from './social-icons';
 
 interface SocialBlockProps {
   block: Block;
@@ -54,7 +55,25 @@ export const SocialBlock = React.memo(function SocialBlock({ block }: SocialBloc
     >
       {p.elements.map((element: SocialElement) => {
         const bgColor = element.backgroundColor || PLATFORM_COLORS[element.name] || '#999999';
-        const initial = element.name.charAt(0).toUpperCase();
+        const iconColor = element.color || '#ffffff';
+        const SvgIcon = getSocialIcon(element.name);
+
+        let iconContent: React.ReactNode;
+        if (element.src) {
+          iconContent = (
+            <img
+              src={element.src}
+              alt={element.name}
+              className={styles.socialIconImage}
+              width={iconSizeNum}
+              height={iconSizeNum}
+            />
+          );
+        } else if (SvgIcon) {
+          iconContent = <SvgIcon size={Math.round(iconSizeNum * 0.6)} color={iconColor} />;
+        } else {
+          iconContent = element.name.charAt(0).toUpperCase();
+        }
 
         return (
           <div
@@ -69,11 +88,11 @@ export const SocialBlock = React.memo(function SocialBlock({ block }: SocialBloc
                 height: iconSizeNum,
                 backgroundColor: bgColor,
                 borderRadius: p.borderRadius,
-                color: element.color || '#ffffff',
+                color: iconColor,
                 fontSize: Math.max(10, iconSizeNum * 0.5),
               }}
             >
-              {initial}
+              {iconContent}
             </span>
             {element.content && (
               <span

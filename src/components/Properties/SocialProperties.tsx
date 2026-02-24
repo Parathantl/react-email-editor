@@ -1,8 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import type { Block, SocialElement } from '../../types';
 import { narrowBlock } from '../../types';
 import { useBlockUpdate } from '../../hooks/useBlockUpdate';
+import { useImageAdapter } from '../../context/EditorContext';
+import { useImageUpload } from '../ImageUpload/useImageUpload';
 import { generateId } from '../../utils/id';
+import { getSocialIcon } from '../Canvas/blocks/social-icons';
 import { PropertyField, FieldSeparator } from './PropertyField';
 import styles from '../../styles/properties.module.css';
 import blockStyles from '../../styles/blocks.module.css';
@@ -10,6 +13,100 @@ import blockStyles from '../../styles/blocks.module.css';
 const MODE_OPTIONS = [
   { value: 'horizontal', label: 'Horizontal' }, { value: 'vertical', label: 'Vertical' },
 ];
+
+const PLATFORM_COLORS: Record<string, string> = {
+  facebook: '#3b5998',
+  twitter: '#1da1f2',
+  instagram: '#e1306c',
+  linkedin: '#0077b5',
+  youtube: '#ff0000',
+  github: '#333333',
+  pinterest: '#bd081c',
+  snapchat: '#fffc00',
+  tiktok: '#000000',
+  web: '#4caf50',
+};
+
+interface SocialElementIconUploadProps {
+  element: SocialElement;
+  blockId: string;
+  onUpdate: (changes: Partial<SocialElement>) => void;
+}
+
+function SocialElementIconUpload({ element, blockId, onUpdate }: SocialElementIconUploadProps) {
+  const { imageUploadAdapter } = useImageAdapter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { upload, status, error } = useImageUpload({
+    adapter: imageUploadAdapter,
+    blockId,
+    onSuccess: (result) => {
+      onUpdate({ src: result.url });
+    },
+  });
+
+  const handleFileSelect = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      await upload(file);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    },
+    [upload],
+  );
+
+  const bgColor = PLATFORM_COLORS[element.name] || '#999999';
+  const SvgIcon = getSocialIcon(element.name);
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+      <div
+        className={blockStyles.socialIconPreview}
+        style={{ backgroundColor: bgColor }}
+      >
+        {element.src ? (
+          <img src={element.src} alt={element.name} />
+        ) : SvgIcon ? (
+          <SvgIcon size={16} color={element.color || '#ffffff'} />
+        ) : (
+          <span style={{ color: element.color || '#ffffff', fontSize: '12px', fontWeight: 'bold' }}>
+            {element.name.charAt(0).toUpperCase()}
+          </span>
+        )}
+      </div>
+      {imageUploadAdapter && (
+        <>
+          <button
+            className={`ee-upload-btn ${status === 'uploading' ? styles.fieldBtnUploadDisabled : styles.fieldBtnUpload}`}
+            onClick={() => fileInputRef.current?.click()}
+            disabled={status === 'uploading'}
+            style={{ flex: 1, fontSize: '11px', padding: '3px 6px' }}
+          >
+            {status === 'uploading' ? 'Uploading...' : 'Upload Icon'}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileSelect}
+            style={{ display: 'none' }}
+          />
+        </>
+      )}
+      {element.src && (
+        <button
+          className={styles.itemActionBtnDanger}
+          onClick={() => onUpdate({ src: undefined })}
+          title="Reset to default icon"
+          style={{ fontSize: '11px', padding: '3px 6px' }}
+        >
+          Reset
+        </button>
+      )}
+      {error && <span className={styles.validationError} style={{ fontSize: '10px' }}>{error}</span>}
+    </div>
+  );
+}
 
 interface SocialPropertiesProps {
   block: Block;
@@ -102,6 +199,11 @@ export function SocialProperties({ block }: SocialPropertiesProps) {
                 value={element.content || ''}
                 onChange={(e) => updateElement(index, { content: e.target.value })}
                 placeholder="Label (optional)"
+              />
+              <SocialElementIconUpload
+                element={element}
+                blockId={block.id}
+                onUpdate={(changes) => updateElement(index, changes)}
               />
             </div>
           ))}

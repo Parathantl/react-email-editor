@@ -19,7 +19,7 @@ const MJML_DEFAULTS = {
     fontFamily: 'Ubuntu, Helvetica, Arial, sans-serif',
     fontSize: '13px',
     color: '#000000',
-    lineHeight: '1',
+    lineHeight: '1.5',
     padding: '10px 25px',
     align: 'left',
     fontWeight: 'normal',

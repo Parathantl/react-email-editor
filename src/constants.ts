@@ -109,7 +109,7 @@ export const DEFAULT_HEADING_PROPERTIES: HeadingBlockProperties = {
   fontFamily: 'Arial, sans-serif',
   fontSize: '28px',
   color: '#000000',
-  lineHeight: '1.3',
+  lineHeight: '1.5',
   fontWeight: 'bold',
   padding: '10px 25px',
   align: 'left',
@@ -266,7 +266,7 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
   {
     type: 'social',
     label: 'Social',
-    icon: '🔗',
+    icon: '👥',
     description: 'Social media links',
   },
   {

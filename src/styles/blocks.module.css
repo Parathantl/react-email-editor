@@ -189,6 +189,29 @@
   background: var(--ee-bg-app);
 }
 
+.socialIconImage {
+  display: block;
+  object-fit: contain;
+  border-radius: inherit;
+}
+
+.socialIconPreview {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ee-border-radius-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.socialIconPreview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 /* HTML Block */
 .htmlBlock {
   min-height: 24px;

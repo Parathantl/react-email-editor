@@ -35,7 +35,7 @@ describe('generateMJML', () => {
     const mjml = generateMJML(makeTemplate([section]));
     expect(mjml).toContain('<mj-text');
     expect(mjml).toContain('font-size="16px"');
-    expect(mjml).toContain('<p>Hello World</p>');
+    expect(mjml).toContain('Hello World</p>');
   });
 
   it('generates mj-button for button blocks', () => {

@@ -32,11 +32,10 @@ describe('BlockRenderer', () => {
 
   it('renders a social block with elements', () => {
     const block = createBlock('social');
-    renderWithEditor(<BlockRenderer block={block} />);
-    // Default social block has facebook, twitter, instagram
-    expect(screen.getByText('F')).toBeTruthy(); // Facebook initial
-    expect(screen.getByText('T')).toBeTruthy(); // Twitter initial
-    expect(screen.getByText('I')).toBeTruthy(); // Instagram initial
+    const { container } = renderWithEditor(<BlockRenderer block={block} />);
+    // Default social block has facebook, twitter, instagram — rendered as SVG icons
+    const svgIcons = container.querySelectorAll('.ee-block-social svg');
+    expect(svgIcons.length).toBe(3);
   });
 
   it('renders nothing for unknown block type', () => {
