@@ -53,6 +53,7 @@ export function HeadingProperties({ block }: HeadingPropertiesProps) {
       <PropertyField type="font" label="Font Family" value={p.fontFamily} onChange={(v) => update({ fontFamily: v })} />
       <PropertyField type="text" label="Font Size" value={p.fontSize} onChange={(v) => update({ fontSize: v })} />
       <PropertyField type="color" label="Color" value={p.color} onChange={(v) => update({ color: v })} />
+      <PropertyField type="color" label="Background Color" value={p.backgroundColor || 'transparent'} onChange={(v) => update({ backgroundColor: v })} />
       <PropertyField type="text" label="Line Height" value={p.lineHeight} onChange={(v) => update({ lineHeight: v })} />
       <PropertyField type="select" label="Font Weight" value={p.fontWeight || 'bold'} onChange={(v) => update({ fontWeight: v })} options={FONT_WEIGHT_OPTIONS} />
       <PropertyField type="select" label="Text Transform" value={p.textTransform || 'none'} onChange={(v) => update({ textTransform: v })} options={TEXT_TRANSFORM_OPTIONS} />

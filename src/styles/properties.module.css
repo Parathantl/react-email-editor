@@ -384,6 +384,32 @@
   border: none;
 }
 
+/* Custom color preset section label */
+.colorPresetSectionLabel {
+  font-size: var(--ee-font-size-xs);
+  color: var(--ee-text-muted);
+  text-align: center;
+  padding: 4px 0 2px;
+  border-top: 1px solid var(--ee-border-color);
+  margin-top: 2px;
+}
+
+/* Save preset button */
+.colorSavePresetBtn {
+  padding: 2px 8px;
+  font-size: var(--ee-font-size-xs);
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius-sm);
+  background: var(--ee-bg-input);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.colorSavePresetBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 /* Separator */
 .separator {
   height: 1px;

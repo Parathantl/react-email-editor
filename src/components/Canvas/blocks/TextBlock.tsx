@@ -90,7 +90,8 @@ const TextBlockInner = function TextBlock({ block }: TextBlockProps) {
     fontWeight: p.fontWeight,
     textTransform: p.textTransform,
     letterSpacing: p.letterSpacing,
-  }), [p.fontFamily, p.fontSize, p.color, p.lineHeight, p.padding, p.fontWeight, p.textTransform, p.letterSpacing]);
+    backgroundColor: p.backgroundColor && p.backgroundColor !== 'transparent' ? p.backgroundColor : undefined,
+  }), [p.fontFamily, p.fontSize, p.color, p.lineHeight, p.padding, p.fontWeight, p.textTransform, p.letterSpacing, p.backgroundColor]);
 
   return (
     <div className={`ee-block-text ${styles.textBlock}`} ref={wrapperRef}>

@@ -32,6 +32,7 @@ export const DEFAULT_TEXT_PROPERTIES: TextBlockProperties = {
   fontWeight: 'normal',
   textTransform: 'none',
   letterSpacing: 'normal',
+  backgroundColor: 'transparent',
 };
 
 export const DEFAULT_BUTTON_PROPERTIES: ButtonBlockProperties = {
@@ -115,6 +116,7 @@ export const DEFAULT_HEADING_PROPERTIES: HeadingBlockProperties = {
   align: 'left',
   textTransform: 'none',
   letterSpacing: 'normal',
+  backgroundColor: 'transparent',
 };
 
 export const DEFAULT_COUNTDOWN_PROPERTIES: CountdownBlockProperties = {

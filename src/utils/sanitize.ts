@@ -152,3 +152,15 @@ export function isSafeURL(url: string): boolean {
   if (trimmed.startsWith('/') || trimmed.startsWith('#') || trimmed.startsWith('?')) return true;
   return SAFE_URL_PATTERN.test(trimmed);
 }
+
+/**
+ * Returns true if the URL is safe for use as an image `src` attribute.
+ * Allows everything isSafeURL allows, plus `data:image/` URLs for raster formats
+ * (png, jpeg, gif, webp). SVG data URLs are excluded because they can contain scripts.
+ */
+export function isSafeImageSrc(url: string): boolean {
+  if (isSafeURL(url)) return true;
+  const trimmed = url.trim();
+  if (/^data:image\/svg/i.test(trimmed)) return false;
+  return /^data:image\//i.test(trimmed);
+}

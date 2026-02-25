@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import type { Editor } from '@tiptap/core';
-import { useEditorFonts } from '../../context/EditorContext';
+import { useEditorFonts, useColorPresets } from '../../context/EditorContext';
 import { isSafeURL } from '../../utils/sanitize';
 import { COLOR_PRESETS } from '../../constants';
 import styles from '../../styles/toolbar.module.css';
@@ -349,6 +349,7 @@ function InlineLinkEditor({ editor }: { editor: Editor }) {
 function InlineColorPicker({ editor, type, title, label }: InlineColorPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const { customColorPresets, addCustomColorPreset, removeCustomColorPreset } = useColorPresets();
 
   const currentColor =
     type === 'color'
@@ -388,6 +389,12 @@ function InlineColorPicker({ editor, type, title, label }: InlineColorPickerProp
     setIsOpen(false);
   }, [editor, type]);
 
+  const handleSavePreset = useCallback(() => {
+    if (currentColor && !customColorPresets.includes(currentColor)) {
+      addCustomColorPreset(currentColor);
+    }
+  }, [currentColor, customColorPresets, addCustomColorPreset]);
+
   const indicatorColor = type === 'color' ? currentColor : (currentColor || 'transparent');
 
   return (
@@ -417,6 +424,16 @@ function InlineColorPicker({ editor, type, title, label }: InlineColorPickerProp
                 title={color}
               />
             ))}
+            {customColorPresets.length > 0 && customColorPresets.map((color) => (
+              <button
+                key={`custom-${color}`}
+                className={`ee-richtext-color-swatch ${styles.richTextColorSwatch}`}
+                style={{ backgroundColor: color }}
+                onClick={() => applyColor(color)}
+                onContextMenu={(e) => { e.preventDefault(); removeCustomColorPreset(color); }}
+                title={`${color} (right-click to remove)`}
+              />
+            ))}
           </div>
           <div className={`ee-richtext-color-actions ${styles.richTextColorActions}`}>
             <input
@@ -426,6 +443,14 @@ function InlineColorPicker({ editor, type, title, label }: InlineColorPickerProp
               className={`ee-richtext-color-input ${styles.richTextColorInput}`}
               title="Custom color"
             />
+            <button
+              className={`ee-richtext-color-save ${styles.richTextColorClearBtn}`}
+              onClick={handleSavePreset}
+              title="Save current color as preset"
+              disabled={!currentColor || customColorPresets.includes(currentColor)}
+            >
+              + Save
+            </button>
             <button
               className={`ee-richtext-color-clear ${styles.richTextColorClearBtn}`}
               onClick={clearColor}

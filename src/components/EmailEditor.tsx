@@ -333,6 +333,8 @@ export const EmailEditor = forwardRef<EmailEditorRef, EmailEditorProps>(
       onVariablesChange,
       fontFamilies,
       fontSizes,
+      colorPresets,
+      onColorPresetsChange,
       persistenceKey,
       persistenceAdapter,
       className,
@@ -366,6 +368,8 @@ export const EmailEditor = forwardRef<EmailEditorRef, EmailEditorProps>(
         onVariablesChange={onVariablesChange}
         fontFamilies={fontFamilies}
         fontSizes={fontSizes}
+        colorPresets={colorPresets}
+        onColorPresetsChange={onColorPresetsChange}
         persistenceKey={persistenceKey}
         persistenceAdapter={persistenceAdapter}
         onBlockAdd={onBlockAdd}

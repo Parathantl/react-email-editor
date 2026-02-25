@@ -342,7 +342,7 @@ describe('parseMJML', () => {
     expect(block.properties.fontWeight).toBe('bold');
   });
 
-  it('does not false-positive heading detection without css-class marker', () => {
+  it('auto-detects heading in mj-text without css-class marker', () => {
     const mjml = `
       <mjml>
         <mj-body>
@@ -356,8 +356,9 @@ describe('parseMJML', () => {
     `;
     const result = parseMJML(mjml);
     const block = result.sections[0].columns[0].blocks[0];
-    // Without css-class marker, text blocks with heading HTML stay as text (no false positive)
-    expect(block.type).toBe('text');
+    // Heading heuristic: mj-text wrapping a single h1-h4 is detected as a heading block
+    expect(block.type).toBe('heading');
+    expect(block.properties.level).toBe('h2');
     expect(block.properties.content).toContain('Title Here');
   });
 

@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useMemo,
   useRef,
+  useState,
   type ReactNode,
 } from 'react';
 import type {
@@ -53,6 +54,8 @@ interface EditorProviderProps {
   onVariablesChange?: (customVariables: Variable[]) => void;
   fontFamilies?: string[];
   fontSizes?: string[];
+  colorPresets?: string[];
+  onColorPresetsChange?: (presets: string[]) => void;
   persistenceKey?: string;
   persistenceAdapter?: PersistenceAdapter;
   // Event callbacks
@@ -78,6 +81,8 @@ export function EditorProvider({
   onVariablesChange,
   fontFamilies: fontFamiliesProp,
   fontSizes: fontSizesProp,
+  colorPresets: colorPresetsProp,
+  onColorPresetsChange,
   persistenceKey,
   persistenceAdapter,
   onBlockAdd,
@@ -93,6 +98,27 @@ export function EditorProvider({
 }: EditorProviderProps) {
   const fontFamilies = fontFamiliesProp ?? FONT_OPTIONS;
   const fontSizes = fontSizesProp ?? DEFAULT_FONT_SIZES;
+
+  const [customColorPresets, setCustomColorPresets] = useState<string[]>(colorPresetsProp ?? []);
+  const onColorPresetsChangeRef = useRef(onColorPresetsChange);
+  onColorPresetsChangeRef.current = onColorPresetsChange;
+
+  const addCustomColorPreset = useCallback((color: string) => {
+    setCustomColorPresets((prev) => {
+      if (prev.includes(color)) return prev;
+      const next = [...prev, color];
+      onColorPresetsChangeRef.current?.(next);
+      return next;
+    });
+  }, []);
+
+  const removeCustomColorPreset = useCallback((color: string) => {
+    setCustomColorPresets((prev) => {
+      const next = prev.filter((c) => c !== color);
+      onColorPresetsChangeRef.current?.(next);
+      return next;
+    });
+  }, []);
 
   // Resolve initial template: persisted data takes priority over prop (sync case).
   const resolvedInitial = useMemo((): EmailTemplate | undefined => {
@@ -336,8 +362,11 @@ export function EditorProvider({
       fontFamilies,
       fontSizes,
       clearPersisted,
+      customColorPresets,
+      addCustomColorPreset,
+      removeCustomColorPreset,
     }),
-    [allVariables, predefinedVariables, customVariables, imageUploadAdapter, addCustomVariable, removeCustomVariable, variableChipStyle, updateVariableChipStyle, fontFamilies, fontSizes, clearPersisted],
+    [allVariables, predefinedVariables, customVariables, imageUploadAdapter, addCustomVariable, removeCustomVariable, variableChipStyle, updateVariableChipStyle, fontFamilies, fontSizes, clearPersisted, customColorPresets, addCustomColorPreset, removeCustomColorPreset],
   );
 
   const blockIndexValue = useMemo(() => state.blockIndex, [state.blockIndex]);
@@ -375,6 +404,7 @@ export {
   useEditorVariables,
   useEditorFonts,
   useImageAdapter,
+  useColorPresets,
 } from './editorHooks';
 
 // Re-export focused context hooks for direct consumption

@@ -505,6 +505,17 @@ function parseBlockElements(parent: Element): Block[] {
     const parser = blockParserRegistry[tagName];
     if (parser) {
       blocks.push(parser(child));
+    } else {
+      // Preserve unknown MJML elements as HTML blocks
+      const serializer = new XMLSerializer();
+      blocks.push({
+        id: generateBlockId(),
+        type: 'html',
+        properties: {
+          content: serializer.serializeToString(child),
+          padding: child.getAttribute('padding') ?? DEFAULT_BLOCK_PROPERTIES.html.padding,
+        },
+      });
     }
   }
 
@@ -531,6 +542,13 @@ function parseTextBlock(el: Element): Block {
 
   const innerHTML = el.innerHTML?.trim() ?? '';
 
+  // Heuristic: detect headings in imported MJML without ee-block-heading marker
+  const headingMatch = innerHTML.match(/^<(h[1-4])\b[^>]*>([\s\S]*)<\/\1>\s*$/i);
+  if (headingMatch) {
+    const syntheticCssClass = `ee-block-heading ee-heading-${headingMatch[1].toLowerCase()}`;
+    return parseHeadingFromMjText(el, syntheticCssClass);
+  }
+
   const d = MJML_DEFAULTS.text;
   return {
     id: generateBlockId(),
@@ -546,6 +564,7 @@ function parseTextBlock(el: Element): Block {
       fontWeight: el.getAttribute('font-weight') ?? d.fontWeight,
       textTransform: el.getAttribute('text-transform') ?? d.textTransform,
       letterSpacing: el.getAttribute('letter-spacing') ?? d.letterSpacing,
+      backgroundColor: el.getAttribute('container-background-color') ?? 'transparent',
     },
   };
 }
@@ -578,6 +597,7 @@ function parseHeadingFromMjText(el: Element, cssClass: string): Block {
       align: el.getAttribute('align') ?? d.align,
       textTransform: el.getAttribute('text-transform') ?? defaults.textTransform,
       letterSpacing: el.getAttribute('letter-spacing') ?? defaults.letterSpacing,
+      backgroundColor: el.getAttribute('container-background-color') ?? 'transparent',
     },
   };
 }
@@ -737,8 +757,18 @@ function parseSocialBlock(el: Element): Block {
   const childEls = el.querySelectorAll('mj-social-element');
   for (let i = 0; i < childEls.length; i++) {
     const child = childEls[i];
+    // Recover platform name: strip `custom-` prefix (used to bypass MJML's
+    // built-in icon override), or fall back to css-class marker, or 'web'.
+    let name = child.getAttribute('name') ?? '';
+    if (name.startsWith('custom-')) {
+      name = name.slice(7); // strip 'custom-' prefix
+    } else if (!name) {
+      const cssClass = child.getAttribute('css-class') ?? '';
+      const nameMatch = cssClass.match(/ee-social-(\w+)/);
+      name = nameMatch ? nameMatch[1] : 'web';
+    }
     const element: SocialElement = {
-      name: child.getAttribute('name') ?? 'web',
+      name,
       href: child.getAttribute('href') ?? '#',
     };
     const src = child.getAttribute('src');

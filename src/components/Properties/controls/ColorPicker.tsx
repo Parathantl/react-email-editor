@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { COLOR_PRESETS } from '../../../constants';
+import { useColorPresets } from '../../../context/EditorContext';
 import styles from '../../../styles/properties.module.css';
 
 interface ColorPickerProps {
@@ -11,6 +12,7 @@ interface ColorPickerProps {
 export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const { customColorPresets, addCustomColorPreset, removeCustomColorPreset } = useColorPresets();
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -30,6 +32,20 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
       setIsOpen(false);
     },
     [onChange],
+  );
+
+  const handleSavePreset = useCallback(() => {
+    if (value && value !== 'transparent' && !customColorPresets.includes(value)) {
+      addCustomColorPreset(value);
+    }
+  }, [value, customColorPresets, addCustomColorPreset]);
+
+  const handlePresetContextMenu = useCallback(
+    (e: React.MouseEvent, color: string) => {
+      e.preventDefault();
+      removeCustomColorPreset(color);
+    },
+    [removeCustomColorPreset],
   );
 
   const isHex = /^#[0-9a-fA-F]{6}$/.test(value);
@@ -70,12 +86,40 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
                 title={color}
               />
             ))}
-            <input
-              type="color"
-              className={`ee-color-native-input ${styles.colorNativeInput}`}
-              value={isHex ? value : '#ffffff'}
-              onChange={(e) => onChange(e.target.value)}
-            />
+            {customColorPresets.length > 0 && (
+              <>
+                <div className={`${styles.colorPresetBtnFull} ${styles.colorPresetSectionLabel}`}>Custom</div>
+                {customColorPresets.map((color) => (
+                  <button
+                    key={`custom-${color}`}
+                    className={`${styles.colorPresetBtn} ${
+                      color === value ? styles.colorPresetBtnActive : ''
+                    }`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => handlePresetClick(color)}
+                    onContextMenu={(e) => handlePresetContextMenu(e, color)}
+                    title={`${color} (right-click to remove)`}
+                  />
+                ))}
+              </>
+            )}
+            <div className={`${styles.colorPresetBtnFull}`} style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+              <input
+                type="color"
+                className={`ee-color-native-input ${styles.colorNativeInput}`}
+                style={{ gridColumn: 'unset', flex: 1 }}
+                value={isHex ? value : '#ffffff'}
+                onChange={(e) => onChange(e.target.value)}
+              />
+              <button
+                className={`ee-color-save-preset ${styles.colorSavePresetBtn}`}
+                onClick={handleSavePreset}
+                title="Save current color as preset"
+                disabled={!value || value === 'transparent' || customColorPresets.includes(value)}
+              >
+                + Save
+              </button>
+            </div>
           </div>
         )}
       </div>

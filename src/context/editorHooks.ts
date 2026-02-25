@@ -76,3 +76,8 @@ export function useImageAdapter() {
   const { imageUploadAdapter } = useConfigContext();
   return { imageUploadAdapter };
 }
+
+export function useColorPresets() {
+  const { customColorPresets, addCustomColorPreset, removeCustomColorPreset } = useConfigContext();
+  return { customColorPresets, addCustomColorPreset, removeCustomColorPreset };
+}

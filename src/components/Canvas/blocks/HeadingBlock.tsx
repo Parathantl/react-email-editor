@@ -99,7 +99,8 @@ const HeadingBlockInner = function HeadingBlock({ block }: HeadingBlockProps) {
     fontWeight: p.fontWeight,
     textTransform: p.textTransform,
     letterSpacing: p.letterSpacing,
-  }), [p.fontFamily, fontSize, p.color, p.lineHeight, p.padding, p.fontWeight, p.textTransform, p.letterSpacing]);
+    backgroundColor: p.backgroundColor && p.backgroundColor !== 'transparent' ? p.backgroundColor : undefined,
+  }), [p.fontFamily, fontSize, p.color, p.lineHeight, p.padding, p.fontWeight, p.textTransform, p.letterSpacing, p.backgroundColor]);
 
   return (
     <div className={`ee-block-heading ${styles.headingBlock}`} ref={wrapperRef}>

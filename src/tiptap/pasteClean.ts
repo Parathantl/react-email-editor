@@ -7,7 +7,7 @@
 
 /** Tags that are safe in email content */
 const ALLOWED_TAGS = new Set([
-  'p', 'br', 'b', 'strong', 'i', 'em', 'u', 's', 'a', 'span',
+  'p', 'br', 'b', 'strong', 'i', 'em', 'u', 's', 'a', 'span', 'mark',
   'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
   'ul', 'ol', 'li', 'blockquote',
   'table', 'thead', 'tbody', 'tr', 'td', 'th',

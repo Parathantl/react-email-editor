@@ -1,6 +1,17 @@
 import type { EmailTemplate, Section, Column, Block } from '../types';
 import { blockGeneratorRegistry, registerBlockGenerator } from '../registry';
-import { escapeHTML, sanitizeHTML, isSafeURL } from '../utils/sanitize';
+import { escapeHTML, sanitizeHTML, isSafeURL, isSafeImageSrc } from '../utils/sanitize';
+
+const GOOGLE_FONTS: Record<string, string> = {
+  'Roboto': 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
+  'Open Sans': 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,700',
+  'Lato': 'https://fonts.googleapis.com/css?family=Lato:300,400,700',
+  'Montserrat': 'https://fonts.googleapis.com/css?family=Montserrat:300,400,500,700',
+  'Source Sans Pro': 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700',
+  'Oswald': 'https://fonts.googleapis.com/css?family=Oswald:300,400,700',
+  'Raleway': 'https://fonts.googleapis.com/css?family=Raleway:300,400,500,700',
+  'Merriweather': 'https://fonts.googleapis.com/css?family=Merriweather:300,400,700',
+};
 
 export function generateMJML(template: EmailTemplate): string {
   const { globalStyles, sections } = template;
@@ -16,6 +27,29 @@ export function generateMJML(template: EmailTemplate): string {
   if (headMetadata?.previewText) {
     lines.push(`    <mj-preview>${escapeHTML(headMetadata.previewText)}</mj-preview>`);
   }
+
+  // Handle Web Fonts
+  const usedFonts = new Set<string>();
+  if (globalStyles.fontFamily) usedFonts.add(globalStyles.fontFamily);
+  
+  // Scan sections and blocks for font families
+  for (const section of sections) {
+    for (const column of section.columns) {
+      for (const block of column.blocks) {
+        if (block.properties.fontFamily) {
+          usedFonts.add(block.properties.fontFamily);
+        }
+      }
+    }
+  }
+
+  for (const font of usedFonts) {
+    const family = font.split(',')[0].trim().replace(/['"]/g, '');
+    if (GOOGLE_FONTS[family]) {
+      lines.push(`    <mj-font name="${escapeAttr(family)}" href="${escapeAttr(GOOGLE_FONTS[family])}" />`);
+    }
+  }
+
   lines.push('    <mj-attributes>');
   lines.push(`      <mj-all font-family="${escapeAttr(globalStyles.fontFamily)}" />`);
   lines.push('    </mj-attributes>');
@@ -167,6 +201,7 @@ function generateTextBlock(block: Block, indent: string): string {
     'font-weight': p.fontWeight && p.fontWeight !== 'normal' ? p.fontWeight : undefined,
     'text-transform': p.textTransform && p.textTransform !== 'none' ? p.textTransform : undefined,
     'letter-spacing': p.letterSpacing && p.letterSpacing !== 'normal' ? p.letterSpacing : undefined,
+    'container-background-color': p.backgroundColor && p.backgroundColor !== 'transparent' ? p.backgroundColor : undefined,
   });
 
   const content = resetBlockMargins(stripVariableChips(p.content || ''));
@@ -197,7 +232,7 @@ function generateButtonBlock(block: Block, indent: string): string {
 function generateImageBlock(block: Block, indent: string): string {
   const p = block.properties;
   const attrs = buildAttrs({
-    src: safeHref(p.src),
+    src: safeSrc(p.src),
     alt: p.alt,
     href: p.href ? safeHref(p.href) : undefined,
     width: p.width,
@@ -246,12 +281,19 @@ function generateSocialBlock(block: Block, indent: string): string {
   lines.push(`${indent}<mj-social${attrs}>`);
 
   for (const element of p.elements) {
+    // When a custom src is provided, use a non-recognized name so MJML
+    // actually uses the custom src. MJML ignores `src` when `name` matches
+    // a built-in network (it uses its own hosted icon instead).
+    // See: https://github.com/mjmlio/mjml/issues/1159
+    // The original platform name is preserved via css-class for round-trip parsing.
+    const hasCustomSrc = !!element.src;
     const elAttrs = buildAttrs({
-      name: element.name,
+      name: hasCustomSrc ? `custom-${element.name}` : element.name,
       href: safeHref(element.href),
-      src: element.src ? safeHref(element.src) : undefined,
-      'background-color': element.backgroundColor,
+      src: hasCustomSrc ? safeSrc(element.src!) : undefined,
+      'background-color': element.backgroundColor || (hasCustomSrc ? 'transparent' : undefined),
       color: element.color,
+      'css-class': hasCustomSrc ? `ee-social-${element.name}` : undefined,
     });
     const content = element.content ? escapeHTML(element.content) : '';
     lines.push(`${indent}  <mj-social-element${elAttrs}>${content}</mj-social-element>`);
@@ -272,7 +314,7 @@ function generateVideoBlock(block: Block, indent: string): string {
   const p = block.properties;
   const thumbnailUrl = p.thumbnailUrl || getAutoThumbnail(p.src);
   const attrs = buildAttrs({
-    src: safeHref(thumbnailUrl),
+    src: safeSrc(thumbnailUrl),
     href: safeHref(p.src),
     alt: p.alt,
     padding: p.padding,
@@ -302,6 +344,7 @@ function generateHeadingBlock(block: Block, indent: string): string {
     'font-weight': p.fontWeight && p.fontWeight !== 'normal' ? p.fontWeight : undefined,
     'text-transform': p.textTransform && p.textTransform !== 'none' ? p.textTransform : undefined,
     'letter-spacing': p.letterSpacing && p.letterSpacing !== 'normal' ? p.letterSpacing : undefined,
+    'container-background-color': p.backgroundColor && p.backgroundColor !== 'transparent' ? p.backgroundColor : undefined,
     'css-class': `ee-block-heading ee-heading-${level}`,
   });
 
@@ -408,15 +451,23 @@ function generateHeroBlock(block: Block, indent: string): string {
 
 /**
  * Strip TipTap variable chip wrappers from content HTML.
- * Converts `<span class="ee-variable-chip" data-variable-key="name" contenteditable="false">{{ name }}</span>`
- * to plain `{{ name }}`.
- * Uses data-variable-key attribute as source of truth to handle any inner HTML.
+ * Uses DOM parsing for robust extraction.
  */
 function stripVariableChips(html: string): string {
-  return html.replace(
-    /<span[^>]*data-variable-key="([^"]*)"[^>]*>[\s\S]*?<\/span>/g,
-    (_match, key) => `{{ ${key} }}`,
-  );
+  if (!html.includes('ee-variable-chip')) return html;
+  
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  
+  const chips = div.querySelectorAll('.ee-variable-chip');
+  chips.forEach(chip => {
+    const key = chip.getAttribute('data-variable-key');
+    if (key) {
+      chip.replaceWith(`{{ ${key} }}`);
+    }
+  });
+  
+  return div.innerHTML;
 }
 
 /**
@@ -453,4 +504,10 @@ function escapeAttr(str: string): string {
 function safeHref(url: string | undefined): string {
   if (!url) return '#';
   return isSafeURL(url) ? url : '#';
+}
+
+/** Sanitize image src: allows data:image/ URLs (raster only) in addition to safe hrefs. */
+function safeSrc(url: string | undefined): string {
+  if (!url) return '#';
+  return isSafeImageSrc(url) ? url : '#';
 }

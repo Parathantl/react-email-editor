@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import type { Block, SocialElement } from '../../types';
 import { narrowBlock } from '../../types';
 import { useBlockUpdate } from '../../hooks/useBlockUpdate';
@@ -9,6 +9,9 @@ import { getSocialIcon } from '../Canvas/blocks/social-icons';
 import { PropertyField, FieldSeparator } from './PropertyField';
 import styles from '../../styles/properties.module.css';
 import blockStyles from '../../styles/blocks.module.css';
+
+const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/webp'];
+const MAX_ICON_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
 
 const MODE_OPTIONS = [
   { value: 'horizontal', label: 'Horizontal' }, { value: 'vertical', label: 'Vertical' },
@@ -36,6 +39,7 @@ interface SocialElementIconUploadProps {
 function SocialElementIconUpload({ element, blockId, onUpdate }: SocialElementIconUploadProps) {
   const { imageUploadAdapter } = useImageAdapter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
 
   const { upload, status, error } = useImageUpload({
     adapter: imageUploadAdapter,
@@ -49,6 +53,17 @@ function SocialElementIconUpload({ element, blockId, onUpdate }: SocialElementIc
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
+      setLocalError(null);
+      if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+        setLocalError('Only PNG, JPG, GIF, SVG, and WebP files are allowed');
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
+      if (file.size > MAX_ICON_SIZE_BYTES) {
+        setLocalError('File size must be under 2MB');
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        return;
+      }
       await upload(file);
       if (fileInputRef.current) fileInputRef.current.value = '';
     },
@@ -87,7 +102,7 @@ function SocialElementIconUpload({ element, blockId, onUpdate }: SocialElementIc
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept=".png,.jpg,.jpeg,.gif,.svg,.webp"
             onChange={handleFileSelect}
             style={{ display: 'none' }}
           />
@@ -103,7 +118,7 @@ function SocialElementIconUpload({ element, blockId, onUpdate }: SocialElementIc
           Reset
         </button>
       )}
-      {error && <span className={styles.validationError} style={{ fontSize: '10px' }}>{error}</span>}
+      {(localError || error) && <span className={styles.validationError} style={{ fontSize: '10px' }}>{localError || error}</span>}
     </div>
   );
 }

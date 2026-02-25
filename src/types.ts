@@ -13,6 +13,7 @@ export interface TextBlockProperties {
   fontWeight: string;
   textTransform: 'none' | 'uppercase' | 'lowercase' | 'capitalize';
   letterSpacing: string;
+  backgroundColor: string;
 }
 
 export interface ButtonBlockProperties {
@@ -102,6 +103,7 @@ export interface HeadingBlockProperties {
   align: 'left' | 'center' | 'right' | 'justify';
   textTransform: 'none' | 'uppercase' | 'lowercase' | 'capitalize';
   letterSpacing: string;
+  backgroundColor: string;
 }
 
 export interface CountdownBlockProperties {
@@ -367,6 +369,10 @@ export interface EmailEditorProps {
   fontFamilies?: string[];
   /** Custom font size options for the rich text toolbar (e.g. ['12px', '14px', '16px']). Falls back to DEFAULT_FONT_SIZES constant. */
   fontSizes?: string[];
+  /** Initial custom color presets for the color picker. Users can add/remove presets at runtime. */
+  colorPresets?: string[];
+  /** Called when custom color presets are added or removed. Receives the full list of custom presets. */
+  onColorPresetsChange?: (presets: string[]) => void;
   /** Custom block definitions for the sidebar palette. Override icons, labels, descriptions, or hide specific blocks. Falls back to BLOCK_DEFINITIONS constant. */
   blockDefinitions?: import('./constants').BlockDefinition[];
   /** Key for auto-persisting the template. Different keys allow multiple editor instances to coexist. */

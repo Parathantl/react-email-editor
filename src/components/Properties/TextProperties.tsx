@@ -17,6 +17,7 @@ export function TextProperties({ block }: TextPropertiesProps) {
       <p className={styles.fieldHint}>
         Use the inline toolbar above the text block to format font, size, color, and alignment.
       </p>
+      <PropertyField type="color" label="Background Color" value={p.backgroundColor || 'transparent'} onChange={(v) => update({ backgroundColor: v })} />
       <PropertyField type="text" label="Line Height" value={p.lineHeight} onChange={(v) => update({ lineHeight: v })} />
       <PropertyField type="padding" label="Padding" value={p.padding} onChange={(v) => update({ padding: v })} />
     </div>

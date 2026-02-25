@@ -13,6 +13,9 @@ export interface ConfigContextValue {
   fontFamilies: string[];
   fontSizes: string[];
   clearPersisted: () => void;
+  customColorPresets: string[];
+  addCustomColorPreset: (color: string) => void;
+  removeCustomColorPreset: (color: string) => void;
 }
 
 export const ConfigContext = createContext<ConfigContextValue | null>(null);

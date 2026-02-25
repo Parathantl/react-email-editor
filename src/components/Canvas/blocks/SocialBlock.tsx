@@ -20,6 +20,34 @@ const PLATFORM_COLORS: Record<string, string> = {
   web: '#4caf50',
 };
 
+function SocialIconImage({ src, name, iconSizeNum, iconColor, SvgIcon }: {
+  src: string;
+  name: string;
+  iconSizeNum: number;
+  iconColor: string;
+  SvgIcon: ReturnType<typeof getSocialIcon>;
+}) {
+  const [errored, setErrored] = React.useState(false);
+  if (errored) {
+    if (SvgIcon) return <SvgIcon size={Math.round(iconSizeNum * 0.6)} color={iconColor} />;
+    return (
+      <span style={{ color: iconColor, fontSize: Math.max(10, iconSizeNum * 0.5), fontWeight: 'bold' }}>
+        {name.charAt(0).toUpperCase()}
+      </span>
+    );
+  }
+  return (
+    <img
+      src={src}
+      alt={name}
+      className={styles.socialIconImage}
+      width={iconSizeNum}
+      height={iconSizeNum}
+      onError={() => setErrored(true)}
+    />
+  );
+}
+
 export const SocialBlock = React.memo(function SocialBlock({ block }: SocialBlockProps) {
   const p = block.properties;
   const isVertical = p.mode === 'vertical';
@@ -61,12 +89,12 @@ export const SocialBlock = React.memo(function SocialBlock({ block }: SocialBloc
         let iconContent: React.ReactNode;
         if (element.src) {
           iconContent = (
-            <img
+            <SocialIconImage
               src={element.src}
-              alt={element.name}
-              className={styles.socialIconImage}
-              width={iconSizeNum}
-              height={iconSizeNum}
+              name={element.name}
+              iconSizeNum={iconSizeNum}
+              iconColor={iconColor}
+              SvgIcon={SvgIcon}
             />
           );
         } else if (SvgIcon) {
