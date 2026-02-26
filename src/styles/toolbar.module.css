@@ -157,24 +157,46 @@
 }
 
 /* Rich text toolbar */
+@keyframes toolbarSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .richTextToolbar {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   padding: var(--ee-space-xs) var(--ee-space-sm);
   background: var(--ee-bg-panel);
   border: 1px solid var(--ee-border-color);
   border-radius: var(--ee-border-radius);
   box-shadow: var(--ee-shadow-sm);
   flex-wrap: wrap;
+  animation: toolbarSlideIn 150ms ease;
+}
+
+.richTextGroup {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  background: var(--ee-bg-app);
+  border-radius: var(--ee-border-radius-sm);
+  padding: 2px;
+  box-shadow: inset 0 0 0 1px var(--ee-border-color);
 }
 
 .richTextBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   font-size: var(--ee-font-size-sm);
   background: transparent;
   border: none;
@@ -182,6 +204,8 @@
   cursor: pointer;
   color: var(--ee-text-secondary);
   transition: all var(--ee-transition-fast);
+  padding: 0;
+  line-height: 1;
 }
 
 .richTextBtn:hover {
@@ -189,35 +213,55 @@
   color: var(--ee-text-primary);
 }
 
+.richTextBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.richTextBtn:disabled:hover {
+  background: transparent;
+  color: var(--ee-text-secondary);
+}
+
+.richTextBtn:focus-visible {
+  outline: 2px solid var(--ee-border-focus);
+  outline-offset: -1px;
+}
+
 .richTextBtnActive {
   background: var(--ee-bg-selected);
   color: var(--ee-color-primary);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.richTextSeparator {
-  width: 1px;
-  height: 20px;
-  background: var(--ee-border-color);
-  margin: 0 2px;
+.richTextBtnWithIndicator {
+  composes: richTextBtn;
+  flex-direction: column;
+  gap: 1px;
+  height: 28px;
 }
 
 /* Rich text select controls */
 .richTextSelect {
-  height: 28px;
+  height: 26px;
   padding: 0 4px;
   font-size: var(--ee-font-size-xs);
   font-family: var(--ee-font-family);
-  border: 1px solid var(--ee-border-color);
+  border: none;
   border-radius: var(--ee-border-radius-sm);
-  background: var(--ee-bg-input);
+  background: transparent;
   color: var(--ee-text-primary);
   outline: none;
   cursor: pointer;
   max-width: 110px;
 }
 
+.richTextSelect:hover {
+  background: var(--ee-bg-hover);
+}
+
 .richTextSelect:focus {
-  border-color: var(--ee-border-focus);
+  background: var(--ee-bg-hover);
 }
 
 .richTextSelectSmall {
@@ -228,11 +272,6 @@
 /* Rich text inline color picker */
 .richTextColorWrapper {
   position: relative;
-}
-
-.richTextColorLabel {
-  font-weight: var(--ee-font-weight-semibold);
-  font-size: var(--ee-font-size-sm);
 }
 
 .richTextColorIndicator {
@@ -254,7 +293,16 @@
   border-radius: var(--ee-border-radius);
   box-shadow: var(--ee-shadow-md);
   z-index: var(--ee-z-dropdown);
-  min-width: 176px;
+  min-width: 192px;
+}
+
+.richTextColorSectionLabel {
+  font-size: 10px;
+  font-weight: var(--ee-font-weight-semibold);
+  color: var(--ee-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
 }
 
 .richTextColorGrid {
@@ -265,6 +313,7 @@
 }
 
 .richTextColorSwatch {
+  position: relative;
   width: 24px;
   height: 24px;
   border-radius: 3px;
@@ -275,26 +324,97 @@
 }
 
 .richTextColorSwatch:hover {
-  transform: scale(1.2);
+  transform: scale(1.15);
   border-color: var(--ee-border-color-strong);
 }
 
-.richTextColorActions {
+.richTextColorSwatchActive {
+  border-color: var(--ee-color-primary);
+  box-shadow: 0 0 0 1px var(--ee-color-primary);
+}
+
+.richTextColorSwatchRemove {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--ee-bg-panel);
+  border: 1px solid var(--ee-border-color);
+  color: var(--ee-text-secondary);
+  font-size: 9px;
+  line-height: 1;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: var(--ee-shadow-sm);
+}
+
+.richTextColorSwatch:hover .richTextColorSwatchRemove {
+  display: flex;
+}
+
+.richTextColorSwatchRemove:hover {
+  background: var(--ee-color-danger, #ef4444);
+  border-color: var(--ee-color-danger, #ef4444);
+  color: #fff;
+}
+
+.richTextColorCustomRow {
   display: flex;
   align-items: center;
-  gap: var(--ee-space-sm);
+  gap: 6px;
   border-top: 1px solid var(--ee-border-color);
   padding-top: var(--ee-space-sm);
 }
 
-.richTextColorInput {
-  width: 28px;
+.richTextColorHexInput {
+  flex: 1;
+  min-width: 0;
   height: 28px;
-  padding: 0;
+  padding: 0 6px;
+  font-size: 12px;
+  font-family: var(--ee-font-family);
   border: 1px solid var(--ee-border-color);
-  border-radius: 3px;
+  border-radius: var(--ee-border-radius-sm);
+  background: var(--ee-bg-input);
+  color: var(--ee-text-primary);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.richTextColorHexInput:focus {
+  border-color: var(--ee-border-focus);
+}
+
+.richTextColorApplyBtn {
+  height: 28px;
+  padding: 0 10px;
+  font-size: var(--ee-font-size-xs);
+  font-family: var(--ee-font-family);
+  font-weight: var(--ee-font-weight-medium);
+  color: var(--ee-text-inverse);
+  background: var(--ee-color-primary);
+  border: none;
+  border-radius: var(--ee-border-radius-sm);
   cursor: pointer;
-  background: none;
+  transition: background var(--ee-transition-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.richTextColorApplyBtn:hover {
+  background: var(--ee-color-primary-hover);
+}
+
+.richTextColorBottomActions {
+  display: flex;
+  align-items: center;
+  gap: var(--ee-space-sm);
+  margin-top: 6px;
 }
 
 .richTextColorClearBtn {
@@ -312,6 +432,16 @@
 .richTextColorClearBtn:hover {
   background: var(--ee-bg-hover);
   color: var(--ee-text-primary);
+}
+
+.richTextColorClearBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.richTextColorClearBtn:disabled:hover {
+  background: transparent;
+  color: var(--ee-text-secondary);
 }
 
 /* Link editor popover */
@@ -399,5 +529,54 @@
 .richTextLinkRemove:hover {
   background: var(--ee-color-danger, #ef4444);
   color: var(--ee-text-inverse);
+}
+
+/* Tooltip */
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 2px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.richTextTooltipWrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.richTextTooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 8px;
+  background: #1f2937;
+  color: #fff;
+  font-size: 11px;
+  font-family: var(--ee-font-family);
+  line-height: 1.3;
+  white-space: nowrap;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  pointer-events: none;
+  z-index: var(--ee-z-dropdown, 100);
+  animation: tooltipFadeIn 120ms ease;
+}
+
+.richTextTooltipShortcut {
+  font-size: 10px;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1px 4px;
+  border-radius: 3px;
+  color: rgba(255, 255, 255, 0.8);
 }
 

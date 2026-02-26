@@ -1,0 +1,58 @@
+.hslPicker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hslArea {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  border-radius: 4px;
+  cursor: crosshair;
+  touch-action: none;
+  user-select: none;
+}
+
+.hslAreaThumb {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.hslHueBar {
+  position: relative;
+  width: 140px;
+  height: 14px;
+  border-radius: 7px;
+  background: linear-gradient(
+    to right,
+    hsl(0, 100%, 50%),
+    hsl(60, 100%, 50%),
+    hsl(120, 100%, 50%),
+    hsl(180, 100%, 50%),
+    hsl(240, 100%, 50%),
+    hsl(300, 100%, 50%),
+    hsl(360, 100%, 50%)
+  );
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+}
+
+.hslHueThumb {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}

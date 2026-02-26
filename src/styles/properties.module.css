@@ -376,14 +376,6 @@
   width: 100%;
 }
 
-.colorNativeInput {
-  width: 100%;
-  grid-column: 1 / -1;
-  height: 28px;
-  cursor: pointer;
-  border: none;
-}
-
 /* Custom color preset section label */
 .colorPresetSectionLabel {
   font-size: var(--ee-font-size-xs);

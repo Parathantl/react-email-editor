@@ -10,6 +10,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import { VariableNode } from './VariableNode';
 import { FontSize } from './FontSize';
 import { FontFamily } from './FontFamily';
+import { Indent } from './Indent';
 
 export function getExtensions(placeholder?: string) {
   return [
@@ -52,6 +53,7 @@ export function getExtensions(placeholder?: string) {
     Placeholder.configure({
       placeholder: placeholder ?? 'Type something...',
     }),
+    Indent,
     VariableNode,
   ];
 }

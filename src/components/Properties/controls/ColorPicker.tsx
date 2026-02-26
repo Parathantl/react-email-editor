@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { COLOR_PRESETS } from '../../../constants';
 import { useColorPresets } from '../../../context/EditorContext';
+import { HslColorArea } from '../../shared/HslColorArea';
 import styles from '../../../styles/properties.module.css';
 
 interface ColorPickerProps {
@@ -103,13 +104,10 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
                 ))}
               </>
             )}
-            <div className={`${styles.colorPresetBtnFull}`} style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-              <input
-                type="color"
-                className={`ee-color-native-input ${styles.colorNativeInput}`}
-                style={{ gridColumn: 'unset', flex: 1 }}
+            <div className={`${styles.colorPresetBtnFull}`} style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'stretch' }}>
+              <HslColorArea
                 value={isHex ? value : '#ffffff'}
-                onChange={(e) => onChange(e.target.value)}
+                onChange={onChange}
               />
               <button
                 className={`ee-color-save-preset ${styles.colorSavePresetBtn}`}
