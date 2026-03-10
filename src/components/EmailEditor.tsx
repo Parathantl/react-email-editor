@@ -274,6 +274,7 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
         propertiesOpen={propertiesOpen}
         onToggleSidebar={toggleSidebar}
         onToggleProperties={toggleProperties}
+        toolbarActions={props.toolbarActions}
       />
       <div className={editorStyles.editorBody}>
         {activeTab === 'visual' && (

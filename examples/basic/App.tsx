@@ -1,7 +1,8 @@
-import React, { useRef, useCallback } from 'react';
+import { useRef, useCallback } from 'react';
 import { EmailEditor } from '../../src';
 import type { EmailEditorRef, EmailTemplate, Variable } from '../../src/types';
 import { createBase64Adapter } from '../adapters/base64-adapter';
+import React from 'react';
 
 const imageAdapter = createBase64Adapter();
 
@@ -24,6 +25,14 @@ export default function App() {
     console.log('Custom variables changed:', customVars);
   }, []);
 
+  const handleSave = useCallback(async () => {
+    if (!editorRef.current) return;
+    const mjml = editorRef.current.getMJML();
+    const html = await editorRef.current.getHTML();
+    console.log('Saved MJML:', mjml);
+    console.log('Saved HTML:', html);
+  }, []);
+
   return (
     <div style={{ height: '100vh' }}>
       <EmailEditor
@@ -32,6 +41,23 @@ export default function App() {
         imageUploadAdapter={imageAdapter}
         onChange={handleChange}
         onVariablesChange={handleVariablesChange}
+        toolbarActions={
+          <button
+            onClick={handleSave}
+            style={{
+              padding: '6px 16px',
+              fontSize: '13px',
+              fontWeight: 500,
+              color: '#fff',
+              background: '#2563eb',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+            }}
+          >
+            Save
+          </button>
+        }
       />
     </div>
   );

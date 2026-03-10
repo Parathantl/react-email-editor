@@ -29,6 +29,8 @@ import { applyIndent, applyOutdent } from '../../tiptap/Indent';
 
 interface RichTextToolbarProps {
   editor: Editor | null;
+  defaultFontFamily?: string;
+  defaultFontSize?: string;
 }
 
 /** Prevent mousedown on toolbar elements so editor keeps focus, but allow inputs/selects to work natively */
@@ -42,15 +44,15 @@ function preventBlur(e: React.MouseEvent) {
   e.preventDefault();
 }
 
-export function RichTextToolbar({ editor }: RichTextToolbarProps) {
+export function RichTextToolbar({ editor, defaultFontFamily, defaultFontSize }: RichTextToolbarProps) {
   if (!editor) return null;
 
   return (
     <div className={`ee-richtext-toolbar ${styles.richTextToolbar}`} onMouseDown={preventBlur}>
       {/* Group 1 — Typography */}
       <div className={`ee-richtext-group ${styles.richTextGroup}`}>
-        <FontFamilySelect editor={editor} />
-        <FontSizeSelect editor={editor} />
+        <FontFamilySelect editor={editor} defaultFontFamily={defaultFontFamily} />
+        <FontSizeSelect editor={editor} defaultFontSize={defaultFontSize} />
       </div>
 
       {/* Group 2 — Formatting */}
@@ -241,9 +243,10 @@ export function RichTextToolbar({ editor }: RichTextToolbarProps) {
 
 // ---- Font Family Select ----
 
-function FontFamilySelect({ editor }: { editor: Editor }) {
+function FontFamilySelect({ editor, defaultFontFamily }: { editor: Editor; defaultFontFamily?: string }) {
   const { fontFamilies } = useEditorFonts();
-  const currentFont = editor.getAttributes('textStyle').fontFamily || '';
+  const inlineFont = editor.getAttributes('textStyle').fontFamily || '';
+  const currentFont = inlineFont || defaultFontFamily || '';
 
   // Include current font if it's not in the predefined list
   const fonts = fontFamilies.slice();
@@ -277,9 +280,10 @@ function FontFamilySelect({ editor }: { editor: Editor }) {
 
 // ---- Font Size Select ----
 
-function FontSizeSelect({ editor }: { editor: Editor }) {
+function FontSizeSelect({ editor, defaultFontSize }: { editor: Editor; defaultFontSize?: string }) {
   const { fontSizes } = useEditorFonts();
-  const currentSize = editor.getAttributes('textStyle').fontSize || '';
+  const inlineSize = editor.getAttributes('textStyle').fontSize || '';
+  const currentSize = inlineSize || defaultFontSize || '';
 
   // Build size list, including current size if it's not in the predefined list
   const sizes = fontSizes.slice();

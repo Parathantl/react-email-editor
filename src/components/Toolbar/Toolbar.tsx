@@ -13,13 +13,14 @@ interface ToolbarProps {
   propertiesOpen?: boolean;
   onToggleSidebar?: () => void;
   onToggleProperties?: () => void;
+  toolbarActions?: React.ReactNode;
 }
 
 /**
  * Inner component that subscribes only to activeTab (not the full template).
  * Template is accessed via ref for export operations to avoid re-renders on every edit.
  */
-export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggleProperties }: ToolbarProps) {
+export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggleProperties, toolbarActions }: ToolbarProps) {
   const { template, activeTab } = useTemplateContext();
   const { canUndo, canRedo } = useHistoryContext();
   const dispatch = useEditorDispatch();
@@ -215,6 +216,12 @@ export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen
           )}
         </div>
       </div>
+
+      {toolbarActions && (
+        <div className={`ee-toolbar-actions ${styles.toolbarGroup}`}>
+          {toolbarActions}
+        </div>
+      )}
 
       <input
         ref={fileInputRef}

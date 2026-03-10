@@ -97,7 +97,11 @@ const TextBlockInner = function TextBlock({ block }: TextBlockProps) {
     <div className={`ee-block-text ${styles.textBlock}`} ref={wrapperRef}>
       {isFocused && editorInstance && (
         <div className={styles.textBlockToolbar}>
-          <RichTextToolbar editor={editorInstance} />
+          <RichTextToolbar
+            editor={editorInstance}
+            defaultFontFamily={p.fontFamily}
+            defaultFontSize={p.fontSize}
+          />
         </div>
       )}
       <div style={wrapperStyle}>

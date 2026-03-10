@@ -403,6 +403,8 @@ export interface EmailEditorProps {
   onTemplateLoad?: (template: EmailTemplate) => void;
   /** Called when history state changes (undo/redo) */
   onHistoryChange?: (canUndo: boolean, canRedo: boolean) => void;
+  /** React node rendered at the right end of the toolbar (e.g. a Save button). */
+  toolbarActions?: React.ReactNode;
 }
 
 export interface EmailEditorRef {
