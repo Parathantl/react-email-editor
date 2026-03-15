@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 
-import { useTemplateContext, useEditorDispatch, useHistoryContext } from '../../context/EditorContext';
+import { useTemplateContext, useEditorDispatch } from '../../context/EditorContext';
 import { generateMJML } from '../../mjml/generator';
 import { compileMJMLToHTML } from '../../mjml/compiler';
 import { parseMJML } from '../../mjml/parser';
@@ -22,7 +22,6 @@ interface ToolbarProps {
  */
 export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggleProperties, toolbarActions }: ToolbarProps) {
   const { template, activeTab } = useTemplateContext();
-  const { canUndo, canRedo } = useHistoryContext();
   const dispatch = useEditorDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [exportOpen, setExportOpen] = useState(false);
@@ -46,14 +45,6 @@ export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen
     },
     [dispatch],
   );
-
-  const handleUndo = useCallback(() => {
-    dispatch({ type: 'UNDO' });
-  }, [dispatch]);
-
-  const handleRedo = useCallback(() => {
-    dispatch({ type: 'REDO' });
-  }, [dispatch]);
 
   const handleExportMJML = useCallback(() => {
     const mjml = generateMJML(templateRef.current!);
@@ -128,27 +119,6 @@ export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen
 
   return (
     <div className={`ee-toolbar ${styles.toolbar}`} role="toolbar" aria-label="Editor toolbar">
-      <div className={`ee-toolbar-history ${styles.toolbarGroup}`} role="group" aria-label="History">
-        <button
-          className={`ee-toolbar-undo ${styles.toolbarBtn}`}
-          onClick={handleUndo}
-          disabled={!canUndo}
-          title="Undo (Ctrl+Z)"
-          aria-label="Undo"
-        >
-          Undo
-        </button>
-        <button
-          className={`ee-toolbar-redo ${styles.toolbarBtn}`}
-          onClick={handleRedo}
-          disabled={!canRedo}
-          title="Redo (Ctrl+Shift+Z)"
-          aria-label="Redo"
-        >
-          Redo
-        </button>
-      </div>
-
       {/* Panel toggles — visible only on narrow screens via CSS */}
       <div className={editorStyles.panelToggle}>
         <button

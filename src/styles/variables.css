@@ -63,8 +63,8 @@
   --ee-font-weight-semibold: 600;
 
   /* Layout */
-  --ee-sidebar-width: 260px;
-  --ee-properties-width: 280px;
+  --ee-sidebar-width: 240px;
+  --ee-properties-width: 260px;
   --ee-toolbar-height: 48px;
 
   /* Shadows */
@@ -92,8 +92,8 @@
   --ee-overlay-subtle: rgba(0, 0, 0, 0.1);
 
   /* Drop zone */
-  --ee-dropzone-color: #3b82f6;
-  --ee-dropzone-bg: rgba(59, 130, 246, 0.08);
+  --ee-dropzone-color: #7c3aed;
+  --ee-dropzone-bg: rgba(124, 58, 237, 0.08);
   --ee-dropzone-height: 4px;
   --ee-dropzone-height-active: 40px;
 

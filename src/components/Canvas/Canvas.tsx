@@ -1,15 +1,21 @@
 import React, { useCallback, useState } from 'react';
 import { Section } from './Section';
 import { SectionDropZone } from './SectionDropZone';
-import { useTemplateContext, useEditorDispatch } from '../../context/EditorContext';
+import { useTemplateContext, useEditorDispatch, useHistoryContext } from '../../context/EditorContext';
 import { createSection, createSectionWithBlock } from '../../utils/factory';
 import { isDropAllowed, getBlockTypeFromDrop } from '../../utils/dnd';
 import styles from '../../styles/canvas.module.css';
 
+type CanvasPreviewMode = 'desktop' | 'mobile';
+
+const MOBILE_WIDTH = 375;
+
 export const Canvas = React.memo(function Canvas() {
   const { template } = useTemplateContext();
+  const { canUndo, canRedo } = useHistoryContext();
   const dispatch = useEditorDispatch();
   const [isDragOver, setIsDragOver] = useState(false);
+  const [previewMode, setPreviewMode] = useState<CanvasPreviewMode>('desktop');
 
   const handleAddSection = useCallback(() => {
     dispatch({ type: 'ADD_SECTION', payload: { section: createSection() } });
@@ -58,33 +64,89 @@ export const Canvas = React.memo(function Canvas() {
     [dispatch],
   );
 
+  const handleUndo = useCallback(() => {
+    dispatch({ type: 'UNDO' });
+  }, [dispatch]);
+
+  const handleRedo = useCallback(() => {
+    dispatch({ type: 'REDO' });
+  }, [dispatch]);
+
+  const canvasWidth = previewMode === 'mobile' ? MOBILE_WIDTH : template.globalStyles.width;
+
   return (
-    <div className={`ee-canvas-wrapper ${styles.canvasWrapper}`} onClick={handleCanvasClick} role="main" aria-label="Email canvas">
-      <div
-        className={`ee-canvas-body ${styles.canvasBody} ${isDragOver ? styles.canvasBodyDragOver : ''}`}
-        style={{
-          width: template.globalStyles.width,
-          backgroundColor: template.globalStyles.backgroundColor,
-          fontFamily: template.globalStyles.fontFamily,
-        }}
-        onClick={(e) => e.stopPropagation()}
-        onDragOver={handleBodyDragOver}
-        onDragLeave={handleBodyDragLeave}
-        onDrop={handleBodyDrop}
-        aria-label="Email content area"
-      >
-        {template.sections.map((section, index) => (
-          <React.Fragment key={section.id}>
-            <SectionDropZone index={index} />
-            <Section section={section} />
-          </React.Fragment>
-        ))}
-        {template.sections.length > 0 && (
-          <SectionDropZone index={template.sections.length} />
-        )}
-        <button className={`ee-add-section ${styles.addSectionBtn}`} onClick={handleAddSection} aria-label="Add new section">
-          + Add Section
-        </button>
+    <div className={`ee-canvas-area ${styles.canvasArea}`}>
+      <div className={`ee-canvas-header ${styles.canvasHeader}`}>
+        <div className={`ee-canvas-header-center ${styles.canvasHeaderCenter}`}>
+          <div className={`ee-canvas-view-toggle ${styles.canvasHeaderGroup}`} role="group" aria-label="Preview size">
+            <button
+              className={`ee-canvas-view-desktop ${styles.canvasHeaderBtn} ${previewMode === 'desktop' ? `ee-canvas-view--active ${styles.canvasHeaderBtnActive}` : ''}`}
+              onClick={() => setPreviewMode('desktop')}
+              aria-pressed={previewMode === 'desktop'}
+              aria-label="Desktop view"
+              title={`Desktop (${template.globalStyles.width}px)`}
+            >
+              🖥
+            </button>
+            <button
+              className={`ee-canvas-view-mobile ${styles.canvasHeaderBtn} ${previewMode === 'mobile' ? `ee-canvas-view--active ${styles.canvasHeaderBtnActive}` : ''}`}
+              onClick={() => setPreviewMode('mobile')}
+              aria-pressed={previewMode === 'mobile'}
+              aria-label="Mobile view"
+              title="Mobile (375px)"
+            >
+              📱
+            </button>
+          </div>
+        </div>
+        <div className={`ee-canvas-history ${styles.canvasHeaderGroup}`} role="group" aria-label="History">
+          <button
+            className={`ee-canvas-undo ${styles.canvasHeaderBtn}`}
+            onClick={handleUndo}
+            disabled={!canUndo}
+            title="Undo (Ctrl+Z)"
+            aria-label="Undo"
+          >
+            ↩
+          </button>
+          <button
+            className={`ee-canvas-redo ${styles.canvasHeaderBtn}`}
+            onClick={handleRedo}
+            disabled={!canRedo}
+            title="Redo (Ctrl+Shift+Z)"
+            aria-label="Redo"
+          >
+            ↪
+          </button>
+        </div>
+      </div>
+      <div className={`ee-canvas-wrapper ${styles.canvasWrapper}`} onClick={handleCanvasClick} role="main" aria-label="Email canvas">
+        <div
+          className={`ee-canvas-body ${styles.canvasBody} ${isDragOver ? styles.canvasBodyDragOver : ''}`}
+          style={{
+            width: canvasWidth,
+            backgroundColor: template.globalStyles.backgroundColor,
+            fontFamily: template.globalStyles.fontFamily,
+          }}
+          onClick={(e) => e.stopPropagation()}
+          onDragOver={handleBodyDragOver}
+          onDragLeave={handleBodyDragLeave}
+          onDrop={handleBodyDrop}
+          aria-label="Email content area"
+        >
+          {template.sections.map((section, index) => (
+            <React.Fragment key={section.id}>
+              <SectionDropZone index={index} />
+              <Section section={section} />
+            </React.Fragment>
+          ))}
+          {template.sections.length > 0 && (
+            <SectionDropZone index={template.sections.length} />
+          )}
+          <button className={`ee-add-section ${styles.addSectionBtn}`} onClick={handleAddSection} aria-label="Add new section">
+            + Add Section
+          </button>
+        </div>
       </div>
     </div>
   );

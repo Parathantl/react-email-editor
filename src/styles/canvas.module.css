@@ -1,17 +1,86 @@
+/* Canvas area — outer column flex container */
+.canvasArea {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Canvas header bar */
+.canvasHeader {
+  display: flex;
+  align-items: center;
+  padding: var(--ee-space-sm) var(--ee-space-xl);
+  gap: var(--ee-space-sm);
+  flex-shrink: 0;
+}
+
+.canvasHeaderCenter {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.canvasHeaderGroup {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.canvasHeaderBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ee-space-xs);
+  padding: 4px 8px;
+  font-size: var(--ee-font-size-sm);
+  font-family: var(--ee-font-family);
+  font-weight: var(--ee-font-weight-medium);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--ee-border-radius-sm);
+  cursor: pointer;
+  color: var(--ee-text-secondary);
+  transition: all var(--ee-transition-fast);
+  white-space: nowrap;
+}
+
+.canvasHeaderBtn:hover {
+  background: var(--ee-bg-hover);
+  color: var(--ee-text-primary);
+  border-color: var(--ee-border-color);
+}
+
+.canvasHeaderBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.canvasHeaderBtnActive {
+  background: var(--ee-bg-selected);
+  color: var(--ee-color-primary);
+  border-color: var(--ee-color-primary);
+}
+
 .canvasWrapper {
   display: flex;
   justify-content: center;
-  padding: var(--ee-space-xl);
+  padding: var(--ee-space-lg) var(--ee-space-xl);
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
 }
 
 .canvasBody {
   width: 600px;
+  max-width: 100%;
   min-height: 400px;
   background: var(--ee-bg-email-body);
   box-shadow: var(--ee-shadow-lg);
   border-radius: var(--ee-border-radius);
   position: relative;
-  transition: box-shadow var(--ee-transition-fast);
+  transition: box-shadow var(--ee-transition-fast), width var(--ee-transition-normal);
 }
 
 .canvasBodyDragOver {
@@ -183,11 +252,15 @@
 }
 
 .blockWrapper.blockDropBefore {
-  box-shadow: 0 -2px 0 0 var(--ee-color-primary);
+  outline: 2px solid var(--ee-dropzone-color);
+  outline-offset: -2px;
+  border-top: 2px solid var(--ee-dropzone-color);
 }
 
 .blockWrapper.blockDropAfter {
-  box-shadow: 0 2px 0 0 var(--ee-color-primary);
+  outline: 2px solid var(--ee-dropzone-color);
+  outline-offset: -2px;
+  border-bottom: 2px solid var(--ee-dropzone-color);
 }
 
 /* Drop Zone */

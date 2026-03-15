@@ -48,7 +48,9 @@
   flex: 1;
   min-width: 0;
   background: var(--ee-bg-canvas);
-  overflow-y: auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .propertiesPanel {
