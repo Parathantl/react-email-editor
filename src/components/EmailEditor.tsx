@@ -27,7 +27,7 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
   const selection = useSelectionContext();
   const { clearPersisted } = useConfigContext();
   const containerRef = useRef<HTMLDivElement>(null);
-  const { onReady, onSave } = props;
+  const { onReady, onSave, customIcons } = props;
 
   // Panel toggle state for responsive layout
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -275,18 +275,19 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
         onToggleSidebar={toggleSidebar}
         onToggleProperties={toggleProperties}
         toolbarActions={props.toolbarActions}
+        customIcons={customIcons}
       />
       <div className={editorStyles.editorBody}>
         {activeTab === 'visual' && (
           <>
             <div className={`ee-sidebar ${sidebarClasses}`}>
               <ErrorBoundary>
-                <Sidebar blockDefinitions={props.blockDefinitions} />
+                <Sidebar blockDefinitions={props.blockDefinitions} customIcons={customIcons} />
               </ErrorBoundary>
             </div>
             <div className={`ee-canvas ${editorStyles.editorPanel} ${editorStyles.canvasPanel}`}>
               <ErrorBoundary>
-                <Canvas />
+                <Canvas customIcons={customIcons} />
               </ErrorBoundary>
             </div>
             <div className={`ee-properties ${propertiesClasses}`}>
@@ -307,14 +308,14 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
             </div>
             <div className={`ee-preview-pane ${editorStyles.sourcePaneDivider}`}>
               <ErrorBoundary>
-                <PreviewPanel />
+                <PreviewPanel customIcons={customIcons} />
               </ErrorBoundary>
             </div>
           </div>
         )}
         {activeTab === 'preview' && (
           <ErrorBoundary>
-            <PreviewPanel />
+            <PreviewPanel customIcons={customIcons} />
           </ErrorBoundary>
         )}
       </div>
@@ -348,6 +349,7 @@ export const EmailEditor = forwardRef<EmailEditorRef, EmailEditorProps>(
       onSelectionChange,
       onTemplateLoad,
       onHistoryChange,
+      customIcons
     } = props;
 
     let template = initialTemplate;
@@ -381,6 +383,7 @@ export const EmailEditor = forwardRef<EmailEditorRef, EmailEditorProps>(
         onSelectionChange={onSelectionChange}
         onTemplateLoad={onTemplateLoad}
         onHistoryChange={onHistoryChange}
+        customIcons={customIcons}
       >
         <div className={`ee-editor-wrapper ${editorStyles.editorWrapper} ${className || ''}`} style={style}>
           <EditorInner ref={ref} {...props} />

@@ -2,7 +2,7 @@ import { useRef, useCallback } from 'react';
 import { EmailEditor } from '../../src';
 import type { EmailEditorRef, EmailTemplate, Variable } from '../../src/types';
 import { createBase64Adapter } from '../adapters/base64-adapter';
-import React from 'react';
+import {CustomIcon, icons} from "./CustomIcons";
 
 const imageAdapter = createBase64Adapter();
 
@@ -58,6 +58,11 @@ export default function App() {
             Save
           </button>
         }
+        customIcons={{
+            desktop: <CustomIcon svg={icons.desktop} />,
+            mobile: <CustomIcon svg={icons.mobile} />,
+            paletteText: <CustomIcon svg={icons.paletteText} />,
+        }}
       />
     </div>
   );

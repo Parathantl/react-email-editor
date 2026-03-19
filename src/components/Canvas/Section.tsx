@@ -8,14 +8,18 @@ import styles from '../../styles/canvas.module.css';
 
 interface SectionProps {
   section: SectionType;
+  customIcons?: Record<string, React.ReactNode>;
 }
 
-export const Section = React.memo(function Section({ section }: SectionProps) {
+export const Section = React.memo(function Section({ section, customIcons }: SectionProps) {
   const selection = useSelectionContext();
   const dispatch = useEditorDispatch();
   const { template } = useTemplateContext();
   const isSelected = selection.sectionId === section.id && !selection.blockId;
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
+  const sectionDragIcon = customIcons?.sectionDrag ?? '↕️';
+  const sectionDuplicateIcon = customIcons?.sectionDuplicate ?? '📄';
+  const sectionRemoveIcon = customIcons?.sectionRemove ?? '🗑️';
 
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
@@ -95,7 +99,7 @@ export const Section = React.memo(function Section({ section }: SectionProps) {
           aria-label="Reorder section with Arrow Up/Down keys"
           tabIndex={0}
         >
-          ⠿
+          {sectionDragIcon}
         </span>
         <button
           className={`ee-section-duplicate ${styles.sectionBtn} ${styles.sectionBtnDuplicate}`}
@@ -103,7 +107,7 @@ export const Section = React.memo(function Section({ section }: SectionProps) {
           title="Duplicate section"
           aria-label="Duplicate section"
         >
-          ⧉
+          {sectionDuplicateIcon}
         </button>
         <button
           className={`ee-section-remove ${styles.sectionBtn}`}
@@ -111,12 +115,12 @@ export const Section = React.memo(function Section({ section }: SectionProps) {
           title="Remove section"
           aria-label="Remove section"
         >
-          x
+          {sectionRemoveIcon}
         </button>
       </div>
       <div className={styles.sectionContent}>
         {section.columns.map((column) => (
-          <Column key={column.id} column={column} sectionId={section.id} />
+          <Column key={column.id} column={column} sectionId={section.id} customIcons={customIcons} />
         ))}
       </div>
       {showRemoveConfirm && (

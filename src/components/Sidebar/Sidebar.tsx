@@ -10,9 +10,10 @@ import styles from '../../styles/sidebar.module.css';
 
 interface SidebarProps {
   blockDefinitions?: BlockDefinition[];
+  customIcons?: Record<string, React.ReactNode>;
 }
 
-export function Sidebar({ blockDefinitions }: SidebarProps) {
+export function Sidebar({ blockDefinitions, customIcons }: SidebarProps) {
   const dispatch = useEditorDispatch();
 
   const handleAddSection = useCallback(
@@ -31,7 +32,7 @@ export function Sidebar({ blockDefinitions }: SidebarProps) {
       </div>
 
       <h3 className={`ee-sidebar-title ${styles.sectionTitle}`}>Blocks</h3>
-      <BlockPalette blockDefinitions={blockDefinitions} />
+      <BlockPalette blockDefinitions={blockDefinitions} customIcons={customIcons} />
 
       <h3 className={`ee-sidebar-title ${styles.sectionTitle}`}>Layouts</h3>
       <div className={`ee-layout-section ${styles.layoutSection}`}>

@@ -18,6 +18,7 @@ import styles from '../../styles/canvas.module.css';
 interface ColumnProps {
   column: ColumnType;
   sectionId: string;
+  customIcons?: Record<string, React.ReactNode>;
 }
 
 /** Read block ID and index from a block wrapper element's data attributes */
@@ -29,10 +30,12 @@ function getBlockData(e: React.SyntheticEvent): { blockId: string; index: number
   return { blockId, index: Number(index) };
 }
 
-export const Column = React.memo(function Column({ column, sectionId }: ColumnProps) {
+export const Column = React.memo(function Column({ column, sectionId, customIcons }: ColumnProps) {
   const selection = useSelectionContext();
   const dispatch = useEditorDispatch();
   const [blockToRemove, setBlockToRemove] = useState<string | null>(null);
+  const blockDuplicateIcon = customIcons?.blockDuplicate ?? '📄';
+  const blockRemoveIcon = customIcons?.blockRemove ?? '🗑️';
 
   const confirmRemoveBlock = useCallback(
     (blockId: string) => {
@@ -263,7 +266,7 @@ export const Column = React.memo(function Column({ column, sectionId }: ColumnPr
                 title="Duplicate block"
                 aria-label="Duplicate block"
               >
-                ⧉
+                {blockDuplicateIcon}
               </button>
               <button
                 className={`ee-block-remove ${styles.blockBtn}`}
@@ -271,7 +274,7 @@ export const Column = React.memo(function Column({ column, sectionId }: ColumnPr
                 title="Remove block"
                 aria-label="Remove block"
               >
-                x
+                {blockRemoveIcon}
               </button>
             </div>
             <BlockRenderer block={block} />

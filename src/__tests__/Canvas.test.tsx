@@ -8,7 +8,7 @@ import { DEFAULT_GLOBAL_STYLES, DEFAULT_HEAD_METADATA } from '../constants';
 describe('Canvas', () => {
   it('renders the "Add Section" button', () => {
     renderWithEditor(<Canvas />);
-    expect(screen.getByText('+ Add Section')).toBeTruthy();
+    expect(screen.getByText('➕ Add Section')).toBeTruthy();
   });
 
   it('renders with empty template', () => {

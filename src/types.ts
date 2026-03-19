@@ -405,6 +405,7 @@ export interface EmailEditorProps {
   onHistoryChange?: (canUndo: boolean, canRedo: boolean) => void;
   /** React node rendered at the right end of the toolbar (e.g. a Save button). */
   toolbarActions?: React.ReactNode;
+  customIcons?: Record<string, React.ReactNode>;
 }
 
 export interface EmailEditorRef {

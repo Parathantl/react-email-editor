@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, type ReactNode } from 'react';
 import { useTemplateContext } from '../../context/EditorContext';
 import { generateMJML } from '../../mjml/generator';
 import { compileMJMLToHTML } from '../../mjml/compiler';
@@ -11,11 +11,13 @@ const PREVIEW_WIDTHS: Record<PreviewMode, number> = {
   mobile: 375,
 };
 
-export function PreviewPanel() {
+export function PreviewPanel({ customIcons }: { customIcons?: Record<string, ReactNode> }) {
   const { template } = useTemplateContext();
   const [html, setHtml] = useState('');
   const [previewMode, setPreviewMode] = useState<PreviewMode>('desktop');
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const desktopIcon = customIcons?.previewDesktop ?? '🖥️';
+  const mobileIcon = customIcons?.previewMobile ?? '📱';
 
   // Debounce preview compilation to avoid excessive recompilations during rapid edits
   useEffect(() => {
@@ -56,7 +58,7 @@ export function PreviewPanel() {
           aria-pressed={previewMode === 'desktop'}
           aria-label="Desktop preview"
         >
-          Desktop
+          {desktopIcon} Desktop
         </button>
         <button
           className={`ee-preview-toggle ee-preview-toggle--mobile ${styles.previewToggle} ${styles.previewToggleMobile} ${previewMode === 'mobile' ? `ee-preview-toggle--active ${styles.previewToggleActive}` : ''}`}
@@ -64,7 +66,7 @@ export function PreviewPanel() {
           aria-pressed={previewMode === 'mobile'}
           aria-label="Mobile preview"
         >
-          Mobile
+          {mobileIcon} Mobile
         </button>
       </div>
       <div className={`ee-preview-container ${styles.previewContainer}`}>
