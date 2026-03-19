@@ -7,10 +7,14 @@ import { isDropAllowed, getBlockTypeFromDrop } from '../../utils/dnd';
 import styles from '../../styles/canvas.module.css';
 
 type CanvasPreviewMode = 'desktop' | 'mobile';
+type CanvasCustomIcons = Record<string, React.ReactNode>;
+interface CanvasProps {
+  customIcons?: CanvasCustomIcons;
+}
 
 const MOBILE_WIDTH = 375;
 
-export const Canvas = React.memo(function Canvas() {
+export const Canvas = React.memo(function Canvas({ customIcons }: CanvasProps) {
   const { template } = useTemplateContext();
   const { canUndo, canRedo } = useHistoryContext();
   const dispatch = useEditorDispatch();
@@ -73,6 +77,10 @@ export const Canvas = React.memo(function Canvas() {
   }, [dispatch]);
 
   const canvasWidth = previewMode === 'mobile' ? MOBILE_WIDTH : template.globalStyles.width;
+  const desktopIcon = customIcons?.desktop ?? '🖥';
+  const mobileIcon = customIcons?.mobile ?? '📱';
+  const undoIcon = customIcons?.undo ?? '↩';
+  const redoIcon = customIcons?.redo ?? '↪';
 
   return (
     <div className={`ee-canvas-area ${styles.canvasArea}`}>
@@ -86,7 +94,7 @@ export const Canvas = React.memo(function Canvas() {
               aria-label="Desktop view"
               title={`Desktop (${template.globalStyles.width}px)`}
             >
-              🖥
+              {desktopIcon}
             </button>
             <button
               className={`ee-canvas-view-mobile ${styles.canvasHeaderBtn} ${previewMode === 'mobile' ? `ee-canvas-view--active ${styles.canvasHeaderBtnActive}` : ''}`}
@@ -95,7 +103,7 @@ export const Canvas = React.memo(function Canvas() {
               aria-label="Mobile view"
               title="Mobile (375px)"
             >
-              📱
+              {mobileIcon}
             </button>
           </div>
         </div>
@@ -107,7 +115,7 @@ export const Canvas = React.memo(function Canvas() {
             title="Undo (Ctrl+Z)"
             aria-label="Undo"
           >
-            ↩
+            {undoIcon}
           </button>
           <button
             className={`ee-canvas-redo ${styles.canvasHeaderBtn}`}
@@ -116,7 +124,7 @@ export const Canvas = React.memo(function Canvas() {
             title="Redo (Ctrl+Shift+Z)"
             aria-label="Redo"
           >
-            ↪
+            {redoIcon}
           </button>
         </div>
       </div>
@@ -137,14 +145,14 @@ export const Canvas = React.memo(function Canvas() {
           {template.sections.map((section, index) => (
             <React.Fragment key={section.id}>
               <SectionDropZone index={index} />
-              <Section section={section} />
+              <Section section={section} customIcons={customIcons} />
             </React.Fragment>
           ))}
           {template.sections.length > 0 && (
             <SectionDropZone index={template.sections.length} />
           )}
           <button className={`ee-add-section ${styles.addSectionBtn}`} onClick={handleAddSection} aria-label="Add new section">
-            + Add Section
+            {(customIcons?.addSection ?? '➕')} Add Section
           </button>
         </div>
       </div>

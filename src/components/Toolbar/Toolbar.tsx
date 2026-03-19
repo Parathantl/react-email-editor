@@ -14,17 +14,25 @@ interface ToolbarProps {
   onToggleSidebar?: () => void;
   onToggleProperties?: () => void;
   toolbarActions?: React.ReactNode;
+  customIcons?: Record<string, React.ReactNode>;
 }
 
 /**
  * Inner component that subscribes only to activeTab (not the full template).
  * Template is accessed via ref for export operations to avoid re-renders on every edit.
  */
-export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggleProperties, toolbarActions }: ToolbarProps) {
+export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen, onToggleSidebar, onToggleProperties, toolbarActions, customIcons }: ToolbarProps) {
   const { template, activeTab } = useTemplateContext();
   const dispatch = useEditorDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [exportOpen, setExportOpen] = useState(false);
+  const sidebarIcon = customIcons?.sidebar ?? '📚';
+  const propertiesIcon = customIcons?.properties ?? '⚙️';
+  const tabIcons: Record<ActiveTab, React.ReactNode> = {
+    visual: customIcons?.visual ?? '🎨',
+    source: customIcons?.source ?? '🧾',
+    preview: customIcons?.preview ?? '👁️',
+  };
 
   // Keep a ref to the current template so export callbacks don't need template as a dependency.
   // Toolbar still re-renders on template changes (due to TemplateContext), but the export
@@ -128,7 +136,7 @@ export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen
           aria-pressed={sidebarOpen}
           title="Toggle sidebar"
         >
-          ☰
+          {sidebarIcon}
         </button>
         <button
           className={`ee-toolbar-toggle-properties ${styles.panelToggleBtn} ${propertiesOpen ? styles.panelToggleBtnActive : ''}`}
@@ -137,7 +145,7 @@ export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen
           aria-pressed={propertiesOpen}
           title="Toggle properties"
         >
-          ⚙
+          {propertiesIcon}
         </button>
       </div>
 
@@ -152,7 +160,13 @@ export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen
             className={`ee-toolbar-tab ee-toolbar-tab--${tab} ${styles.tabBtn} ${activeTab === tab ? styles.tabBtnActive : ''}`}
             onClick={() => handleTabChange(tab)}
           >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            <span className="ee-toolbar-tab-icon">
+              {tabIcons[tab]}
+            </span>
+            <span className="ee-toolbar-tab-label">
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </span>
+
           </button>
         ))}
       </div>

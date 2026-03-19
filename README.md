@@ -165,6 +165,81 @@ Or pass MJML at init time without a ref:
 | `className` | `string` | CSS class for the outer wrapper |
 | `style` | `CSSProperties` | Inline styles for the outer wrapper |
 
+## Custom Icons (`customIcons`)
+
+You can pass `customIcons` to override built-in UI icons.  
+Every key is optional. If you skip a key, the editor uses its default emoji/icon.
+
+```tsx
+<EmailEditor
+  customIcons={{
+    desktop: '🖥️',
+    mobile: '📱',
+    undo: '↩️',
+    redo: '↪️',
+    addSection: '➕',
+    sidebar: '📚',
+    properties: '⚙️',
+    visual: '🎨',
+    source: '🧾',
+    preview: '👁️',
+    sectionDrag: '↕️',
+    sectionDuplicate: '📄',
+    sectionRemove: '🗑️',
+    blockDuplicate: '📄',
+    blockRemove: '🗑️',
+    previewDesktop: '🖥️',
+    previewMobile: '📱',
+    paletteText: '📝',
+    paletteHeading: '🔤',
+    paletteButton: '🔘',
+    paletteImage: '🖼️',
+    paletteVideo: '▶️',
+    paletteDivider: '➖',
+    paletteSpacer: '↕️',
+    paletteSocial: '🌐',
+    paletteHtml: '💻',
+    paletteCountdown: '⏰',
+    paletteMenu: '📋',
+    paletteHero: '⭐',
+  }}
+/>
+```
+
+### Available `customIcons` keys
+
+| Key | Used In |
+|-----|---------|
+| `desktop` | Canvas desktop view toggle |
+| `mobile` | Canvas mobile view toggle |
+| `undo` | Canvas undo button |
+| `redo` | Canvas redo button |
+| `addSection` | Canvas "Add Section" button |
+| `sidebar` | Toolbar sidebar toggle button |
+| `properties` | Toolbar properties toggle button |
+| `visual` | Toolbar Visual tab icon |
+| `source` | Toolbar Source tab icon |
+| `preview` | Toolbar Preview tab icon |
+| `sectionDrag` | Section drag handle |
+| `sectionDuplicate` | Section duplicate action |
+| `sectionRemove` | Section remove action |
+| `blockDuplicate` | Block duplicate action |
+| `blockRemove` | Block remove action |
+| `previewDesktop` | Preview panel desktop toggle |
+| `previewMobile` | Preview panel mobile toggle |
+| `paletteText` | Block palette icon for Text |
+| `paletteHeading` | Block palette icon for Heading |
+| `paletteButton` | Block palette icon for Button |
+| `paletteImage` | Block palette icon for Image |
+| `paletteVideo` | Block palette icon for Video |
+| `paletteDivider` | Block palette icon for Divider |
+| `paletteSpacer` | Block palette icon for Spacer |
+| `paletteSocial` | Block palette icon for Social |
+| `paletteHtml` | Block palette icon for HTML |
+| `paletteCountdown` | Block palette icon for Countdown |
+| `paletteMenu` | Block palette icon for Menu |
+| `paletteHero` | Block palette icon for Hero |
+
 ## Block Types
 
 | Type | Description | MJML Output |

@@ -49,6 +49,7 @@ interface EditorProviderProps {
   initialTemplate?: EmailTemplate;
   variables?: Variable[];
   initialCustomVariables?: Variable[];
+  customIcons?: Record<string, ReactNode>;
   imageUploadAdapter?: ImageUploadAdapter;
   onChange?: (template: EmailTemplate) => void;
   onVariablesChange?: (customVariables: Variable[]) => void;

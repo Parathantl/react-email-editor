@@ -9,9 +9,25 @@ import styles from '../../styles/sidebar.module.css';
 
 interface BlockPaletteProps {
   blockDefinitions?: BlockDefinition[];
+  customIcons?: Record<string, React.ReactNode>;
 }
 
-export const BlockPalette = React.memo(function BlockPalette({ blockDefinitions }: BlockPaletteProps) {
+const BLOCK_PALETTE_ICON_KEYS: Record<BlockType, string> = {
+  text: 'paletteText',
+  heading: 'paletteHeading',
+  button: 'paletteButton',
+  image: 'paletteImage',
+  video: 'paletteVideo',
+  divider: 'paletteDivider',
+  spacer: 'paletteSpacer',
+  social: 'paletteSocial',
+  html: 'paletteHtml',
+  countdown: 'paletteCountdown',
+  menu: 'paletteMenu',
+  hero: 'paletteHero',
+};
+
+export const BlockPalette = React.memo(function BlockPalette({ blockDefinitions, customIcons }: BlockPaletteProps) {
   const defs = blockDefinitions ?? BLOCK_DEFINITIONS;
   const dispatch = useEditorDispatch();
   const { template } = useTemplateContext();
@@ -42,7 +58,10 @@ export const BlockPalette = React.memo(function BlockPalette({ blockDefinitions 
 
   return (
     <div className={`ee-block-palette ${styles.blockPalette}`} role="list" aria-label="Available blocks">
-      {defs.map((def) => (
+      {defs.map((def) => {
+        const iconKey = BLOCK_PALETTE_ICON_KEYS[def.type];
+        const icon = customIcons?.[iconKey] ?? def.icon;
+        return (
         <div
           key={def.type}
           data-block-type={def.type}
@@ -60,10 +79,11 @@ export const BlockPalette = React.memo(function BlockPalette({ blockDefinitions 
             }
           }}
         >
-          <span className={`ee-palette-icon ${styles.blockCardIcon}`} aria-hidden="true">{def.icon}</span>
+          <span className={`ee-palette-icon ${styles.blockCardIcon}`} aria-hidden="true">{icon}</span>
           <span className={`ee-palette-label ${styles.blockCardLabel}`}>{def.label}</span>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 });
