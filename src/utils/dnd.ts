@@ -1,3 +1,4 @@
+import type { DragEvent } from 'react';
 import type { BlockType } from '../types';
 
 export const DND_TYPES = {
@@ -8,13 +9,13 @@ export const DND_TYPES = {
   SECTION_MOVE: 'application/x-section-move',
 } as const;
 
-export function setBlockTypeDragData(e: React.DragEvent, type: BlockType): void {
+export function setBlockTypeDragData(e: DragEvent, type: BlockType): void {
   e.dataTransfer.setData(DND_TYPES.BLOCK_TYPE, type);
   e.dataTransfer.effectAllowed = 'copy';
 }
 
 export function setBlockMoveDragData(
-  e: React.DragEvent,
+  e: DragEvent,
   blockId: string,
   sectionId: string,
   columnId: string,
@@ -25,12 +26,12 @@ export function setBlockMoveDragData(
   e.dataTransfer.effectAllowed = 'move';
 }
 
-export function getBlockTypeFromDrop(e: React.DragEvent): BlockType | null {
+export function getBlockTypeFromDrop(e: DragEvent): BlockType | null {
   const type = e.dataTransfer.getData(DND_TYPES.BLOCK_TYPE);
   return (type as BlockType) || null;
 }
 
-export function getBlockMoveFromDrop(e: React.DragEvent): {
+export function getBlockMoveFromDrop(e: DragEvent): {
   blockId: string;
   sectionId: string;
   columnId: string;
@@ -42,20 +43,20 @@ export function getBlockMoveFromDrop(e: React.DragEvent): {
   return { blockId, sectionId, columnId };
 }
 
-export function setSectionMoveDragData(e: React.DragEvent, sectionId: string): void {
+export function setSectionMoveDragData(e: DragEvent, sectionId: string): void {
   e.dataTransfer.setData(DND_TYPES.SECTION_MOVE, sectionId);
   e.dataTransfer.effectAllowed = 'move';
 }
 
-export function getSectionMoveFromDrop(e: React.DragEvent): string | null {
+export function getSectionMoveFromDrop(e: DragEvent): string | null {
   return e.dataTransfer.getData(DND_TYPES.SECTION_MOVE) || null;
 }
 
-export function isSectionDrop(e: React.DragEvent): boolean {
+export function isSectionDrop(e: DragEvent): boolean {
   return e.dataTransfer.types.includes(DND_TYPES.SECTION_MOVE);
 }
 
-export function isDropAllowed(e: React.DragEvent): boolean {
+export function isDropAllowed(e: DragEvent): boolean {
   return (
     e.dataTransfer.types.includes(DND_TYPES.BLOCK_TYPE) ||
     e.dataTransfer.types.includes(DND_TYPES.BLOCK_ID)

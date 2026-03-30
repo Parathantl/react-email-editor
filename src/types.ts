@@ -1,3 +1,5 @@
+import type { CSSProperties, ReactNode } from 'react';
+
 // ---- Block Types ----
 
 export type BlockType = 'text' | 'button' | 'image' | 'divider' | 'spacer' | 'social' | 'html' | 'video' | 'heading' | 'countdown' | 'menu' | 'hero';
@@ -380,7 +382,7 @@ export interface EmailEditorProps {
   /** Custom persistence adapter. Defaults to localStorage when persistenceKey is set. */
   persistenceAdapter?: PersistenceAdapter;
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 
   // Event callbacks for host app integration
   /** Called when a block is added to the template */
@@ -404,8 +406,8 @@ export interface EmailEditorProps {
   /** Called when history state changes (undo/redo) */
   onHistoryChange?: (canUndo: boolean, canRedo: boolean) => void;
   /** React node rendered at the right end of the toolbar (e.g. a Save button). */
-  toolbarActions?: React.ReactNode;
-  customIcons?: Record<string, React.ReactNode>;
+  toolbarActions?: ReactNode;
+  customIcons?: Record<string, ReactNode>;
 }
 
 export interface EmailEditorRef {

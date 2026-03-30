@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, type Dispatch } from 'react';
 import type { EditorAction, Block, Section } from '../types';
 import { useTemplateContext } from './TemplateContext';
 import { useSelectionContext } from './SelectionContext';
@@ -28,7 +28,7 @@ export function useEditorState() {
   );
 }
 
-export function useEditorDispatch(): React.Dispatch<EditorAction> {
+export function useEditorDispatch(): Dispatch<EditorAction> {
   return useDispatchContext();
 }
 
