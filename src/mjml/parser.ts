@@ -540,6 +540,11 @@ function parseTextBlock(el: Element): Block {
     return parseHtmlFromMjText(el);
   }
 
+  // Detect hero block by css-class marker
+  if (cssClass.includes('ee-block-hero')) {
+    return parseHeroFromMjText(el);
+  }
+
   const innerHTML = el.innerHTML?.trim() ?? '';
 
   // Heuristic: detect headings in imported MJML without ee-block-heading marker
@@ -653,6 +658,55 @@ function parseHtmlFromMjText(el: Element): Block {
     properties: {
       content: el.innerHTML?.trim() ?? '',
       padding: resolvePadding(el, defaults.padding),
+    },
+  };
+}
+
+function parseHeroFromMjText(el: Element): Block {
+  const defaults = DEFAULT_BLOCK_PROPERTIES.hero;
+  const innerHTML = el.innerHTML?.trim() ?? '';
+
+  // Extract metadata from embedded JSON comment
+  const metaMatch = innerHTML.match(/<!--ee-hero:([\s\S]*?)-->/);
+
+  if (metaMatch) {
+    try {
+      const raw = metaMatch[1].replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'");
+      const meta = JSON.parse(raw);
+      return {
+        id: generateBlockId(),
+        type: 'hero',
+        properties: {
+          heading: meta.heading ?? defaults.heading,
+          subtext: meta.subtext ?? defaults.subtext,
+          buttonText: meta.buttonText ?? '',
+          buttonHref: meta.buttonHref ?? defaults.buttonHref,
+          headingColor: meta.headingColor ?? defaults.headingColor,
+          headingFontSize: meta.headingFontSize ?? defaults.headingFontSize,
+          subtextColor: meta.subtextColor ?? defaults.subtextColor,
+          subtextFontSize: meta.subtextFontSize ?? defaults.subtextFontSize,
+          buttonBackgroundColor: meta.buttonBackgroundColor ?? defaults.buttonBackgroundColor,
+          buttonColor: meta.buttonColor ?? defaults.buttonColor,
+          buttonBorderRadius: meta.buttonBorderRadius ?? defaults.buttonBorderRadius,
+          align: el.getAttribute('align') ?? defaults.align,
+          padding: resolvePadding(el, defaults.padding),
+          backgroundImage: meta.backgroundImage ?? defaults.backgroundImage,
+          backgroundColor: meta.backgroundColor ?? defaults.backgroundColor,
+        },
+      };
+    } catch {
+      // JSON parse failed — fall through to default
+    }
+  }
+
+  // Fallback: create a default hero block
+  return {
+    id: generateBlockId(),
+    type: 'hero',
+    properties: {
+      ...defaults,
+      padding: resolvePadding(el, defaults.padding),
+      align: el.getAttribute('align') ?? defaults.align,
     },
   };
 }

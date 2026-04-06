@@ -451,12 +451,32 @@ function generateHeroBlock(block: Block, indent: string): string {
   }
 
   const bgColor = !p.backgroundImage && p.backgroundColor && p.backgroundColor !== 'transparent' ? p.backgroundColor : undefined;
+
+  // Embed hero metadata as a comment for round-trip parsing (like countdown blocks)
+  const metaJson = JSON.stringify({
+    heading: p.heading,
+    subtext: p.subtext,
+    buttonText: p.buttonText,
+    buttonHref: p.buttonHref,
+    headingColor: p.headingColor,
+    headingFontSize: p.headingFontSize,
+    subtextColor: p.subtextColor,
+    subtextFontSize: p.subtextFontSize,
+    buttonBackgroundColor: p.buttonBackgroundColor,
+    buttonColor: p.buttonColor,
+    buttonBorderRadius: p.buttonBorderRadius,
+    backgroundImage: p.backgroundImage,
+    backgroundColor: p.backgroundColor,
+  });
+  const meta = `<!--ee-hero:${escapeAttr(metaJson)}-->`;
+
   const attrs = buildAttrs({
     padding: p.padding,
     align: p.align,
     'container-background-color': bgColor,
+    'css-class': 'ee-block-hero',
   });
-  return `${indent}<mj-text${attrs}>${html}</mj-text>`;
+  return `${indent}<mj-text${attrs}>${meta}${html}</mj-text>`;
 }
 
 // ---- Helpers ----
