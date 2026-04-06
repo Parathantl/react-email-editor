@@ -66,6 +66,7 @@
 .canvasWrapper {
   display: flex;
   justify-content: center;
+  align-items: flex-start;
   padding: var(--ee-space-lg) var(--ee-space-xl);
   flex: 1;
   min-height: 0;
