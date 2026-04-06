@@ -117,6 +117,7 @@ function generateHeroAsSection(block: Block, indent: string): string {
   const heroAttrs = buildAttrs({
     'background-color': p.backgroundColor,
     'background-url': p.backgroundImage || undefined,
+    'background-position': p.backgroundImage ? 'center center' : undefined,
     padding: p.padding,
   });
 
@@ -443,7 +444,18 @@ function generateHeroBlock(block: Block, indent: string): string {
     html += `<a href="${escapeAttr(safeHref(p.buttonHref))}" style="display:inline-block;background-color:${escapeAttr(p.buttonBackgroundColor)};color:${escapeAttr(p.buttonColor)};border-radius:${escapeAttr(p.buttonBorderRadius)};padding:12px 28px;font-weight:600;font-size:16px;text-decoration:none">${escapeHTML(p.buttonText)}</a>`;
   }
 
-  const attrs = buildAttrs({ padding: p.padding, align: p.align });
+  // Wrap in a div with background styles when backgroundImage is set
+  if (p.backgroundImage) {
+    const bgStyle = `background-image:url(${escapeAttr(p.backgroundImage)});background-size:cover;background-position:center;background-repeat:no-repeat;${p.backgroundColor ? `background-color:${escapeAttr(p.backgroundColor)};` : ''}`;
+    html = `<div style="${bgStyle}padding:20px;">${html}</div>`;
+  }
+
+  const bgColor = !p.backgroundImage && p.backgroundColor && p.backgroundColor !== 'transparent' ? p.backgroundColor : undefined;
+  const attrs = buildAttrs({
+    padding: p.padding,
+    align: p.align,
+    'container-background-color': bgColor,
+  });
   return `${indent}<mj-text${attrs}>${html}</mj-text>`;
 }
 
