@@ -114,8 +114,11 @@ function generateSection(section: Section, indent: string): string {
 
 function generateHeroAsSection(block: Block, indent: string): string {
   const p = block.properties;
+  // Normalize empty/missing backgroundColor to 'transparent' so the attribute
+  // is always present and round-trips correctly (parser defaults to #ffffff when missing)
+  const bgColor = p.backgroundColor || 'transparent';
   const heroAttrs = buildAttrs({
-    'background-color': p.backgroundColor,
+    'background-color': bgColor,
     'background-url': p.backgroundImage || undefined,
     'background-position': p.backgroundImage ? 'center center' : undefined,
     padding: p.padding,

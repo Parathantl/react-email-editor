@@ -453,7 +453,7 @@ function buildHeroBlock(el: Element): Block {
       align,
       padding: resolvePadding(el, defaults.padding),
       backgroundImage: el.getAttribute('background-url') ?? defaults.backgroundImage,
-      backgroundColor: el.getAttribute('background-color') ?? defaults.backgroundColor,
+      backgroundColor: el.getAttribute('background-color') || 'transparent',
     },
   };
 }
@@ -691,7 +691,7 @@ function parseHeroFromMjText(el: Element): Block {
           align: el.getAttribute('align') ?? defaults.align,
           padding: resolvePadding(el, defaults.padding),
           backgroundImage: meta.backgroundImage ?? defaults.backgroundImage,
-          backgroundColor: meta.backgroundColor ?? defaults.backgroundColor,
+          backgroundColor: meta.backgroundColor || 'transparent',
         },
       };
     } catch {
