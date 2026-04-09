@@ -23,7 +23,7 @@ export function Tooltip({ label, shortcut, children }: TooltipProps) {
 
   return (
     <span
-      className={styles.richTextTooltipWrapper}
+      className={styles['ee-rich-text-tooltip-wrapper']}
       onMouseEnter={show}
       onMouseLeave={hide}
       onFocus={show}
@@ -31,9 +31,9 @@ export function Tooltip({ label, shortcut, children }: TooltipProps) {
     >
       {children}
       {visible && (
-        <span className={styles.richTextTooltip} role="tooltip">
+        <span className={styles['ee-rich-text-tooltip']} role="tooltip">
           <span>{label}</span>
-          {shortcut && <kbd className={styles.richTextTooltipShortcut}>{shortcut}</kbd>}
+          {shortcut && <kbd className={styles['ee-rich-text-tooltip-shortcut']}>{shortcut}</kbd>}
         </span>
       )}
     </span>

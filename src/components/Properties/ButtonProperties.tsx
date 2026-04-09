@@ -27,7 +27,7 @@ export function ButtonProperties({ block }: ButtonPropertiesProps) {
   const p = block.properties;
 
   return (
-    <div className={styles.propertiesBody}>
+    <div className={styles['ee-properties-body']}>
       <PropertyField type="text" label="Button Text" value={p.text} onChange={(v) => update({ text: v })} />
       <PropertyField type="link" label="Link URL" value={p.href} onChange={(v) => update({ href: v })} />
       <FieldSeparator />

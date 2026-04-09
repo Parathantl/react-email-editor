@@ -1,5 +1,5 @@
 /* Canvas area — outer column flex container */
-.canvasArea {
+.ee-canvas-area {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -7,7 +7,7 @@
 }
 
 /* Canvas header bar */
-.canvasHeader {
+.ee-canvas-header {
   display: flex;
   align-items: center;
   padding: var(--ee-space-sm) var(--ee-space-xl);
@@ -15,19 +15,19 @@
   flex-shrink: 0;
 }
 
-.canvasHeaderCenter {
+.ee-canvas-header-center {
   flex: 1;
   display: flex;
   justify-content: center;
 }
 
-.canvasHeaderGroup {
+.ee-canvas-header-group {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.canvasHeaderBtn {
+.ee-canvas-header-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,25 +45,25 @@
   white-space: nowrap;
 }
 
-.canvasHeaderBtn:hover {
+.ee-canvas-header-btn:hover {
   background: var(--ee-bg-hover);
   color: var(--ee-text-primary);
   border-color: var(--ee-border-color);
 }
 
-.canvasHeaderBtn:disabled {
+.ee-canvas-header-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
   pointer-events: none;
 }
 
-.canvasHeaderBtnActive {
+.ee-canvas-header-btn-active {
   background: var(--ee-bg-selected);
   color: var(--ee-color-primary);
   border-color: var(--ee-color-primary);
 }
 
-.canvasWrapper {
+.ee-canvas-wrapper {
   display: flex;
   justify-content: center;
   padding: var(--ee-space-lg) var(--ee-space-xl);
@@ -72,7 +72,7 @@
   overflow: auto;
 }
 
-.canvasBody {
+.ee-canvas-body {
   width: 600px;
   max-width: 100%;
   min-height: 400px;
@@ -83,32 +83,32 @@
   transition: box-shadow var(--ee-transition-fast), width var(--ee-transition-normal);
 }
 
-.canvasBodyDragOver {
+.ee-canvas-body-drag-over {
   box-shadow: var(--ee-shadow-lg), 0 0 0 3px var(--ee-dropzone-color);
 }
 
 /* Section */
-.section {
+.ee-section {
   position: relative;
   border: 1px solid transparent;
   transition: border-color var(--ee-transition-fast);
   cursor: pointer;
 }
 
-.section:hover {
+.ee-section:hover {
   border-color: var(--ee-border-color-strong);
 }
 
-.section.sectionSelected,
-.sectionSelected:hover {
+.ee-section.ee-section-selected,
+.ee-section-selected:hover {
   border-color: var(--ee-border-selected);
 }
 
-.sectionFullWidth {
+.ee-section-full-width {
   border-left: 3px solid var(--ee-color-primary);
 }
 
-.sectionOverlay {
+.ee-section-overlay {
   position: absolute;
   top: -1px;
   right: -1px;
@@ -119,11 +119,11 @@
   z-index: var(--ee-z-block-overlay);
 }
 
-.section:hover .sectionOverlay {
+.ee-section:hover .ee-section-overlay {
   opacity: 1;
 }
 
-.sectionBtn {
+.ee-section-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -138,19 +138,19 @@
   transition: all var(--ee-transition-fast);
 }
 
-.sectionBtn:hover {
+.ee-section-btn:hover {
   background: var(--ee-color-danger);
   color: var(--ee-text-inverse);
   border-color: var(--ee-color-danger);
 }
 
-.sectionBtnDuplicate:hover {
+.ee-section-btn-duplicate:hover {
   background: var(--ee-color-primary);
   color: var(--ee-text-inverse);
   border-color: var(--ee-color-primary);
 }
 
-.sectionDragHandle {
+.ee-section-drag-handle {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -167,23 +167,23 @@
   line-height: 1;
 }
 
-.sectionDragHandle:hover {
+.ee-section-drag-handle:hover {
   background: var(--ee-color-primary);
   color: var(--ee-text-inverse);
   border-color: var(--ee-color-primary);
 }
 
-.sectionDragHandle:active {
+.ee-section-drag-handle:active {
   cursor: grabbing;
 }
 
-.sectionContent {
+.ee-section-content {
   display: flex;
   min-height: 40px;
 }
 
 /* Column */
-.column {
+.ee-column {
   flex: 1;
   min-height: 40px;
   padding: 2px;
@@ -191,7 +191,7 @@
 }
 
 /* Block */
-.blockWrapper {
+.ee-block-wrapper {
   position: relative;
   border: 1px solid transparent;
   border-radius: var(--ee-border-radius-sm);
@@ -199,17 +199,17 @@
   cursor: pointer;
 }
 
-.blockWrapper:hover {
+.ee-block-wrapper:hover {
   border-color: var(--ee-border-color-strong);
 }
 
-.blockWrapper.blockSelected,
-.blockSelected:hover {
+.ee-block-wrapper.ee-block-selected,
+.ee-block-selected:hover {
   border-color: var(--ee-border-selected);
   box-shadow: var(--ee-shadow-focus);
 }
 
-.blockOverlay {
+.ee-block-overlay {
   position: absolute;
   top: -1px;
   right: -1px;
@@ -220,11 +220,11 @@
   z-index: var(--ee-z-block-overlay);
 }
 
-.blockWrapper:hover .blockOverlay {
+.ee-block-wrapper:hover .ee-block-overlay {
   opacity: 1;
 }
 
-.blockBtn {
+.ee-block-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -239,32 +239,32 @@
   transition: all var(--ee-transition-fast);
 }
 
-.blockBtn:hover {
+.ee-block-btn:hover {
   background: var(--ee-color-danger);
   color: var(--ee-text-inverse);
   border-color: var(--ee-color-danger);
 }
 
-.blockBtnDuplicate:hover {
+.ee-block-btn-duplicate:hover {
   background: var(--ee-color-primary);
   color: var(--ee-text-inverse);
   border-color: var(--ee-color-primary);
 }
 
-.blockWrapper.blockDropBefore {
+.ee-block-wrapper.ee-block-drop-before {
   outline: 2px solid var(--ee-dropzone-color);
   outline-offset: -2px;
   border-top: 2px solid var(--ee-dropzone-color);
 }
 
-.blockWrapper.blockDropAfter {
+.ee-block-wrapper.ee-block-drop-after {
   outline: 2px solid var(--ee-dropzone-color);
   outline-offset: -2px;
   border-bottom: 2px solid var(--ee-dropzone-color);
 }
 
 /* Drop Zone */
-.dropZone {
+.ee-drop-zone {
   min-height: 2px;
   padding: 4px 0;
   transition: all var(--ee-transition-fast);
@@ -272,14 +272,14 @@
   margin: 0 4px;
 }
 
-.dropZoneActive {
+.ee-drop-zone-active {
   min-height: var(--ee-dropzone-height-active);
   background: var(--ee-dropzone-bg);
   border: 2px dashed var(--ee-dropzone-color);
   border-radius: var(--ee-border-radius-sm);
 }
 
-.dropZoneLabel {
+.ee-drop-zone-label {
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
   display: flex;
@@ -291,7 +291,7 @@
 }
 
 /* Empty column */
-.emptyColumn {
+.ee-empty-column {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -305,7 +305,7 @@
   cursor: default;
 }
 
-.emptyColumnActive {
+.ee-empty-column-active {
   border-color: var(--ee-dropzone-color);
   background: var(--ee-dropzone-bg);
   color: var(--ee-dropzone-color);
@@ -313,13 +313,13 @@
 }
 
 /* Section Drop Zone */
-.sectionDropZone {
+.ee-section-drop-zone {
   min-height: 2px;
   transition: all var(--ee-transition-fast);
   position: relative;
 }
 
-.sectionDropZoneActive {
+.ee-section-drop-zone-active {
   min-height: 40px;
   background: var(--ee-dropzone-bg);
   border: 2px dashed var(--ee-dropzone-color);
@@ -327,7 +327,7 @@
   margin: 2px 4px;
 }
 
-.sectionDropZoneLabel {
+.ee-section-drop-zone-label {
   position: absolute;
   top: 0; right: 0; bottom: 0; left: 0;
   display: flex;
@@ -339,7 +339,7 @@
 }
 
 /* Add section button */
-.addSectionBtn {
+.ee-add-section-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -356,7 +356,7 @@
   width: calc(100% - 2 * var(--ee-space-lg));
 }
 
-.addSectionBtn:hover {
+.ee-add-section-btn:hover {
   border-color: var(--ee-color-primary);
   color: var(--ee-color-primary);
   background: var(--ee-color-primary-light);

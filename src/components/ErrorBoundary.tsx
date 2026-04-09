@@ -35,15 +35,15 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       if (this.props.fallback) return this.props.fallback;
       return (
         <div
-          className={`ee-error-boundary ${styles.errorBoundary}`}
+          className={`ee-error-boundary ${styles['ee-error-boundary']}`}
           role="alert"
         >
           <strong className="ee-error-title">Something went wrong</strong>
-          <p className={`ee-error-message ${styles.errorMessage}`}>
+          <p className={`ee-error-message ${styles['ee-error-message']}`}>
             {this.state.error?.message || 'An unexpected error occurred.'}
           </p>
           <button
-            className={`ee-error-retry ${styles.retryBtn}`}
+            className={`ee-error-retry ${styles['ee-retry-btn']}`}
             onClick={this.handleRetry}
             aria-label="Retry"
           >

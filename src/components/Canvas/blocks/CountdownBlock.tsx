@@ -65,22 +65,22 @@ export const CountdownBlock = React.memo(function CountdownBlock({ block }: Coun
   }), [p.labelColor]);
 
   return (
-    <div className={`ee-block-countdown ${styles.countdownBlock}`} style={wrapperStyle}>
+    <div className={`ee-block-countdown ${styles['ee-countdown-block']}`} style={wrapperStyle}>
       {p.label && (
-        <div className={styles.countdownLabel} style={labelStyle}>
+        <div className={styles['ee-countdown-label']} style={labelStyle}>
           {p.label}
         </div>
       )}
-      <div className={styles.countdownDigits} style={digitsContainerStyle}>
+      <div className={styles['ee-countdown-digits']} style={digitsContainerStyle}>
         {units.map((unit) => (
-          <div key={unit.label} className={styles.countdownUnit}>
+          <div key={unit.label} className={styles['ee-countdown-unit']}>
             <div
-              className={styles.countdownDigitBox}
+              className={styles['ee-countdown-digit-box']}
               style={digitBoxStyle}
             >
               {String(unit.value).padStart(2, '0')}
             </div>
-            <div className={styles.countdownUnitLabel} style={unitLabelStyle}>
+            <div className={styles['ee-countdown-unit-label']} style={unitLabelStyle}>
               {unit.label}
             </div>
           </div>

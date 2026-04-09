@@ -94,9 +94,9 @@ const TextBlockInner = function TextBlock({ block }: TextBlockProps) {
   }), [p.fontFamily, p.fontSize, p.color, p.lineHeight, p.padding, p.fontWeight, p.textTransform, p.letterSpacing, p.backgroundColor]);
 
   return (
-    <div className={`ee-block-text ${styles.textBlock}`} ref={wrapperRef}>
+    <div className={`ee-block-text ${styles['ee-text-block']}`} ref={wrapperRef}>
       {isFocused && editorInstance && (
-        <div className={styles.textBlockToolbar}>
+        <div className={styles['ee-text-block-toolbar']}>
           <RichTextToolbar
             editor={editorInstance}
             defaultFontFamily={p.fontFamily}
@@ -110,7 +110,7 @@ const TextBlockInner = function TextBlock({ block }: TextBlockProps) {
           onUpdate={handleUpdate}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className={tiptapStyles.tiptapWrapper}
+          className={tiptapStyles['ee-tiptap-wrapper']}
           editorRef={handleEditorRef}
           placeholder="Edit this text..."
         />

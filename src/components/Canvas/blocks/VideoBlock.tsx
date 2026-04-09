@@ -8,16 +8,16 @@ interface VideoBlockProps {
 
 export const VideoBlock = React.memo(function VideoBlock({ block }: VideoBlockProps) {
   const p = block.properties;
-  const alignClass = p.align === 'left' ? styles.videoBlockLeft
-    : p.align === 'right' ? styles.videoBlockRight
-    : styles.videoBlockCenter;
+  const alignClass = p.align === 'left' ? styles['ee-video-block-left']
+    : p.align === 'right' ? styles['ee-video-block-right']
+    : styles['ee-video-block-center'];
 
   const thumbnailUrl = p.thumbnailUrl || getAutoThumbnail(p.src);
 
   if (!thumbnailUrl && !p.src) {
     return (
-      <div className={`ee-block-video ${styles.videoBlock} ${alignClass}`} style={{ padding: p.padding }}>
-        <div className={styles.videoPlaceholder}>
+      <div className={`ee-block-video ${styles['ee-video-block']} ${alignClass}`} style={{ padding: p.padding }}>
+        <div className={styles['ee-video-placeholder']}>
           <span style={{ fontSize: '32px' }}>&#9654;</span>
           <span>Video Block</span>
         </div>
@@ -26,17 +26,17 @@ export const VideoBlock = React.memo(function VideoBlock({ block }: VideoBlockPr
   }
 
   return (
-    <div className={`ee-block-video ${styles.videoBlock} ${alignClass}`} style={{ padding: p.padding }}>
-      <div className={styles.videoPreview}>
+    <div className={`ee-block-video ${styles['ee-video-block']} ${alignClass}`} style={{ padding: p.padding }}>
+      <div className={styles['ee-video-preview']}>
         {thumbnailUrl ? (
           <img src={thumbnailUrl} alt={p.alt} style={{ maxWidth: '100%', display: 'block' }} />
         ) : (
-          <div className={styles.videoPlaceholder}>
+          <div className={styles['ee-video-placeholder']}>
             <span style={{ fontSize: '32px' }}>&#9654;</span>
             <span>No thumbnail</span>
           </div>
         )}
-        <div className={styles.playOverlay}>&#9654;</div>
+        <div className={styles['ee-play-overlay']}>&#9654;</div>
       </div>
     </div>
   );

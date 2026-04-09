@@ -103,9 +103,9 @@ const HeadingBlockInner = function HeadingBlock({ block }: HeadingBlockProps) {
   }), [p.fontFamily, fontSize, p.color, p.lineHeight, p.padding, p.fontWeight, p.textTransform, p.letterSpacing, p.backgroundColor]);
 
   return (
-    <div className={`ee-block-heading ${styles.headingBlock}`} ref={wrapperRef}>
+    <div className={`ee-block-heading ${styles['ee-heading-block']}`} ref={wrapperRef}>
       {isFocused && editorInstance && (
-        <div className={styles.textBlockToolbar}>
+        <div className={styles['ee-text-block-toolbar']}>
           <RichTextToolbar editor={editorInstance} />
         </div>
       )}
@@ -115,7 +115,7 @@ const HeadingBlockInner = function HeadingBlock({ block }: HeadingBlockProps) {
           onUpdate={handleUpdate}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className={tiptapStyles.tiptapWrapper}
+          className={tiptapStyles['ee-tiptap-wrapper']}
           editorRef={handleEditorRef}
           placeholder="Enter heading..."
         />

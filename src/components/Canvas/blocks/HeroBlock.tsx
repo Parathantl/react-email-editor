@@ -36,10 +36,10 @@ export const HeroBlock = React.memo(function HeroBlock({ block }: HeroBlockProps
   }), [p.buttonBackgroundColor, p.buttonColor, p.buttonBorderRadius]);
 
   return (
-    <div className={`ee-block-hero ${styles.heroBlock}`} style={containerStyle}>
+    <div className={`ee-block-hero ${styles['ee-hero-block']}`} style={containerStyle}>
       {p.heading && (
         <h2
-          className={styles.heroHeading}
+          className={styles['ee-hero-heading']}
           style={headingStyle}
         >
           {p.heading}
@@ -47,7 +47,7 @@ export const HeroBlock = React.memo(function HeroBlock({ block }: HeroBlockProps
       )}
       {p.subtext && (
         <p
-          className={styles.heroSubtext}
+          className={styles['ee-hero-subtext']}
           style={subtextStyle}
         >
           {p.subtext}
@@ -55,7 +55,7 @@ export const HeroBlock = React.memo(function HeroBlock({ block }: HeroBlockProps
       )}
       {p.buttonText && (
         <span
-          className={styles.heroButton}
+          className={styles['ee-hero-button']}
           style={buttonStyle}
         >
           {p.buttonText}

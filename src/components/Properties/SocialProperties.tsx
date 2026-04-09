@@ -76,11 +76,11 @@ function SocialElementIconUpload({ element, blockId, onUpdate }: SocialElementIc
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
       <div
-        className={blockStyles.socialIconPreview}
+        className={blockStyles['ee-social-icon-preview']}
         style={{ backgroundColor: bgColor }}
       >
         {element.src ? (
-          <img src={element.src} alt={element.name} />
+          <img className={blockStyles['ee-social-icon-img']} src={element.src} alt={element.name} />
         ) : SvgIcon ? (
           <SvgIcon size={16} color={element.color || '#ffffff'} />
         ) : (
@@ -92,7 +92,7 @@ function SocialElementIconUpload({ element, blockId, onUpdate }: SocialElementIc
       {imageUploadAdapter && (
         <>
           <button
-            className={`ee-upload-btn ${status === 'uploading' ? styles.fieldBtnUploadDisabled : styles.fieldBtnUpload}`}
+            className={`ee-upload-btn ${status === 'uploading' ? styles['ee-field-btn-upload-disabled'] : styles['ee-field-btn-upload']}`}
             onClick={() => fileInputRef.current?.click()}
             disabled={status === 'uploading'}
             style={{ flex: 1, fontSize: '11px', padding: '3px 6px' }}
@@ -110,7 +110,7 @@ function SocialElementIconUpload({ element, blockId, onUpdate }: SocialElementIc
       )}
       {element.src && (
         <button
-          className={styles.itemActionBtnDanger}
+          className={styles['ee-item-action-btn-danger']}
           onClick={() => onUpdate({ src: undefined })}
           title="Reset to default icon"
           style={{ fontSize: '11px', padding: '3px 6px' }}
@@ -118,7 +118,7 @@ function SocialElementIconUpload({ element, blockId, onUpdate }: SocialElementIc
           Reset
         </button>
       )}
-      {(localError || error) && <span className={styles.validationError} style={{ fontSize: '10px' }}>{localError || error}</span>}
+      {(localError || error) && <span className={styles['ee-validation-error']} style={{ fontSize: '10px' }}>{localError || error}</span>}
     </div>
   );
 }
@@ -167,7 +167,7 @@ export function SocialProperties({ block }: SocialPropertiesProps) {
   const p = block.properties;
 
   return (
-    <div className={styles.propertiesBody}>
+    <div className={styles['ee-properties-body']}>
       <PropertyField type="select" label="Mode" value={p.mode} onChange={(v) => update({ mode: v })} options={MODE_OPTIONS} />
       <PropertyField type="alignment" label="Alignment" value={p.align} onChange={(v) => update({ align: v })} />
       <PropertyField type="text" label="Icon Size" value={p.iconSize} onChange={(v) => update({ iconSize: v })} />
@@ -177,14 +177,14 @@ export function SocialProperties({ block }: SocialPropertiesProps) {
       <PropertyField type="text" label="Font Size" value={p.fontSize} onChange={(v) => update({ fontSize: v })} />
       <PropertyField type="padding" label="Padding" value={p.padding} onChange={(v) => update({ padding: v })} />
       <FieldSeparator />
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Social Elements</label>
-        <div className={blockStyles.socialElementsContainer}>
+      <div className={styles['ee-field-group']}>
+        <label className={styles['ee-field-label']}>Social Elements</label>
+        <div className={blockStyles['ee-social-elements-container']}>
           {p.elements.map((element: SocialElement, index: number) => (
-            <div key={element.id ?? `se-${index}`} className={blockStyles.socialElementItem}>
-              <div className={styles.fieldRow}>
+            <div key={element.id ?? `se-${index}`} className={blockStyles['ee-social-element-item']}>
+              <div className={styles['ee-field-row']}>
                 <select
-                  className={`${styles.fieldSelect} ${styles.fieldInputFlex}`}
+                  className={`${styles['ee-field-select']} ${styles['ee-field-input-flex']}`}
                   value={element.name}
                   onChange={(e) => updateElement(index, { name: e.target.value })}
                 >
@@ -199,18 +199,18 @@ export function SocialProperties({ block }: SocialPropertiesProps) {
                   <option value="tiktok">TikTok</option>
                   <option value="web">Web</option>
                 </select>
-                <button className={`ee-item-move-up ${styles.itemActionBtn}`} onClick={() => moveElement(index, -1)} disabled={index === 0} title="Move up">↑</button>
-                <button className={`ee-item-move-down ${styles.itemActionBtn}`} onClick={() => moveElement(index, 1)} disabled={index === p.elements.length - 1} title="Move down">↓</button>
-                <button className={`ee-item-remove ${styles.itemActionBtnDanger}`} onClick={() => removeElement(index)} title="Remove">×</button>
+                <button className={`ee-item-move-up ${styles['ee-item-action-btn']}`} onClick={() => moveElement(index, -1)} disabled={index === 0} title="Move up">↑</button>
+                <button className={`ee-item-move-down ${styles['ee-item-action-btn']}`} onClick={() => moveElement(index, 1)} disabled={index === p.elements.length - 1} title="Move down">↓</button>
+                <button className={`ee-item-remove ${styles['ee-item-action-btn-danger']}`} onClick={() => removeElement(index)} title="Remove">×</button>
               </div>
               <input
-                className={styles.fieldInputStacked}
+                className={styles['ee-field-input-stacked']}
                 value={element.href}
                 onChange={(e) => updateElement(index, { href: e.target.value })}
                 placeholder="URL"
               />
               <input
-                className={styles.fieldInputStacked}
+                className={styles['ee-field-input-stacked']}
                 value={element.content || ''}
                 onChange={(e) => updateElement(index, { content: e.target.value })}
                 placeholder="Label (optional)"
@@ -223,7 +223,7 @@ export function SocialProperties({ block }: SocialPropertiesProps) {
             </div>
           ))}
         </div>
-        <button className={`ee-add-item ${styles.addItemBtn}`} onClick={addElement}>+ Add Element</button>
+        <button className={`ee-add-item ${styles['ee-add-item-btn']}`} onClick={addElement}>+ Add Element</button>
       </div>
     </div>
   );

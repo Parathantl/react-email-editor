@@ -109,18 +109,18 @@ export function HslColorArea({ value, onChange, onChangeEnd }: HslColorAreaProps
   const areaBackground = `linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, hsl(${hsl.h}, 100%, 50%))`;
 
   return (
-    <div className={styles.hslPicker}>
+    <div className={styles['ee-hsl-picker']}>
       {/* Saturation / Lightness area */}
       <div
         ref={areaRef}
-        className={styles.hslArea}
+        className={styles['ee-hsl-area']}
         style={{ background: areaBackground }}
         onPointerDown={onAreaPointerDown}
         onPointerMove={onAreaPointerMove}
         onPointerUp={onAreaPointerUp}
       >
         <div
-          className={styles.hslAreaThumb}
+          className={styles['ee-hsl-area-thumb']}
           style={{
             left: `${hsl.s}%`,
             top: `${100 - hsl.l}%`,
@@ -132,13 +132,13 @@ export function HslColorArea({ value, onChange, onChangeEnd }: HslColorAreaProps
       {/* Hue bar */}
       <div
         ref={hueRef}
-        className={styles.hslHueBar}
+        className={styles['ee-hsl-hue-bar']}
         onPointerDown={onHuePointerDown}
         onPointerMove={onHuePointerMove}
         onPointerUp={onHuePointerUp}
       >
         <div
-          className={styles.hslHueThumb}
+          className={styles['ee-hsl-hue-thumb']}
           style={{
             left: `${(hsl.h / 360) * 100}%`,
             backgroundColor: `hsl(${hsl.h}, 100%, 50%)`,

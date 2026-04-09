@@ -83,12 +83,12 @@ export const Canvas = React.memo(function Canvas({ customIcons }: CanvasProps) {
   const redoIcon = customIcons?.redo ?? '↪';
 
   return (
-    <div className={`ee-canvas-area ${styles.canvasArea}`}>
-      <div className={`ee-canvas-header ${styles.canvasHeader}`}>
-        <div className={`ee-canvas-header-center ${styles.canvasHeaderCenter}`}>
-          <div className={`ee-canvas-view-toggle ${styles.canvasHeaderGroup}`} role="group" aria-label="Preview size">
+    <div className={`ee-canvas-area ${styles['ee-canvas-area']}`}>
+      <div className={`ee-canvas-header ${styles['ee-canvas-header']}`}>
+        <div className={`ee-canvas-header-center ${styles['ee-canvas-header-center']}`}>
+          <div className={`ee-canvas-view-toggle ${styles['ee-canvas-header-group']}`} role="group" aria-label="Preview size">
             <button
-              className={`ee-canvas-view-desktop ${styles.canvasHeaderBtn} ${previewMode === 'desktop' ? `ee-canvas-view--active ${styles.canvasHeaderBtnActive}` : ''}`}
+              className={`ee-canvas-view-desktop ${styles['ee-canvas-header-btn']} ${previewMode === 'desktop' ? `ee-canvas-view--active ${styles['ee-canvas-header-btn-active']}` : ''}`}
               onClick={() => setPreviewMode('desktop')}
               aria-pressed={previewMode === 'desktop'}
               aria-label="Desktop view"
@@ -97,7 +97,7 @@ export const Canvas = React.memo(function Canvas({ customIcons }: CanvasProps) {
               {desktopIcon}
             </button>
             <button
-              className={`ee-canvas-view-mobile ${styles.canvasHeaderBtn} ${previewMode === 'mobile' ? `ee-canvas-view--active ${styles.canvasHeaderBtnActive}` : ''}`}
+              className={`ee-canvas-view-mobile ${styles['ee-canvas-header-btn']} ${previewMode === 'mobile' ? `ee-canvas-view--active ${styles['ee-canvas-header-btn-active']}` : ''}`}
               onClick={() => setPreviewMode('mobile')}
               aria-pressed={previewMode === 'mobile'}
               aria-label="Mobile view"
@@ -107,9 +107,9 @@ export const Canvas = React.memo(function Canvas({ customIcons }: CanvasProps) {
             </button>
           </div>
         </div>
-        <div className={`ee-canvas-history ${styles.canvasHeaderGroup}`} role="group" aria-label="History">
+        <div className={`ee-canvas-history ${styles['ee-canvas-header-group']}`} role="group" aria-label="History">
           <button
-            className={`ee-canvas-undo ${styles.canvasHeaderBtn}`}
+            className={`ee-canvas-undo ${styles['ee-canvas-header-btn']}`}
             onClick={handleUndo}
             disabled={!canUndo}
             title="Undo (Ctrl+Z)"
@@ -118,7 +118,7 @@ export const Canvas = React.memo(function Canvas({ customIcons }: CanvasProps) {
             {undoIcon}
           </button>
           <button
-            className={`ee-canvas-redo ${styles.canvasHeaderBtn}`}
+            className={`ee-canvas-redo ${styles['ee-canvas-header-btn']}`}
             onClick={handleRedo}
             disabled={!canRedo}
             title="Redo (Ctrl+Shift+Z)"
@@ -128,9 +128,9 @@ export const Canvas = React.memo(function Canvas({ customIcons }: CanvasProps) {
           </button>
         </div>
       </div>
-      <div className={`ee-canvas-wrapper ${styles.canvasWrapper}`} onClick={handleCanvasClick} role="main" aria-label="Email canvas">
+      <div className={`ee-canvas-wrapper ${styles['ee-canvas-wrapper']}`} onClick={handleCanvasClick} role="main" aria-label="Email canvas">
         <div
-          className={`ee-canvas-body ${styles.canvasBody} ${isDragOver ? styles.canvasBodyDragOver : ''}`}
+          className={`ee-canvas-body ${styles['ee-canvas-body']} ${isDragOver ? styles['ee-canvas-body-drag-over'] : ''}`}
           style={{
             width: canvasWidth,
             backgroundColor: template.globalStyles.backgroundColor,
@@ -151,7 +151,7 @@ export const Canvas = React.memo(function Canvas({ customIcons }: CanvasProps) {
           {template.sections.length > 0 && (
             <SectionDropZone index={template.sections.length} />
           )}
-          <button className={`ee-add-section ${styles.addSectionBtn}`} onClick={handleAddSection} aria-label="Add new section">
+          <button className={`ee-add-section ${styles['ee-add-section-btn']}`} onClick={handleAddSection} aria-label="Add new section">
             {(customIcons?.addSection ?? '➕')} Add Section
           </button>
         </div>

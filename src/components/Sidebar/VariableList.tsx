@@ -42,8 +42,8 @@ export function VariableList() {
 
   if (variables.length === 0) {
     return (
-      <div className={`ee-variable-list ${styles.variableList}`}>
-        <p className={`ee-variable-hint ${styles.variableHint}`}>
+      <div className={`ee-variable-list ${styles['ee-variable-list']}`}>
+        <p className={`ee-variable-hint ${styles['ee-variable-hint']}`}>
           No variables yet. Add one below.
         </p>
       </div>
@@ -53,18 +53,18 @@ export function VariableList() {
   const grouped = groupVariables(variables);
 
   return (
-    <div className={`ee-variable-list ${styles.variableList}`}>
-      <p className={`ee-variable-hint ${styles.variableHint}`}>
+    <div className={`ee-variable-list ${styles['ee-variable-list']}`}>
+      <p className={`ee-variable-hint ${styles['ee-variable-hint']}`}>
         Click to insert at cursor, or drag into text.
       </p>
       {Array.from(grouped.entries()).map(([group, vars]) => (
-        <div key={group} className={`ee-variable-group ${styles.variableGroup}`}>
-          <h4 className={`ee-variable-group-title ${styles.variableGroupTitle}`}>{group}</h4>
-          <div className={`ee-variable-chips ${styles.variableChips}`}>
+        <div key={group} className={`ee-variable-group ${styles['ee-variable-group']}`}>
+          <h4 className={`ee-variable-group-title ${styles['ee-variable-group-title']}`}>{group}</h4>
+          <div className={`ee-variable-chips ${styles['ee-variable-chips']}`}>
             {vars.map((v) => (
               <span
                 key={v.key}
-                className={`ee-variable-chip ${styles.variableChip} ${flashKey === v.key ? styles.variableChipInserted : ''} ${customKeys.has(v.key) ? styles.variableChipCustom : ''}`}
+                className={`ee-variable-chip ${styles['ee-variable-chip']} ${flashKey === v.key ? styles['ee-variable-chip-inserted'] : ''} ${customKeys.has(v.key) ? styles['ee-variable-chip-custom'] : ''}`}
                 title={`Click to insert${v.sample ? ` • Sample: ${v.sample}` : ''}${customKeys.has(v.key) ? ' • Custom variable' : ''}`}
                 onClick={() => handleChipClick(v.key)}
                 draggable
@@ -73,11 +73,11 @@ export function VariableList() {
                   e.dataTransfer.setData('application/x-variable-key', v.key);
                 }}
               >
-                {v.icon && <span className={`ee-variable-chip-icon ${styles.variableChipIcon}`}>{v.icon}</span>}
+                {v.icon && <span className={`ee-variable-chip-icon ${styles['ee-variable-chip-icon']}`}>{v.icon}</span>}
                 {v.label ?? v.key}
                 {customKeys.has(v.key) && (
                   <button
-                    className={`ee-variable-chip-delete ${styles.variableChipDelete}`}
+                    className={`ee-variable-chip-delete ${styles['ee-variable-chip-delete']}`}
                     onClick={(e) => handleDelete(v.key, e)}
                     title="Remove variable"
                   >

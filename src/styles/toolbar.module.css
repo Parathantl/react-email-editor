@@ -1,4 +1,4 @@
-.toolbar {
+.ee-toolbar {
   display: flex;
   align-items: center;
   height: var(--ee-toolbar-height);
@@ -9,24 +9,24 @@
   flex-shrink: 0;
 }
 
-.toolbarGroup {
+.ee-toolbar-group {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.toolbarSeparator {
+.ee-toolbar-separator {
   width: 1px;
   height: 24px;
   background: var(--ee-border-color);
   margin: 0 var(--ee-space-sm);
 }
 
-.toolbarSpacer {
+.ee-toolbar-spacer {
   flex: 1;
 }
 
-.toolbarBtn {
+.ee-toolbar-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,37 +44,37 @@
   white-space: nowrap;
 }
 
-.toolbarBtn:hover {
+.ee-toolbar-btn:hover {
   background: var(--ee-bg-hover);
   color: var(--ee-text-primary);
   border-color: var(--ee-border-color);
 }
 
-.toolbarBtn:disabled {
+.ee-toolbar-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
-.toolbarBtnActive {
+.ee-toolbar-btn-active {
   background: var(--ee-bg-selected);
   color: var(--ee-color-primary);
   border-color: var(--ee-color-primary);
 }
 
-.toolbarBtnPrimary {
+.ee-toolbar-btn-primary {
   background: var(--ee-color-primary);
   color: var(--ee-text-inverse);
   border-color: var(--ee-color-primary);
 }
 
-.toolbarBtnPrimary:hover {
+.ee-toolbar-btn-primary:hover {
   background: var(--ee-color-primary-hover);
   color: var(--ee-text-inverse);
   border-color: var(--ee-color-primary-hover);
 }
 
 /* Tab bar within toolbar */
-.tabBar {
+.ee-tab-bar {
   display: flex;
   gap: 2px;
   background: var(--ee-bg-app);
@@ -82,7 +82,7 @@
   padding: 2px;
 }
 
-.tabBtn {
+.ee-tab-btn {
   padding: 4px 12px;
   font-size: var(--ee-font-size-sm);
   font-family: var(--ee-font-family);
@@ -95,36 +95,36 @@
   transition: all var(--ee-transition-fast);
 }
 
-.tabBtn:hover {
+.ee-tab-btn:hover {
   color: var(--ee-text-primary);
 }
 
-.tabBtnActive {
+.ee-tab-btn-active {
   background: var(--ee-bg-panel);
   color: var(--ee-text-primary);
   box-shadow: var(--ee-shadow-sm);
 }
 
 /* Panel toggle buttons (visible only on narrow screens via editor.module.css) */
-.panelToggleBtn {
-  composes: toolbarBtn;
+.ee-panel-toggle-btn {
+  composes: ee-toolbar-btn;
   font-size: var(--ee-font-size-lg);
   padding: 4px 8px;
   line-height: 1;
 }
 
-.panelToggleBtnActive {
+.ee-panel-toggle-btn-active {
   background: var(--ee-bg-selected);
   color: var(--ee-color-primary);
   border-color: var(--ee-color-primary);
 }
 
 /* Export dropdown */
-.exportWrapper {
+.ee-export-wrapper {
   position: relative;
 }
 
-.exportDropdown {
+.ee-export-dropdown {
   position: absolute;
   top: 100%;
   right: 0;
@@ -138,7 +138,7 @@
   overflow: hidden;
 }
 
-.exportDropdownItem {
+.ee-export-dropdown-item {
   display: block;
   width: 100%;
   padding: 8px 16px;
@@ -152,7 +152,7 @@
   transition: background var(--ee-transition-fast);
 }
 
-.exportDropdownItem:hover {
+.ee-export-dropdown-item:hover {
   background: var(--ee-bg-hover);
 }
 
@@ -168,7 +168,7 @@
   }
 }
 
-.richTextToolbar {
+.ee-rich-text-toolbar {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -181,7 +181,7 @@
   animation: toolbarSlideIn 150ms ease;
 }
 
-.richTextGroup {
+.ee-rich-text-group {
   display: flex;
   align-items: center;
   gap: 1px;
@@ -191,7 +191,7 @@
   box-shadow: inset 0 0 0 1px var(--ee-border-color);
 }
 
-.richTextBtn {
+.ee-rich-text-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -208,41 +208,41 @@
   line-height: 1;
 }
 
-.richTextBtn:hover {
+.ee-rich-text-btn:hover {
   background: var(--ee-bg-hover);
   color: var(--ee-text-primary);
 }
 
-.richTextBtn:disabled {
+.ee-rich-text-btn:disabled {
   opacity: 0.35;
   cursor: not-allowed;
 }
 
-.richTextBtn:disabled:hover {
+.ee-rich-text-btn:disabled:hover {
   background: transparent;
   color: var(--ee-text-secondary);
 }
 
-.richTextBtn:focus-visible {
+.ee-rich-text-btn:focus-visible {
   outline: 2px solid var(--ee-border-focus);
   outline-offset: -1px;
 }
 
-.richTextBtnActive {
+.ee-rich-text-btn-active {
   background: var(--ee-bg-selected);
   color: var(--ee-color-primary);
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.richTextBtnWithIndicator {
-  composes: richTextBtn;
+.ee-rich-text-btn-with-indicator {
+  composes: ee-rich-text-btn;
   flex-direction: column;
   gap: 1px;
   height: 28px;
 }
 
 /* Rich text select controls */
-.richTextSelect {
+.ee-rich-text-select {
   height: 26px;
   padding: 0 4px;
   font-size: var(--ee-font-size-xs);
@@ -256,25 +256,25 @@
   max-width: 110px;
 }
 
-.richTextSelect:hover {
+.ee-rich-text-select:hover {
   background: var(--ee-bg-hover);
 }
 
-.richTextSelect:focus {
+.ee-rich-text-select:focus {
   background: var(--ee-bg-hover);
 }
 
-.richTextSelectSmall {
-  composes: richTextSelect;
+.ee-rich-text-select-small {
+  composes: ee-rich-text-select;
   max-width: 64px;
 }
 
 /* Rich text inline color picker */
-.richTextColorWrapper {
+.ee-rich-text-color-wrapper {
   position: relative;
 }
 
-.richTextColorIndicator {
+.ee-rich-text-color-indicator {
   display: block;
   width: 16px;
   height: 3px;
@@ -282,7 +282,7 @@
   margin-top: 1px;
 }
 
-.richTextColorDropdown {
+.ee-rich-text-color-dropdown {
   position: absolute;
   top: 100%;
   left: 0;
@@ -296,7 +296,7 @@
   min-width: 192px;
 }
 
-.richTextColorSectionLabel {
+.ee-rich-text-color-section-label {
   font-size: 10px;
   font-weight: var(--ee-font-weight-semibold);
   color: var(--ee-text-secondary);
@@ -305,14 +305,14 @@
   margin-bottom: 4px;
 }
 
-.richTextColorGrid {
+.ee-rich-text-color-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 4px;
   margin-bottom: var(--ee-space-sm);
 }
 
-.richTextColorSwatch {
+.ee-rich-text-color-swatch {
   position: relative;
   width: 24px;
   height: 24px;
@@ -323,17 +323,17 @@
   transition: all var(--ee-transition-fast);
 }
 
-.richTextColorSwatch:hover {
+.ee-rich-text-color-swatch:hover {
   transform: scale(1.15);
   border-color: var(--ee-border-color-strong);
 }
 
-.richTextColorSwatchActive {
+.ee-rich-text-color-swatch-active {
   border-color: var(--ee-color-primary);
   box-shadow: 0 0 0 1px var(--ee-color-primary);
 }
 
-.richTextColorSwatchRemove {
+.ee-rich-text-color-swatch-remove {
   position: absolute;
   top: -5px;
   right: -5px;
@@ -353,17 +353,17 @@
   box-shadow: var(--ee-shadow-sm);
 }
 
-.richTextColorSwatch:hover .richTextColorSwatchRemove {
+.ee-rich-text-color-swatch:hover .ee-rich-text-color-swatch-remove {
   display: flex;
 }
 
-.richTextColorSwatchRemove:hover {
+.ee-rich-text-color-swatch-remove:hover {
   background: var(--ee-color-danger, #ef4444);
   border-color: var(--ee-color-danger, #ef4444);
   color: #fff;
 }
 
-.richTextColorCustomRow {
+.ee-rich-text-color-custom-row {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -371,7 +371,7 @@
   padding-top: var(--ee-space-sm);
 }
 
-.richTextColorHexInput {
+.ee-rich-text-color-hex-input {
   flex: 1;
   min-width: 0;
   height: 28px;
@@ -386,11 +386,11 @@
   box-sizing: border-box;
 }
 
-.richTextColorHexInput:focus {
+.ee-rich-text-color-hex-input:focus {
   border-color: var(--ee-border-focus);
 }
 
-.richTextColorApplyBtn {
+.ee-rich-text-color-apply-btn {
   height: 28px;
   padding: 0 10px;
   font-size: var(--ee-font-size-xs);
@@ -406,18 +406,18 @@
   flex-shrink: 0;
 }
 
-.richTextColorApplyBtn:hover {
+.ee-rich-text-color-apply-btn:hover {
   background: var(--ee-color-primary-hover);
 }
 
-.richTextColorBottomActions {
+.ee-rich-text-color-bottom-actions {
   display: flex;
   align-items: center;
   gap: var(--ee-space-sm);
   margin-top: 6px;
 }
 
-.richTextColorClearBtn {
+.ee-rich-text-color-clear-btn {
   font-size: var(--ee-font-size-xs);
   font-family: var(--ee-font-family);
   color: var(--ee-text-secondary);
@@ -429,23 +429,23 @@
   transition: all var(--ee-transition-fast);
 }
 
-.richTextColorClearBtn:hover {
+.ee-rich-text-color-clear-btn:hover {
   background: var(--ee-bg-hover);
   color: var(--ee-text-primary);
 }
 
-.richTextColorClearBtn:disabled {
+.ee-rich-text-color-clear-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
-.richTextColorClearBtn:disabled:hover {
+.ee-rich-text-color-clear-btn:disabled:hover {
   background: transparent;
   color: var(--ee-text-secondary);
 }
 
 /* Link editor popover */
-.richTextLinkDropdown {
+.ee-rich-text-link-dropdown {
   position: absolute;
   top: 100%;
   left: 0;
@@ -462,13 +462,13 @@
   gap: 6px;
 }
 
-.richTextLinkLabel {
+.ee-rich-text-link-label {
   font-size: var(--ee-font-size-xs);
   font-weight: var(--ee-font-weight-semibold);
   color: var(--ee-text-secondary);
 }
 
-.richTextLinkInput {
+.ee-rich-text-link-input {
   width: 100%;
   padding: 6px 8px;
   font-size: var(--ee-font-size-sm);
@@ -481,22 +481,22 @@
   box-sizing: border-box;
 }
 
-.richTextLinkInput:focus {
+.ee-rich-text-link-input:focus {
   border-color: var(--ee-border-focus);
 }
 
-.richTextLinkError {
+.ee-rich-text-link-error {
   color: var(--ee-color-danger, #dc2626);
   font-size: 11px;
   margin-bottom: 4px;
 }
 
-.richTextLinkActions {
+.ee-rich-text-link-actions {
   display: flex;
   gap: 6px;
 }
 
-.richTextLinkApply {
+.ee-rich-text-link-apply {
   flex: 1;
   padding: 4px 10px;
   font-size: var(--ee-font-size-xs);
@@ -510,11 +510,11 @@
   transition: background var(--ee-transition-fast);
 }
 
-.richTextLinkApply:hover {
+.ee-rich-text-link-apply:hover {
   background: var(--ee-color-primary-hover);
 }
 
-.richTextLinkRemove {
+.ee-rich-text-link-remove {
   padding: 4px 10px;
   font-size: var(--ee-font-size-xs);
   font-family: var(--ee-font-family);
@@ -526,7 +526,7 @@
   transition: all var(--ee-transition-fast);
 }
 
-.richTextLinkRemove:hover {
+.ee-rich-text-link-remove:hover {
   background: var(--ee-color-danger, #ef4444);
   color: var(--ee-text-inverse);
 }
@@ -543,12 +543,12 @@
   }
 }
 
-.richTextTooltipWrapper {
+.ee-rich-text-tooltip-wrapper {
   position: relative;
   display: inline-flex;
 }
 
-.richTextTooltip {
+.ee-rich-text-tooltip {
   position: absolute;
   bottom: calc(100% + 6px);
   left: 50%;
@@ -571,7 +571,7 @@
   animation: tooltipFadeIn 120ms ease;
 }
 
-.richTextTooltipShortcut {
+.ee-rich-text-tooltip-shortcut {
   font-size: 10px;
   font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
   background: rgba(255, 255, 255, 0.15);
@@ -579,4 +579,3 @@
   border-radius: 3px;
   color: rgba(255, 255, 255, 0.8);
 }
-

@@ -16,11 +16,11 @@ export function CountdownProperties({ block }: CountdownPropertiesProps) {
   const p = block.properties;
 
   return (
-    <div className={styles.propertiesBody}>
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Target Date</label>
+    <div className={styles['ee-properties-body']}>
+      <div className={styles['ee-field-group']}>
+        <label className={styles['ee-field-label']}>Target Date</label>
         <input
-          className={styles.fieldInput}
+          className={styles['ee-field-input']}
           type="datetime-local"
           value={p.targetDate}
           onChange={(e) => update({ targetDate: e.target.value })}

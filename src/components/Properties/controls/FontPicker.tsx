@@ -10,10 +10,10 @@ interface FontPickerProps {
 
 export function FontPicker({ label, value, onChange }: FontPickerProps) {
   return (
-    <div className={`ee-field-group ee-font-picker ${styles.fieldGroup}`}>
-      <label className={styles.fieldLabel}>{label}</label>
+    <div className={`ee-field-group ee-font-picker ${styles['ee-field-group']}`}>
+      <label className={styles['ee-field-label']}>{label}</label>
       <select
-        className={styles.fieldSelect}
+        className={styles['ee-field-select']}
         value={value}
         onChange={(e) => onChange(e.target.value)}
       >

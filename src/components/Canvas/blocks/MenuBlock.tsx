@@ -31,12 +31,12 @@ export const MenuBlock = React.memo(function MenuBlock({ block }: MenuBlockProps
   }), [p.fontFamily, p.fontSize, p.color]);
 
   return (
-    <div className={`ee-block-menu ${styles.menuBlock}`} style={wrapperStyle}>
-      <div className={styles.menuItems} style={itemsStyle}>
+    <div className={`ee-block-menu ${styles['ee-menu-block']}`} style={wrapperStyle}>
+      <div className={styles['ee-menu-items']} style={itemsStyle}>
         {p.items.map((item: MenuItem) => (
           <span
             key={`${item.text}-${item.href}`}
-            className={styles.menuItem}
+            className={styles['ee-menu-item']}
             style={itemStyle}
           >
             {item.text}

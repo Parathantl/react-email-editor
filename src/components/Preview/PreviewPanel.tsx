@@ -50,10 +50,10 @@ export function PreviewPanel({ customIcons }: { customIcons?: Record<string, Rea
   }, [html]);
 
   return (
-    <div className={`ee-preview ${styles.preview}`}>
-      <div className={`ee-preview-toggles ${styles.previewToggles}`} role="group" aria-label="Preview size">
+    <div className={`ee-preview ${styles['ee-preview']}`}>
+      <div className={`ee-preview-toggles ${styles['ee-preview-toggles']}`} role="group" aria-label="Preview size">
         <button
-          className={`ee-preview-toggle ee-preview-toggle--desktop ${styles.previewToggle} ${styles.previewToggleDesktop} ${previewMode === 'desktop' ? `ee-preview-toggle--active ${styles.previewToggleActive}` : ''}`}
+          className={`ee-preview-toggle ee-preview-toggle--desktop ${styles['ee-preview-toggle']} ${styles['ee-preview-toggle-desktop']} ${previewMode === 'desktop' ? `ee-preview-toggle--active ${styles['ee-preview-toggle-active']}` : ''}`}
           onClick={() => setPreviewMode('desktop')}
           aria-pressed={previewMode === 'desktop'}
           aria-label="Desktop preview"
@@ -61,7 +61,7 @@ export function PreviewPanel({ customIcons }: { customIcons?: Record<string, Rea
           {desktopIcon} Desktop
         </button>
         <button
-          className={`ee-preview-toggle ee-preview-toggle--mobile ${styles.previewToggle} ${styles.previewToggleMobile} ${previewMode === 'mobile' ? `ee-preview-toggle--active ${styles.previewToggleActive}` : ''}`}
+          className={`ee-preview-toggle ee-preview-toggle--mobile ${styles['ee-preview-toggle']} ${styles['ee-preview-toggle-mobile']} ${previewMode === 'mobile' ? `ee-preview-toggle--active ${styles['ee-preview-toggle-active']}` : ''}`}
           onClick={() => setPreviewMode('mobile')}
           aria-pressed={previewMode === 'mobile'}
           aria-label="Mobile preview"
@@ -69,9 +69,9 @@ export function PreviewPanel({ customIcons }: { customIcons?: Record<string, Rea
           {mobileIcon} Mobile
         </button>
       </div>
-      <div className={`ee-preview-container ${styles.previewContainer}`}>
+      <div className={`ee-preview-container ${styles['ee-preview-container']}`}>
         <iframe
-          className={`ee-preview-iframe ${styles.previewIframe}`}
+          className={`ee-preview-iframe ${styles['ee-preview-iframe']}`}
           ref={iframeRef}
           title="Email Preview"
           style={{ width: PREVIEW_WIDTHS[previewMode] }}

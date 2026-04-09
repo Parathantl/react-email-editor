@@ -92,7 +92,7 @@ export const DropZone = React.memo(function DropZone({ sectionId, columnId, inde
   if (emptyPlaceholder) {
     return (
       <div
-        className={`ee-drop-zone ee-drop-zone--empty ${styles.emptyColumn} ${isOver ? styles.emptyColumnActive : ''}`}
+        className={`ee-drop-zone ee-drop-zone--empty ${styles['ee-empty-column']} ${isOver ? styles['ee-empty-column-active'] : ''}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -104,12 +104,12 @@ export const DropZone = React.memo(function DropZone({ sectionId, columnId, inde
 
   return (
     <div
-      className={`ee-drop-zone ${styles.dropZone} ${isOver ? styles.dropZoneActive : ''}`}
+      className={`ee-drop-zone ${styles['ee-drop-zone']} ${isOver ? styles['ee-drop-zone-active'] : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {isOver && <div className={styles.dropZoneLabel}>Drop here</div>}
+      {isOver && <div className={styles['ee-drop-zone-label']}>Drop here</div>}
     </div>
   );
 });

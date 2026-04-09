@@ -55,7 +55,7 @@ export function MenuProperties({ block }: MenuPropertiesProps) {
   const p = block.properties;
 
   return (
-    <div className={styles.propertiesBody}>
+    <div className={styles['ee-properties-body']}>
       <PropertyField type="font" label="Font Family" value={p.fontFamily} onChange={(v) => update({ fontFamily: v })} />
       <PropertyField type="text" label="Font Size" value={p.fontSize} onChange={(v) => update({ fontSize: v })} />
       <PropertyField type="color" label="Text Color" value={p.color} onChange={(v) => update({ color: v })} />
@@ -66,24 +66,24 @@ export function MenuProperties({ block }: MenuPropertiesProps) {
       <PropertyField type="alignment" label="Alignment" value={p.align} onChange={(v) => update({ align: v })} />
       <PropertyField type="padding" label="Padding" value={p.padding} onChange={(v) => update({ padding: v })} />
       <FieldSeparator />
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Menu Items</label>
-        <div className={blockStyles.menuItemsContainer}>
+      <div className={styles['ee-field-group']}>
+        <label className={styles['ee-field-label']}>Menu Items</label>
+        <div className={blockStyles['ee-menu-items-container']}>
           {p.items.map((item: MenuItem, index: number) => (
-            <div key={item.id ?? `mi-${index}`} className={blockStyles.menuItemEntry}>
-              <div className={styles.fieldRow}>
+            <div key={item.id ?? `mi-${index}`} className={blockStyles['ee-menu-item-entry']}>
+              <div className={styles['ee-field-row']}>
                 <input
-                  className={styles.fieldInputFlex}
+                  className={styles['ee-field-input-flex']}
                   value={item.text}
                   onChange={(e) => updateItem(index, { text: e.target.value })}
                   placeholder="Label"
                 />
-                <button className={`ee-item-move-up ${styles.itemActionBtn}`} onClick={() => moveItem(index, -1)} disabled={index === 0} title="Move up">↑</button>
-                <button className={`ee-item-move-down ${styles.itemActionBtn}`} onClick={() => moveItem(index, 1)} disabled={index === p.items.length - 1} title="Move down">↓</button>
-                <button className={`ee-item-remove ${styles.itemActionBtnDanger}`} onClick={() => removeItem(index)} title="Remove">×</button>
+                <button className={`ee-item-move-up ${styles['ee-item-action-btn']}`} onClick={() => moveItem(index, -1)} disabled={index === 0} title="Move up">↑</button>
+                <button className={`ee-item-move-down ${styles['ee-item-action-btn']}`} onClick={() => moveItem(index, 1)} disabled={index === p.items.length - 1} title="Move down">↓</button>
+                <button className={`ee-item-remove ${styles['ee-item-action-btn-danger']}`} onClick={() => removeItem(index)} title="Remove">×</button>
               </div>
               <input
-                className={styles.fieldInputStacked}
+                className={styles['ee-field-input-stacked']}
                 value={item.href}
                 onChange={(e) => updateItem(index, { href: e.target.value })}
                 placeholder="URL"
@@ -91,7 +91,7 @@ export function MenuProperties({ block }: MenuPropertiesProps) {
             </div>
           ))}
         </div>
-        <button className={`ee-add-item ${styles.addItemBtn}`} onClick={addItem}>+ Add Item</button>
+        <button className={`ee-add-item ${styles['ee-add-item-btn']}`} onClick={addItem}>+ Add Item</button>
       </div>
     </div>
   );

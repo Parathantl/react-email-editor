@@ -239,24 +239,24 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
   }), [dispatch, clearPersisted]);
 
   const sidebarClasses = [
-    editorStyles.editorPanel,
-    editorStyles.sidebarPanel,
-    sidebarOpen ? editorStyles.sidebarOpen : '',
+    editorStyles['ee-editor-panel'],
+    editorStyles['ee-sidebar-panel'],
+    sidebarOpen ? editorStyles['ee-sidebar-open'] : '',
   ].filter(Boolean).join(' ');
 
   const propertiesClasses = [
-    editorStyles.editorPanel,
-    editorStyles.propertiesPanel,
-    propertiesOpen ? editorStyles.propertiesOpen : '',
+    editorStyles['ee-editor-panel'],
+    editorStyles['ee-properties-panel'],
+    propertiesOpen ? editorStyles['ee-properties-open'] : '',
   ].filter(Boolean).join(' ');
 
   const overlayClasses = [
-    editorStyles.panelOverlay,
-    (sidebarOpen || propertiesOpen) ? editorStyles.panelOverlayVisible : '',
+    editorStyles['ee-panel-overlay'],
+    (sidebarOpen || propertiesOpen) ? editorStyles['ee-panel-overlay-visible'] : '',
   ].filter(Boolean).join(' ');
 
   return (
-    <div ref={containerRef} className={`ee-editor ${editorStyles.editorContainer}`} tabIndex={-1}>
+    <div ref={containerRef} className={`ee-editor ${editorStyles['ee-editor-container']}`} tabIndex={-1}>
       {pendingRemoval && (
         <ConfirmDialog
           title={pendingRemoval.type === 'block' ? 'Remove Block' : 'Remove Section'}
@@ -277,7 +277,7 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
         toolbarActions={props.toolbarActions}
         customIcons={customIcons}
       />
-      <div className={editorStyles.editorBody}>
+      <div className={editorStyles['ee-editor-body']}>
         {activeTab === 'visual' && (
           <>
             <div className={`ee-sidebar ${sidebarClasses}`}>
@@ -285,7 +285,7 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
                 <Sidebar blockDefinitions={props.blockDefinitions} customIcons={customIcons} />
               </ErrorBoundary>
             </div>
-            <div className={`ee-canvas ${editorStyles.editorPanel} ${editorStyles.canvasPanel}`}>
+            <div className={`ee-canvas ${editorStyles['ee-editor-panel']} ${editorStyles['ee-canvas-panel']}`}>
               <ErrorBoundary>
                 <Canvas customIcons={customIcons} />
               </ErrorBoundary>
@@ -300,13 +300,13 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
           </>
         )}
         {activeTab === 'source' && (
-          <div className={`ee-source-layout ${editorStyles.sourceLayout}`}>
-            <div className={`ee-source-pane ${editorStyles.sourcePane}`}>
+          <div className={`ee-source-layout ${editorStyles['ee-source-layout']}`}>
+            <div className={`ee-source-pane ${editorStyles['ee-source-pane']}`}>
               <ErrorBoundary>
                 <SourceEditor />
               </ErrorBoundary>
             </div>
-            <div className={`ee-preview-pane ${editorStyles.sourcePaneDivider}`}>
+            <div className={`ee-preview-pane ${editorStyles['ee-source-pane-divider']}`}>
               <ErrorBoundary>
                 <PreviewPanel customIcons={customIcons} />
               </ErrorBoundary>
@@ -385,7 +385,7 @@ export const EmailEditor = forwardRef<EmailEditorRef, EmailEditorProps>(
         onHistoryChange={onHistoryChange}
         customIcons={customIcons}
       >
-        <div className={`ee-editor-wrapper ${editorStyles.editorWrapper} ${className || ''}`} style={style}>
+        <div className={`ee-editor-wrapper ${editorStyles['ee-editor-wrapper']} ${className || ''}`} style={style}>
           <EditorInner ref={ref} {...props} />
         </div>
       </EditorProvider>

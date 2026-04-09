@@ -73,11 +73,11 @@ export function LinkInput({ label, value, onChange }: LinkInputProps) {
     : 'https://';
 
   return (
-    <div className={`ee-field-group ee-link-input ${styles.fieldGroup}`}>
-      <label className={styles.fieldLabel}>{label}</label>
-      <div className={styles.fieldRowCompact}>
+    <div className={`ee-field-group ee-link-input ${styles['ee-field-group']}`}>
+      <label className={styles['ee-field-label']}>{label}</label>
+      <div className={styles['ee-field-row-compact']}>
         <select
-          className={styles.fieldSelectNarrow}
+          className={styles['ee-field-select-narrow']}
           value={type}
           onChange={(e) => handleTypeChange(e.target.value as LinkType)}
         >
@@ -86,7 +86,7 @@ export function LinkInput({ label, value, onChange }: LinkInputProps) {
           <option value="phone">Phone</option>
         </select>
         <input
-          className={styles.fieldInputFlex}
+          className={styles['ee-field-input-flex']}
           value={rawValue}
           onChange={(e) => handleValueChange(e.target.value)}
           placeholder={placeholder}
@@ -95,7 +95,7 @@ export function LinkInput({ label, value, onChange }: LinkInputProps) {
         />
       </div>
       {validationError && (
-        <span className={`ee-validation-error ${styles.validationError}`} role="alert">
+        <span className={`ee-validation-error ${styles['ee-validation-error']}`} role="alert">
           {validationError}
         </span>
       )}

@@ -61,8 +61,8 @@ export const PropertyField = React.memo(function PropertyField(props: PropertyFi
 
     case 'toggle':
       return (
-        <div className={styles.fieldGroup}>
-          <label className={`ee-checkbox-label ${styles.checkboxLabel}`}>
+        <div className={styles['ee-field-group']}>
+          <label className={`ee-checkbox-label ${styles['ee-checkbox-label']}`}>
             <input
               type="checkbox"
               checked={props.value}
@@ -75,10 +75,10 @@ export const PropertyField = React.memo(function PropertyField(props: PropertyFi
 
     case 'select':
       return (
-        <div className={styles.fieldGroup}>
-          <label className={styles.fieldLabel}>{props.label}</label>
+        <div className={styles['ee-field-group']}>
+          <label className={styles['ee-field-label']}>{props.label}</label>
           <select
-            className={styles.fieldSelect}
+            className={styles['ee-field-select']}
             value={props.value}
             onChange={(e) => props.onChange(e.target.value)}
           >
@@ -91,10 +91,10 @@ export const PropertyField = React.memo(function PropertyField(props: PropertyFi
 
     case 'textarea':
       return (
-        <div className={styles.fieldGroup}>
-          <label className={styles.fieldLabel}>{props.label}</label>
+        <div className={styles['ee-field-group']}>
+          <label className={styles['ee-field-label']}>{props.label}</label>
           <textarea
-            className={props.code ? `ee-code-textarea ${styles.fieldTextareaCode}` : styles.fieldTextarea}
+            className={props.code ? `ee-code-textarea ${styles['ee-field-textarea-code']}` : styles['ee-field-textarea']}
             value={props.value}
             onChange={(e) => props.onChange(e.target.value)}
             placeholder={props.placeholder}
@@ -106,10 +106,10 @@ export const PropertyField = React.memo(function PropertyField(props: PropertyFi
     case 'text':
     default:
       return (
-        <div className={styles.fieldGroup}>
-          <label className={styles.fieldLabel}>{props.label}</label>
+        <div className={styles['ee-field-group']}>
+          <label className={styles['ee-field-label']}>{props.label}</label>
           <input
-            className={styles.fieldInput}
+            className={styles['ee-field-input']}
             value={props.value}
             onChange={(e) => props.onChange(e.target.value)}
             placeholder={props.placeholder}
@@ -121,5 +121,5 @@ export const PropertyField = React.memo(function PropertyField(props: PropertyFi
 
 /** Visual separator between field groups */
 export function FieldSeparator() {
-  return <div className={styles.separator} />;
+  return <div className={styles['ee-separator']} />;
 }

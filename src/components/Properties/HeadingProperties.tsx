@@ -47,7 +47,7 @@ export function HeadingProperties({ block }: HeadingPropertiesProps) {
   );
 
   return (
-    <div className={styles.propertiesBody}>
+    <div className={styles['ee-properties-body']}>
       <PropertyField type="select" label="Heading Level" value={p.level} onChange={handleLevelChange} options={LEVEL_OPTIONS} />
       <FieldSeparator />
       <PropertyField type="font" label="Font Family" value={p.fontFamily} onChange={(v) => update({ fontFamily: v })} />

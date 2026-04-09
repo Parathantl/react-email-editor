@@ -34,10 +34,10 @@ const ImageBlockInner = function ImageBlock({ block }: ImageBlockProps) {
 
   const alignClass =
     p.align === 'left'
-      ? styles.imageBlockLeft
+      ? styles['ee-image-block-left']
       : p.align === 'right'
-        ? styles.imageBlockRight
-        : styles.imageBlockCenter;
+        ? styles['ee-image-block-right']
+        : styles['ee-image-block-center'];
 
   const handleFileSelect = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,20 +53,20 @@ const ImageBlockInner = function ImageBlock({ block }: ImageBlockProps) {
   }, []);
 
   return (
-    <div className={`ee-block-image ${styles.imageBlock} ${alignClass}`} style={{ padding: p.padding }}>
+    <div className={`ee-block-image ${styles['ee-image-block']} ${alignClass}`} style={{ padding: p.padding }}>
       {p.src ? (
         <img
           src={p.src}
           alt={p.alt}
-          className={styles.imagePreview}
+          className={styles['ee-image-preview']}
           style={{
             width: p.width,
             height: p.height !== 'auto' ? p.height : undefined,
           }}
         />
       ) : (
-        <div className={styles.imagePlaceholder} onClick={handlePlaceholderClick}>
-          <span className={styles.imagePlaceholderIcon}>+</span>
+        <div className={styles['ee-image-placeholder']} onClick={handlePlaceholderClick}>
+          <span className={styles['ee-image-placeholder-icon']}>+</span>
           <span>{status === 'uploading' ? 'Uploading...' : 'Click to upload image'}</span>
         </div>
       )}

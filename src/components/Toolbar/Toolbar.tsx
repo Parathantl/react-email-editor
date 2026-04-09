@@ -126,11 +126,11 @@ export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen
   );
 
   return (
-    <div className={`ee-toolbar ${styles.toolbar}`} role="toolbar" aria-label="Editor toolbar">
+    <div className={`ee-toolbar ${styles['ee-toolbar']}`} role="toolbar" aria-label="Editor toolbar">
       {/* Panel toggles — visible only on narrow screens via CSS */}
-      <div className={editorStyles.panelToggle}>
+      <div className={editorStyles['ee-panel-toggle']}>
         <button
-          className={`ee-toolbar-toggle-sidebar ${styles.panelToggleBtn} ${sidebarOpen ? styles.panelToggleBtnActive : ''}`}
+          className={`ee-toolbar-toggle-sidebar ${styles['ee-panel-toggle-btn']} ${sidebarOpen ? styles['ee-panel-toggle-btn-active'] : ''}`}
           onClick={onToggleSidebar}
           aria-label="Toggle sidebar"
           aria-pressed={sidebarOpen}
@@ -139,7 +139,7 @@ export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen
           {sidebarIcon}
         </button>
         <button
-          className={`ee-toolbar-toggle-properties ${styles.panelToggleBtn} ${propertiesOpen ? styles.panelToggleBtnActive : ''}`}
+          className={`ee-toolbar-toggle-properties ${styles['ee-panel-toggle-btn']} ${propertiesOpen ? styles['ee-panel-toggle-btn-active'] : ''}`}
           onClick={onToggleProperties}
           aria-label="Toggle properties"
           aria-pressed={propertiesOpen}
@@ -149,15 +149,15 @@ export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen
         </button>
       </div>
 
-      <div className={`ee-toolbar-separator ${styles.toolbarSeparator}`} role="separator" />
+      <div className={`ee-toolbar-separator ${styles['ee-toolbar-separator']}`} role="separator" />
 
-      <div className={`ee-toolbar-tabs ${styles.tabBar}`} role="tablist" aria-label="Editor views">
+      <div className={`ee-toolbar-tabs ${styles['ee-tab-bar']}`} role="tablist" aria-label="Editor views">
         {(['visual', 'source', 'preview'] as ActiveTab[]).map((tab) => (
           <button
             key={tab}
             role="tab"
             aria-selected={activeTab === tab}
-            className={`ee-toolbar-tab ee-toolbar-tab--${tab} ${styles.tabBtn} ${activeTab === tab ? styles.tabBtnActive : ''}`}
+            className={`ee-toolbar-tab ee-toolbar-tab--${tab} ${styles['ee-tab-btn']} ${activeTab === tab ? styles['ee-tab-btn-active'] : ''}`}
             onClick={() => handleTabChange(tab)}
           >
             <span className="ee-toolbar-tab-icon">
@@ -171,19 +171,19 @@ export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen
         ))}
       </div>
 
-      <div className={styles.toolbarSpacer} />
+      <div className={styles['ee-toolbar-spacer']} />
 
-      <div className={`ee-toolbar-io ${styles.toolbarGroup}`} role="group" aria-label="Import/Export">
+      <div className={`ee-toolbar-io ${styles['ee-toolbar-group']}`} role="group" aria-label="Import/Export">
         <button
-          className={`ee-toolbar-import ${styles.toolbarBtn}`}
+          className={`ee-toolbar-import ${styles['ee-toolbar-btn']}`}
           onClick={() => fileInputRef.current?.click()}
           aria-label="Import MJML file"
         >
           Import
         </button>
-        <div className={`ee-toolbar-export ${styles.exportWrapper}`}>
+        <div className={`ee-toolbar-export ${styles['ee-export-wrapper']}`}>
           <button
-            className={`ee-toolbar-export-btn ${styles.toolbarBtn}`}
+            className={`ee-toolbar-export-btn ${styles['ee-toolbar-btn']}`}
             onClick={(e) => { e.stopPropagation(); setExportOpen((prev) => !prev); }}
             aria-label="Export template"
             aria-expanded={exportOpen}
@@ -192,17 +192,17 @@ export const Toolbar = React.memo(function Toolbar({ sidebarOpen, propertiesOpen
             Export
           </button>
           {exportOpen && (
-            <div className={`ee-toolbar-export-dropdown ${styles.exportDropdown}`} role="menu">
-              <button className={`ee-toolbar-export-mjml ${styles.exportDropdownItem}`} onClick={handleExportMJML} role="menuitem">MJML</button>
-              <button className={`ee-toolbar-export-html ${styles.exportDropdownItem}`} onClick={handleExportHTML} role="menuitem">HTML</button>
-              <button className={`ee-toolbar-export-pdf ${styles.exportDropdownItem}`} onClick={handleExportPDF} role="menuitem">PDF</button>
+            <div className={`ee-toolbar-export-dropdown ${styles['ee-export-dropdown']}`} role="menu">
+              <button className={`ee-toolbar-export-mjml ${styles['ee-export-dropdown-item']}`} onClick={handleExportMJML} role="menuitem">MJML</button>
+              <button className={`ee-toolbar-export-html ${styles['ee-export-dropdown-item']}`} onClick={handleExportHTML} role="menuitem">HTML</button>
+              <button className={`ee-toolbar-export-pdf ${styles['ee-export-dropdown-item']}`} onClick={handleExportPDF} role="menuitem">PDF</button>
             </div>
           )}
         </div>
       </div>
 
       {toolbarActions && (
-        <div className={`ee-toolbar-actions ${styles.toolbarGroup}`}>
+        <div className={`ee-toolbar-actions ${styles['ee-toolbar-group']}`}>
           {toolbarActions}
         </div>
       )}

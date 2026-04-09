@@ -58,12 +58,12 @@ export const SectionDropZone = React.memo(function SectionDropZone({ index }: Se
 
   return (
     <div
-      className={`ee-section-drop-zone ${styles.sectionDropZone} ${isOver ? styles.sectionDropZoneActive : ''}`}
+      className={`ee-section-drop-zone ${styles['ee-section-drop-zone']} ${isOver ? styles['ee-section-drop-zone-active'] : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {isOver && <div className={styles.sectionDropZoneLabel}>Move section here</div>}
+      {isOver && <div className={styles['ee-section-drop-zone-label']}>Move section here</div>}
     </div>
   );
 });

@@ -212,7 +212,7 @@ export const Column = React.memo(function Column({ column, sectionId, customIcon
 
   if (column.blocks.length === 0) {
     return (
-      <div className={`ee-column ${styles.column}`} style={{ width: column.width }}>
+      <div className={`ee-column ${styles['ee-column']}`} style={{ width: column.width }}>
         <DropZone
           sectionId={sectionId}
           columnId={column.id}
@@ -224,7 +224,7 @@ export const Column = React.memo(function Column({ column, sectionId, customIcon
   }
 
   return (
-    <div className={`ee-column ${styles.column}`} style={{ width: column.width }}>
+    <div className={`ee-column ${styles['ee-column']}`} style={{ width: column.width }}>
       {column.blocks.map((block, index) => (
         <React.Fragment key={block.id}>
           <DropZone sectionId={sectionId} columnId={column.id} index={index} />
@@ -236,14 +236,14 @@ export const Column = React.memo(function Column({ column, sectionId, customIcon
               'ee-block',
               `ee-block--${block.type}`,
               selection.blockId === block.id && 'ee-block--selected',
-              styles.blockWrapper,
-              selection.blockId === block.id && styles.blockSelected,
+              styles['ee-block-wrapper'],
+              selection.blockId === block.id && styles['ee-block-selected'],
               dropTarget?.blockId === block.id &&
                 dropTarget.position === 'before' &&
-                styles.blockDropBefore,
+                styles['ee-block-drop-before'],
               dropTarget?.blockId === block.id &&
                 dropTarget.position === 'after' &&
-                styles.blockDropAfter,
+                styles['ee-block-drop-after'],
             ]
               .filter(Boolean)
               .join(' ')}
@@ -259,9 +259,9 @@ export const Column = React.memo(function Column({ column, sectionId, customIcon
             aria-selected={selection.blockId === block.id}
             tabIndex={0}
           >
-            <div className={`ee-block-actions ${styles.blockOverlay}`} role="group" aria-label="Block actions">
+            <div className={`ee-block-actions ${styles['ee-block-overlay']}`} role="group" aria-label="Block actions">
               <button
-                className={`ee-block-duplicate ${styles.blockBtn} ${styles.blockBtnDuplicate}`}
+                className={`ee-block-duplicate ${styles['ee-block-btn']} ${styles['ee-block-btn-duplicate']}`}
                 onClick={handleDuplicateClick}
                 title="Duplicate block"
                 aria-label="Duplicate block"
@@ -269,7 +269,7 @@ export const Column = React.memo(function Column({ column, sectionId, customIcon
                 {blockDuplicateIcon}
               </button>
               <button
-                className={`ee-block-remove ${styles.blockBtn}`}
+                className={`ee-block-remove ${styles['ee-block-btn']}`}
                 onClick={handleRemoveClick}
                 title="Remove block"
                 aria-label="Remove block"

@@ -16,9 +16,9 @@ export const DividerBlock = React.memo(function DividerBlock({ block }: DividerB
   }), [p.width, p.borderWidth, p.borderStyle, p.borderColor]);
 
   return (
-    <div className={`ee-block-divider ${styles.dividerBlock}`} style={outerStyle}>
+    <div className={`ee-block-divider ${styles['ee-divider-block']}`} style={outerStyle}>
       <hr
-        className={styles.dividerLine}
+        className={styles['ee-divider-line']}
         style={hrStyle}
       />
     </div>

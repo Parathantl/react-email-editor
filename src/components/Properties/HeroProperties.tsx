@@ -17,7 +17,7 @@ export function HeroProperties({ block }: HeroPropertiesProps) {
   const p = block.properties;
 
   return (
-    <div className={styles.propertiesBody}>
+    <div className={styles['ee-properties-body']}>
       <PropertyField type="text" label="Heading" value={p.heading} onChange={(v) => update({ heading: v })} />
       <PropertyField type="textarea" label="Subtext" value={p.subtext} onChange={(v) => update({ subtext: v })} rows={3} />
       <FieldSeparator />
@@ -44,9 +44,9 @@ export function HeroProperties({ block }: HeroPropertiesProps) {
         />
       )}
       {p.backgroundImage && (
-        <div className={styles.fieldGroup}>
+        <div className={styles['ee-field-group']}>
           <button
-            className={`ee-remove-bg ${styles.fieldBtnUpload}`}
+            className={`ee-remove-bg ${styles['ee-field-btn-upload']}`}
             onClick={() => update({ backgroundImage: '' })}
           >
             Remove Background Image

@@ -10,10 +10,10 @@ export const ButtonBlock = React.memo(function ButtonBlock({ block }: ButtonBloc
   const p = block.properties;
   const alignClass =
     p.align === 'left'
-      ? styles.buttonBlockLeft
+      ? styles['ee-button-block-left']
       : p.align === 'right'
-        ? styles.buttonBlockRight
-        : styles.buttonBlockCenter;
+        ? styles['ee-button-block-right']
+        : styles['ee-button-block-center'];
 
   const outerStyle = useMemo(() => ({ padding: p.padding }), [p.padding]);
   const buttonStyle = useMemo(() => ({
@@ -30,9 +30,9 @@ export const ButtonBlock = React.memo(function ButtonBlock({ block }: ButtonBloc
   }), [p.backgroundColor, p.color, p.fontFamily, p.fontSize, p.borderRadius, p.innerPadding, p.width, p.fontWeight, p.textTransform, p.letterSpacing]);
 
   return (
-    <div className={`ee-block-button ${styles.buttonBlock} ${alignClass}`} style={outerStyle}>
+    <div className={`ee-block-button ${styles['ee-button-block']} ${alignClass}`} style={outerStyle}>
       <span
-        className={styles.buttonPreview}
+        className={styles['ee-button-preview']}
         style={buttonStyle}
       >
         {p.text}

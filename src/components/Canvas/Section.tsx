@@ -74,7 +74,7 @@ export const Section = React.memo(function Section({ section, customIcons }: Sec
 
   return (
     <div
-      className={`ee-section ${isSelected ? 'ee-section--selected' : ''} ${section.properties.fullWidth ? 'ee-section--full-width' : ''} ${styles.section} ${isSelected ? styles.sectionSelected : ''} ${section.properties.fullWidth ? styles.sectionFullWidth : ''}`}
+      className={`ee-section ${isSelected ? 'ee-section--selected' : ''} ${section.properties.fullWidth ? 'ee-section--full-width' : ''} ${styles['ee-section']} ${isSelected ? styles['ee-section-selected'] : ''} ${section.properties.fullWidth ? styles['ee-section-full-width'] : ''}`}
       style={{
         backgroundColor: section.properties.backgroundColor,
         padding: section.properties.padding,
@@ -88,9 +88,9 @@ export const Section = React.memo(function Section({ section, customIcons }: Sec
       aria-label={`Email section${isSelected ? ' (selected)' : ''}`}
       aria-selected={isSelected}
     >
-      <div className={`ee-section-actions ${styles.sectionOverlay}`} role="group" aria-label="Section actions">
+      <div className={`ee-section-actions ${styles['ee-section-overlay']}`} role="group" aria-label="Section actions">
         <span
-          className={`ee-section-drag ${styles.sectionDragHandle}`}
+          className={`ee-section-drag ${styles['ee-section-drag-handle']}`}
           draggable
           onDragStart={handleDragStart}
           onKeyDown={handleDragKeyDown}
@@ -102,7 +102,7 @@ export const Section = React.memo(function Section({ section, customIcons }: Sec
           {sectionDragIcon}
         </span>
         <button
-          className={`ee-section-duplicate ${styles.sectionBtn} ${styles.sectionBtnDuplicate}`}
+          className={`ee-section-duplicate ${styles['ee-section-btn']} ${styles['ee-section-btn-duplicate']}`}
           onClick={handleDuplicate}
           title="Duplicate section"
           aria-label="Duplicate section"
@@ -110,7 +110,7 @@ export const Section = React.memo(function Section({ section, customIcons }: Sec
           {sectionDuplicateIcon}
         </button>
         <button
-          className={`ee-section-remove ${styles.sectionBtn}`}
+          className={`ee-section-remove ${styles['ee-section-btn']}`}
           onClick={handleRemove}
           title="Remove section"
           aria-label="Remove section"
@@ -118,7 +118,7 @@ export const Section = React.memo(function Section({ section, customIcons }: Sec
           {sectionRemoveIcon}
         </button>
       </div>
-      <div className={styles.sectionContent}>
+      <div className={styles['ee-section-content']}>
         {section.columns.map((column) => (
           <Column key={column.id} column={column} sectionId={section.id} customIcons={customIcons} />
         ))}
