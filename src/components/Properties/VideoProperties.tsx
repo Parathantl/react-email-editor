@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import type { Block, VideoBlockProperties } from '@/types';
-import { useBlockUpdate } from '@/hooks/useBlockUpdate';
+import type { Block, VideoBlockProperties } from '../../types';
+import { useBlockUpdate } from '../../hooks/useBlockUpdate';
 import { PropertyField } from './PropertyField';
 import styles from '../../styles/properties.module.css';
 
