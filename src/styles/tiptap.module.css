@@ -1,46 +1,46 @@
-.tiptapWrapper {
+.ee-tiptap-wrapper {
   position: relative;
 }
 
-.tiptapWrapper :global(.ProseMirror) {
+.ee-tiptap-wrapper :global(.ProseMirror) {
   outline: none;
   min-height: 24px;
   padding: 4px;
   word-break: break-word;
 }
 
-.tiptapWrapper :global(.ProseMirror) p {
+.ee-tiptap-wrapper :global(.ProseMirror) p {
   margin: 0;
 }
 
-.tiptapWrapper :global(.ProseMirror) h1,
-.tiptapWrapper :global(.ProseMirror) h2,
-.tiptapWrapper :global(.ProseMirror) h3,
-.tiptapWrapper :global(.ProseMirror) h4 {
+.ee-tiptap-wrapper :global(.ProseMirror) h1,
+.ee-tiptap-wrapper :global(.ProseMirror) h2,
+.ee-tiptap-wrapper :global(.ProseMirror) h3,
+.ee-tiptap-wrapper :global(.ProseMirror) h4 {
   margin: 0;
   line-height: 1.3;
 }
 
-.tiptapWrapper :global(.ProseMirror) ul,
-.tiptapWrapper :global(.ProseMirror) ol {
+.ee-tiptap-wrapper :global(.ProseMirror) ul,
+.ee-tiptap-wrapper :global(.ProseMirror) ol {
   margin: 0;
   padding-left: 1.5em;
 }
 
-.tiptapWrapper :global(.ProseMirror) blockquote {
+.ee-tiptap-wrapper :global(.ProseMirror) blockquote {
   border-left: 3px solid var(--ee-border-color-strong);
   margin: 0;
   padding-left: 1em;
   color: var(--ee-text-secondary);
 }
 
-.tiptapWrapper :global(.ProseMirror) a {
+.ee-tiptap-wrapper :global(.ProseMirror) a {
   color: var(--ee-text-link);
   text-decoration: underline;
 }
 
 /* Variable chips in TipTap */
-.tiptapWrapper :global(.ee-variable-chip) {
+.ee-tiptap-wrapper :global(.ee-variable-chip) {
   display: inline-flex;
   align-items: center;
   padding: 1px 6px;
@@ -59,12 +59,12 @@
 }
 
 /* Focus styling */
-.tiptapWrapper :global(.ProseMirror-focused) {
+.ee-tiptap-wrapper :global(.ProseMirror-focused) {
   outline: none;
 }
 
 /* Placeholder — uses TipTap Placeholder extension's data-placeholder attribute */
-.tiptapWrapper :global(.ProseMirror) :global(.is-editor-empty):first-child::before {
+.ee-tiptap-wrapper :global(.ProseMirror) :global(.is-editor-empty):first-child::before {
   content: attr(data-placeholder);
   float: left;
   color: var(--ee-text-muted);

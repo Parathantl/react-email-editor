@@ -49,8 +49,8 @@ export function PropertiesPanel() {
     const title = selectedBlock.type.charAt(0).toUpperCase() + selectedBlock.type.slice(1);
     const Component = getBlockPanel(selectedBlock.type);
     return (
-      <div className={`ee-properties-panel ${styles.propertiesInner}`}>
-        <div className={`ee-properties-header ${styles.propertiesHeader}`}>{title} Properties</div>
+      <div className={`ee-properties-panel ${styles['ee-properties-inner']}`}>
+        <div className={`ee-properties-header ${styles['ee-properties-header']}`}>{title} Properties</div>
         {Component ? <Component block={selectedBlock} /> : null}
       </div>
     );
@@ -58,16 +58,16 @@ export function PropertiesPanel() {
 
   if (selectedSection) {
     return (
-      <div className={`ee-properties-panel ${styles.propertiesInner}`}>
-        <div className={`ee-properties-header ${styles.propertiesHeader}`}>Section Properties</div>
+      <div className={`ee-properties-panel ${styles['ee-properties-inner']}`}>
+        <div className={`ee-properties-header ${styles['ee-properties-header']}`}>Section Properties</div>
         <SectionProperties section={selectedSection} />
       </div>
     );
   }
 
   return (
-    <div className={`ee-properties-panel ${styles.propertiesInner}`}>
-      <div className={`ee-properties-header ${styles.propertiesHeader}`}>Email Settings</div>
+    <div className={`ee-properties-panel ${styles['ee-properties-inner']}`}>
+      <div className={`ee-properties-header ${styles['ee-properties-header']}`}>Email Settings</div>
       <HeadMetadataProperties />
     </div>
   );

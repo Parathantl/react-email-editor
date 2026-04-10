@@ -22,14 +22,14 @@ export function AlignmentPicker({
   options = ['left', 'center', 'right'],
 }: AlignmentPickerProps) {
   return (
-    <div className={`ee-field-group ee-alignment ${styles.fieldGroup}`}>
-      <label className={styles.fieldLabel}>{label}</label>
-      <div className={styles.alignmentPicker}>
+    <div className={`ee-field-group ee-alignment ${styles['ee-field-group']}`}>
+      <label className={styles['ee-field-label']}>{label}</label>
+      <div className={styles['ee-alignment-picker']}>
         {options.map((option) => (
           <button
             key={option}
-            className={`${styles.alignmentBtn} ${
-              value === option ? styles.alignmentBtnActive : ''
+            className={`${styles['ee-alignment-btn']} ${
+              value === option ? styles['ee-alignment-btn-active'] : ''
             }`}
             onClick={() => onChange(option)}
             title={option.charAt(0).toUpperCase() + option.slice(1)}

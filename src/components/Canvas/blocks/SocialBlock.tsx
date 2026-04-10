@@ -40,7 +40,7 @@ function SocialIconImage({ src, name, iconSizeNum, iconColor, SvgIcon }: {
     <img
       src={src}
       alt={name}
-      className={styles.socialIconImage}
+      className={styles['ee-social-icon-image']}
       width={iconSizeNum}
       height={iconSizeNum}
       onError={() => setErrored(true)}
@@ -78,7 +78,7 @@ export const SocialBlock = React.memo(function SocialBlock({ block }: SocialBloc
 
   return (
     <div
-      className={`ee-block-social ${styles.socialBlock}`}
+      className={`ee-block-social ${styles['ee-social-block']}`}
       style={wrapperStyle}
     >
       {p.elements.map((element: SocialElement) => {
@@ -106,11 +106,11 @@ export const SocialBlock = React.memo(function SocialBlock({ block }: SocialBloc
         return (
           <div
             key={`${element.name}-${element.href}`}
-            className={styles.socialElement}
+            className={styles['ee-social-element']}
             style={elementPaddingStyle}
           >
             <span
-              className={styles.socialIcon}
+              className={styles['ee-social-icon']}
               style={{
                 width: iconSizeNum,
                 height: iconSizeNum,
@@ -124,7 +124,7 @@ export const SocialBlock = React.memo(function SocialBlock({ block }: SocialBloc
             </span>
             {element.content && (
               <span
-                className={styles.socialLabel}
+                className={styles['ee-social-label']}
                 style={labelStyle}
               >
                 {element.content}

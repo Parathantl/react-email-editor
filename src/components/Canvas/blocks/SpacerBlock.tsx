@@ -10,8 +10,8 @@ export const SpacerBlock = React.memo(function SpacerBlock({ block }: SpacerBloc
   const p = block.properties;
 
   return (
-    <div className={`ee-block-spacer ${styles.spacerBlock}`} style={{ height: p.height }}>
-      <span className={styles.spacerLabel}>{p.height}</span>
+    <div className={`ee-block-spacer ${styles['ee-spacer-block']}`} style={{ height: p.height }}>
+      <span className={styles['ee-spacer-label']}>{p.height}</span>
     </div>
   );
 });

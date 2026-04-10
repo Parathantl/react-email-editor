@@ -1,4 +1,4 @@
-.errorBoundary {
+.ee-error-boundary {
   padding: var(--ee-space-lg);
   margin: var(--ee-space-sm);
   background: var(--ee-color-danger-light);
@@ -8,12 +8,12 @@
   font-size: var(--ee-font-size-md);
 }
 
-.errorMessage {
+.ee-error-message {
   margin: var(--ee-space-sm) 0 0;
   color: var(--ee-color-danger-hover);
 }
 
-.retryBtn {
+.ee-retry-btn {
   margin-top: var(--ee-space-md);
   padding: var(--ee-space-sm) var(--ee-space-lg);
   background: var(--ee-color-danger);
@@ -25,6 +25,6 @@
   transition: background var(--ee-transition-fast);
 }
 
-.retryBtn:hover {
+.ee-retry-btn:hover {
   background: var(--ee-color-danger-hover);
 }

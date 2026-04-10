@@ -37,37 +37,37 @@ export function PaddingInput({ label, value, onChange }: PaddingInputProps) {
   );
 
   return (
-    <div className={`ee-field-group ee-padding ${styles.fieldGroup}`}>
-      <label className={styles.fieldLabel}>{label}</label>
-      <div className={styles.paddingGrid}>
-        <div className={styles.paddingField}>
-          <span className={styles.paddingLabel}>Top</span>
+    <div className={`ee-field-group ee-padding ${styles['ee-field-group']}`}>
+      <label className={styles['ee-field-label']}>{label}</label>
+      <div className={styles['ee-padding-grid']}>
+        <div className={styles['ee-padding-field']}>
+          <span className={styles['ee-padding-label']}>Top</span>
           <input
-            className={styles.paddingInput}
+            className={styles['ee-padding-input']}
             value={top}
             onChange={(e) => handleChange('top', e.target.value)}
           />
         </div>
-        <div className={styles.paddingField}>
-          <span className={styles.paddingLabel}>Right</span>
+        <div className={styles['ee-padding-field']}>
+          <span className={styles['ee-padding-label']}>Right</span>
           <input
-            className={styles.paddingInput}
+            className={styles['ee-padding-input']}
             value={right}
             onChange={(e) => handleChange('right', e.target.value)}
           />
         </div>
-        <div className={styles.paddingField}>
-          <span className={styles.paddingLabel}>Bottom</span>
+        <div className={styles['ee-padding-field']}>
+          <span className={styles['ee-padding-label']}>Bottom</span>
           <input
-            className={styles.paddingInput}
+            className={styles['ee-padding-input']}
             value={bottom}
             onChange={(e) => handleChange('bottom', e.target.value)}
           />
         </div>
-        <div className={styles.paddingField}>
-          <span className={styles.paddingLabel}>Left</span>
+        <div className={styles['ee-padding-field']}>
+          <span className={styles['ee-padding-label']}>Left</span>
           <input
-            className={styles.paddingInput}
+            className={styles['ee-padding-input']}
             value={left}
             onChange={(e) => handleChange('left', e.target.value)}
           />

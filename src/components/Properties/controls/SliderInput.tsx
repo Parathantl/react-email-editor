@@ -28,19 +28,19 @@ export function SliderInput({
   );
 
   return (
-    <div className={`ee-field-group ee-slider ${styles.fieldGroup}`}>
-      <label className={styles.fieldLabel}>{label}</label>
-      <div className={styles.sliderWrapper}>
+    <div className={`ee-field-group ee-slider ${styles['ee-field-group']}`}>
+      <label className={styles['ee-field-label']}>{label}</label>
+      <div className={styles['ee-slider-wrapper']}>
         <input
           type="range"
-          className={styles.sliderInput}
+          className={styles['ee-slider-input']}
           min={min}
           max={max}
           step={step}
           value={value}
           onChange={handleChange}
         />
-        <span className={styles.sliderValue}>
+        <span className={styles['ee-slider-value']}>
           {value}{unit}
         </span>
       </div>

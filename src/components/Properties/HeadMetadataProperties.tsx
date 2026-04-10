@@ -17,7 +17,7 @@ export function HeadMetadataProperties() {
   );
 
   return (
-    <div className={styles.propertiesBody}>
+    <div className={styles['ee-properties-body']}>
       <PropertyField type="text" label="Email Title" value={metadata.title} onChange={(v) => update({ title: v })} placeholder="Email title (mj-title)" />
       <PropertyField type="text" label="Preview Text" value={metadata.previewText} onChange={(v) => update({ previewText: v })} placeholder="Preview text shown in inbox (mj-preview)" />
       <PropertyField

@@ -37,22 +37,22 @@ export function ImageUploader({ blockId, onUploadComplete }: ImageUploaderProps)
   return (
     <div>
       {status === 'uploading' ? (
-        <div className={`ee-image-uploading ${styles.imageUploading}`}>
-          <div className={`ee-image-placeholder ${styles.imagePlaceholder}`}>
+        <div className={`ee-image-uploading ${styles['ee-image-uploading']}`}>
+          <div className={`ee-image-placeholder ${styles['ee-image-placeholder']}`}>
             <span>Uploading... {Math.round(progress)}%</span>
             <button className="ee-upload-cancel" onClick={cancel}>
               Cancel
             </button>
           </div>
-          <div className={`ee-image-progress ${styles.imageProgress}`} style={{ width: `${progress}%` }} />
+          <div className={`ee-image-progress ${styles['ee-image-progress']}`} style={{ width: `${progress}%` }} />
         </div>
       ) : (
-        <div className={`ee-image-placeholder ${styles.imagePlaceholder}`} onClick={handleClick}>
-          <span className={`ee-image-placeholder-icon ${styles.imagePlaceholderIcon}`}>+</span>
+        <div className={`ee-image-placeholder ${styles['ee-image-placeholder']}`} onClick={handleClick}>
+          <span className={`ee-image-placeholder-icon ${styles['ee-image-placeholder-icon']}`}>+</span>
           <span>Click to upload image</span>
         </div>
       )}
-      {error && <div className={`ee-image-error ${styles.imageError}`}>{error}</div>}
+      {error && <div className={`ee-image-error ${styles['ee-image-error']}`}>{error}</div>}
       <input
         ref={fileInputRef}
         type="file"

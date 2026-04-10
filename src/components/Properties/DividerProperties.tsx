@@ -19,7 +19,7 @@ export function DividerProperties({ block }: DividerPropertiesProps) {
   const p = block.properties;
 
   return (
-    <div className={styles.propertiesBody}>
+    <div className={styles['ee-properties-body']}>
       <PropertyField type="color" label="Border Color" value={p.borderColor} onChange={(v) => update({ borderColor: v })} />
       <PropertyField type="text" label="Border Width" value={p.borderWidth} onChange={(v) => update({ borderWidth: v })} />
       <PropertyField type="select" label="Border Style" value={p.borderStyle} onChange={(v) => update({ borderStyle: v })} options={BORDER_STYLE_OPTIONS} />

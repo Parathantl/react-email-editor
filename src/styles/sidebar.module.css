@@ -1,11 +1,11 @@
-.sidebar {
+.ee-sidebar {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
 }
 
-.sectionTitle {
+.ee-section-title {
   font-size: var(--ee-font-size-sm);
   font-weight: var(--ee-font-weight-semibold);
   color: var(--ee-text-secondary);
@@ -17,14 +17,14 @@
 }
 
 /* Block Palette */
-.blockPalette {
+.ee-block-palette {
   padding: var(--ee-space-sm);
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--ee-space-sm);
 }
 
-.blockCard {
+.ee-block-card {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -38,34 +38,34 @@
   user-select: none;
 }
 
-.blockCard:hover {
+.ee-block-card:hover {
   border-color: var(--ee-border-focus);
   background: var(--ee-bg-selected);
   box-shadow: var(--ee-shadow-sm);
 }
 
-.blockCard:active {
+.ee-block-card:active {
   cursor: grabbing;
   opacity: 0.7;
 }
 
-.blockCardIcon {
+.ee-block-card-icon {
   font-size: 20px;
   line-height: 1;
 }
 
-.blockCardLabel {
+.ee-block-card-label {
   font-size: var(--ee-font-size-sm);
   font-weight: var(--ee-font-weight-medium);
   color: var(--ee-text-primary);
 }
 
 /* Variable List */
-.variableList {
+.ee-variable-list {
   padding: var(--ee-space-sm) var(--ee-space-lg);
 }
 
-.variableHint {
+.ee-variable-hint {
   font-size: var(--ee-font-size-xs);
   color: var(--ee-text-muted);
   margin: 0 0 var(--ee-space-sm) 0;
@@ -73,11 +73,11 @@
   font-style: italic;
 }
 
-.variableGroup {
+.ee-variable-group {
   margin-bottom: var(--ee-space-md);
 }
 
-.variableGroupTitle {
+.ee-variable-group-title {
   font-size: var(--ee-font-size-xs);
   font-weight: var(--ee-font-weight-semibold);
   color: var(--ee-text-muted);
@@ -85,13 +85,13 @@
   text-transform: uppercase;
 }
 
-.variableChips {
+.ee-variable-chips {
   display: flex;
   flex-wrap: wrap;
   gap: var(--ee-space-xs);
 }
 
-.variableChip {
+.ee-variable-chip {
   display: inline-flex;
   align-items: center;
   gap: 3px;
@@ -107,37 +107,37 @@
   white-space: nowrap;
 }
 
-.variableChip:hover {
+.ee-variable-chip:hover {
   background: var(--ee-color-primary-light);
   border-color: var(--ee-color-primary);
   transform: translateY(-1px);
   box-shadow: var(--ee-shadow-sm);
 }
 
-.variableChip:active {
+.ee-variable-chip:active {
   transform: translateY(0);
   box-shadow: none;
 }
 
-.variableChipInserted {
+.ee-variable-chip-inserted {
   background: var(--ee-color-primary);
   color: var(--ee-text-inverse);
   border-color: var(--ee-color-primary);
   transition: all 0.15s ease;
 }
 
-.variableChipCustom {
+.ee-variable-chip-custom {
   background: var(--ee-color-success-light);
   color: var(--ee-color-success-text);
   border-color: var(--ee-color-success-border);
 }
 
-.variableChipCustom:hover {
+.ee-variable-chip-custom:hover {
   background: var(--ee-color-success-light-hover);
   border-color: var(--ee-color-success);
 }
 
-.variableChipDelete {
+.ee-variable-chip-delete {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -156,21 +156,21 @@
   transition: all var(--ee-transition-fast);
 }
 
-.variableChipDelete:hover {
+.ee-variable-chip-delete:hover {
   opacity: 1;
   background: var(--ee-overlay-subtle);
 }
 
-.variableChipIcon {
+.ee-variable-chip-icon {
   font-size: 11px;
 }
 
 /* Add Variable */
-.addVariableSection {
+.ee-add-variable-section {
   padding: var(--ee-space-xs) var(--ee-space-lg) var(--ee-space-lg);
 }
 
-.addVariableBtn {
+.ee-add-variable-btn {
   width: 100%;
   padding: 6px 12px;
   font-size: var(--ee-font-size-sm);
@@ -184,11 +184,11 @@
   transition: all var(--ee-transition-fast);
 }
 
-.addVariableBtn:hover {
+.ee-add-variable-btn:hover {
   background: var(--ee-color-primary-light);
 }
 
-.addVariableForm {
+.ee-add-variable-form {
   display: flex;
   flex-direction: column;
   gap: var(--ee-space-sm);
@@ -198,13 +198,13 @@
   border-radius: var(--ee-border-radius);
 }
 
-.addVariableField {
+.ee-add-variable-field {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.addVariableLabel {
+.ee-add-variable-label {
   font-size: 10px;
   font-weight: var(--ee-font-weight-medium);
   color: var(--ee-text-secondary);
@@ -212,7 +212,7 @@
   letter-spacing: 0.3px;
 }
 
-.addVariableInput {
+.ee-add-variable-input {
   width: 100%;
   padding: 5px 8px;
   font-size: var(--ee-font-size-sm);
@@ -226,25 +226,25 @@
   transition: border-color var(--ee-transition-fast);
 }
 
-.addVariableInput:focus {
+.ee-add-variable-input:focus {
   border-color: var(--ee-border-focus);
   box-shadow: var(--ee-shadow-focus);
 }
 
-.addVariableError {
+.ee-add-variable-error {
   font-size: var(--ee-font-size-xs);
   color: var(--ee-color-danger);
   padding: 2px 0;
 }
 
-.addVariableActions {
+.ee-add-variable-actions {
   display: flex;
   gap: var(--ee-space-sm);
   justify-content: flex-end;
   padding-top: var(--ee-space-xs);
 }
 
-.addVariableCancelBtn {
+.ee-add-variable-cancel-btn {
   padding: 4px 12px;
   font-size: var(--ee-font-size-sm);
   font-family: var(--ee-font-family);
@@ -256,11 +256,11 @@
   transition: all var(--ee-transition-fast);
 }
 
-.addVariableCancelBtn:hover {
+.ee-add-variable-cancel-btn:hover {
   background: var(--ee-bg-hover);
 }
 
-.addVariableSubmitBtn {
+.ee-add-variable-submit-btn {
   padding: 4px 16px;
   font-size: var(--ee-font-size-sm);
   font-family: var(--ee-font-family);
@@ -273,16 +273,16 @@
   transition: all var(--ee-transition-fast);
 }
 
-.addVariableSubmitBtn:hover {
+.ee-add-variable-submit-btn:hover {
   background: var(--ee-color-primary-hover);
 }
 
 /* Layout section */
-.layoutSection {
+.ee-layout-section {
   padding: var(--ee-space-sm) var(--ee-space-lg);
 }
 
-.layoutOption {
+.ee-layout-option {
   display: flex;
   align-items: center;
   gap: var(--ee-space-sm);
@@ -294,26 +294,26 @@
   transition: all var(--ee-transition-fast);
 }
 
-.layoutOption:hover {
+.ee-layout-option:hover {
   border-color: var(--ee-border-focus);
   background: var(--ee-bg-selected);
 }
 
-.layoutPreview {
+.ee-layout-preview {
   display: flex;
   gap: 2px;
   flex: 1;
   height: 20px;
 }
 
-.layoutColumn {
+.ee-layout-column {
   background: var(--ee-color-primary-light);
   border: 1px solid var(--ee-color-primary);
   border-radius: 2px;
   height: 100%;
 }
 
-.layoutLabel {
+.ee-layout-label {
   font-size: var(--ee-font-size-xs);
   color: var(--ee-text-secondary);
   white-space: nowrap;

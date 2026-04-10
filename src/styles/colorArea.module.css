@@ -1,10 +1,10 @@
-.hslPicker {
+.ee-hsl-picker {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.hslArea {
+.ee-hsl-area {
   position: relative;
   width: 140px;
   height: 140px;
@@ -14,7 +14,7 @@
   user-select: none;
 }
 
-.hslAreaThumb {
+.ee-hsl-area-thumb {
   position: absolute;
   width: 14px;
   height: 14px;
@@ -25,7 +25,7 @@
   transform: translate(-50%, -50%);
 }
 
-.hslHueBar {
+.ee-hsl-hue-bar {
   position: relative;
   width: 140px;
   height: 14px;
@@ -45,7 +45,7 @@
   user-select: none;
 }
 
-.hslHueThumb {
+.ee-hsl-hue-thumb {
   position: absolute;
   top: 50%;
   width: 14px;

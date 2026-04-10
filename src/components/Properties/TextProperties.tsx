@@ -13,8 +13,8 @@ export function TextProperties({ block }: TextPropertiesProps) {
   const p = block.properties;
 
   return (
-    <div className={styles.propertiesBody}>
-      <p className={styles.fieldHint}>
+    <div className={styles['ee-properties-body']}>
+      <p className={styles['ee-field-hint']}>
         Use the inline toolbar above the text block to format font, size, color, and alignment.
       </p>
       <PropertyField type="color" label="Background Color" value={p.backgroundColor || 'transparent'} onChange={(v) => update({ backgroundColor: v })} />

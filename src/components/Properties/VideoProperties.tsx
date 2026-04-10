@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import type { Block, VideoBlockProperties } from '../../types';
 import { useBlockUpdate } from '../../hooks/useBlockUpdate';
 import { PropertyField } from './PropertyField';
@@ -37,27 +37,27 @@ export function VideoProperties({ block }: VideoPropertiesProps) {
   }, [update, p.src]);
 
   return (
-    <div className={styles.propertiesBody}>
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Video URL</label>
+    <div className={styles['ee-properties-body']}>
+      <div className={styles['ee-field-group']}>
+        <label className={styles['ee-field-label']}>Video URL</label>
         <input
-          className={styles.fieldInput}
+          className={styles['ee-field-input']}
           value={p.src}
           onChange={(e) => handleVideoUrlChange(e.target.value)}
           placeholder="https://youtube.com/watch?v=..."
         />
       </div>
-      <div className={styles.fieldGroup}>
-        <label className={styles.fieldLabel}>Thumbnail URL</label>
+      <div className={styles['ee-field-group']}>
+        <label className={styles['ee-field-label']}>Thumbnail URL</label>
         <input
-          className={styles.fieldInput}
+          className={styles['ee-field-input']}
           value={p.thumbnailUrl}
           onChange={(e) => update({ thumbnailUrl: e.target.value })}
           placeholder="https://..."
         />
         {p.src && (
           <button
-            className={`ee-auto-thumbnail ${styles.fieldBtnUpload} ${styles.fieldInputStacked}`}
+            className={`ee-auto-thumbnail ${styles['ee-field-btn-upload']} ${styles['ee-field-input-stacked']}`}
             onClick={handleAutoThumbnail}
           >
             Auto-generate from URL

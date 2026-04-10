@@ -48,18 +48,18 @@ export function RichTextToolbar({ editor, defaultFontFamily, defaultFontSize }: 
   if (!editor) return null;
 
   return (
-    <div className={`ee-richtext-toolbar ${styles.richTextToolbar}`} onMouseDown={preventBlur}>
+    <div className={`ee-richtext-toolbar ${styles['ee-rich-text-toolbar']}`} onMouseDown={preventBlur}>
       {/* Group 1 — Typography */}
-      <div className={`ee-richtext-group ${styles.richTextGroup}`}>
+      <div className={`ee-richtext-group ${styles['ee-rich-text-group']}`}>
         <FontFamilySelect editor={editor} defaultFontFamily={defaultFontFamily} />
         <FontSizeSelect editor={editor} defaultFontSize={defaultFontSize} />
       </div>
 
       {/* Group 2 — Formatting */}
-      <div className={`ee-richtext-group ${styles.richTextGroup}`}>
+      <div className={`ee-richtext-group ${styles['ee-rich-text-group']}`}>
         <Tooltip label="Bold" shortcut="Ctrl+B">
           <button
-            className={`ee-richtext-btn ee-richtext-bold ${styles.richTextBtn} ${editor.isActive('bold') ? styles.richTextBtnActive : ''}`}
+            className={`ee-richtext-btn ee-richtext-bold ${styles['ee-rich-text-btn']} ${editor.isActive('bold') ? styles['ee-rich-text-btn-active'] : ''}`}
             onClick={() => editor.chain().focus().toggleBold().run()}
             aria-label="Bold"
             aria-pressed={editor.isActive('bold')}
@@ -69,7 +69,7 @@ export function RichTextToolbar({ editor, defaultFontFamily, defaultFontSize }: 
         </Tooltip>
         <Tooltip label="Italic" shortcut="Ctrl+I">
           <button
-            className={`ee-richtext-btn ee-richtext-italic ${styles.richTextBtn} ${editor.isActive('italic') ? styles.richTextBtnActive : ''}`}
+            className={`ee-richtext-btn ee-richtext-italic ${styles['ee-rich-text-btn']} ${editor.isActive('italic') ? styles['ee-rich-text-btn-active'] : ''}`}
             onClick={() => editor.chain().focus().toggleItalic().run()}
             aria-label="Italic"
             aria-pressed={editor.isActive('italic')}
@@ -79,7 +79,7 @@ export function RichTextToolbar({ editor, defaultFontFamily, defaultFontSize }: 
         </Tooltip>
         <Tooltip label="Underline" shortcut="Ctrl+U">
           <button
-            className={`ee-richtext-btn ee-richtext-underline ${styles.richTextBtn} ${editor.isActive('underline') ? styles.richTextBtnActive : ''}`}
+            className={`ee-richtext-btn ee-richtext-underline ${styles['ee-rich-text-btn']} ${editor.isActive('underline') ? styles['ee-rich-text-btn-active'] : ''}`}
             onClick={() => editor.chain().focus().toggleUnderline().run()}
             aria-label="Underline"
             aria-pressed={editor.isActive('underline')}
@@ -89,7 +89,7 @@ export function RichTextToolbar({ editor, defaultFontFamily, defaultFontSize }: 
         </Tooltip>
         <Tooltip label="Strikethrough" shortcut="Ctrl+Shift+X">
           <button
-            className={`ee-richtext-btn ee-richtext-strike ${styles.richTextBtn} ${editor.isActive('strike') ? styles.richTextBtnActive : ''}`}
+            className={`ee-richtext-btn ee-richtext-strike ${styles['ee-rich-text-btn']} ${editor.isActive('strike') ? styles['ee-rich-text-btn-active'] : ''}`}
             onClick={() => editor.chain().focus().toggleStrike().run()}
             aria-label="Strikethrough"
             aria-pressed={editor.isActive('strike')}
@@ -100,7 +100,7 @@ export function RichTextToolbar({ editor, defaultFontFamily, defaultFontSize }: 
       </div>
 
       {/* Group 3 — Colors */}
-      <div className={`ee-richtext-group ${styles.richTextGroup}`}>
+      <div className={`ee-richtext-group ${styles['ee-rich-text-group']}`}>
         <InlineColorPicker
           editor={editor}
           type="color"
@@ -116,10 +116,10 @@ export function RichTextToolbar({ editor, defaultFontFamily, defaultFontSize }: 
       </div>
 
       {/* Group 4 — Alignment */}
-      <div className={`ee-richtext-group ${styles.richTextGroup}`}>
+      <div className={`ee-richtext-group ${styles['ee-rich-text-group']}`}>
         <Tooltip label="Align Left" shortcut="Ctrl+Shift+L">
           <button
-            className={`ee-richtext-btn ee-richtext-align-left ${styles.richTextBtn} ${editor.isActive({ textAlign: 'left' }) ? styles.richTextBtnActive : ''}`}
+            className={`ee-richtext-btn ee-richtext-align-left ${styles['ee-rich-text-btn']} ${editor.isActive({ textAlign: 'left' }) ? styles['ee-rich-text-btn-active'] : ''}`}
             onClick={() => editor.chain().focus().setTextAlign('left').run()}
             aria-label="Align Left"
             aria-pressed={editor.isActive({ textAlign: 'left' })}
@@ -129,7 +129,7 @@ export function RichTextToolbar({ editor, defaultFontFamily, defaultFontSize }: 
         </Tooltip>
         <Tooltip label="Align Center" shortcut="Ctrl+Shift+E">
           <button
-            className={`ee-richtext-btn ee-richtext-align-center ${styles.richTextBtn} ${editor.isActive({ textAlign: 'center' }) ? styles.richTextBtnActive : ''}`}
+            className={`ee-richtext-btn ee-richtext-align-center ${styles['ee-rich-text-btn']} ${editor.isActive({ textAlign: 'center' }) ? styles['ee-rich-text-btn-active'] : ''}`}
             onClick={() => editor.chain().focus().setTextAlign('center').run()}
             aria-label="Align Center"
             aria-pressed={editor.isActive({ textAlign: 'center' })}
@@ -139,7 +139,7 @@ export function RichTextToolbar({ editor, defaultFontFamily, defaultFontSize }: 
         </Tooltip>
         <Tooltip label="Align Right" shortcut="Ctrl+Shift+R">
           <button
-            className={`ee-richtext-btn ee-richtext-align-right ${styles.richTextBtn} ${editor.isActive({ textAlign: 'right' }) ? styles.richTextBtnActive : ''}`}
+            className={`ee-richtext-btn ee-richtext-align-right ${styles['ee-rich-text-btn']} ${editor.isActive({ textAlign: 'right' }) ? styles['ee-rich-text-btn-active'] : ''}`}
             onClick={() => editor.chain().focus().setTextAlign('right').run()}
             aria-label="Align Right"
             aria-pressed={editor.isActive({ textAlign: 'right' })}
@@ -149,7 +149,7 @@ export function RichTextToolbar({ editor, defaultFontFamily, defaultFontSize }: 
         </Tooltip>
         <Tooltip label="Justify" shortcut="Ctrl+Shift+J">
           <button
-            className={`ee-richtext-btn ee-richtext-align-justify ${styles.richTextBtn} ${editor.isActive({ textAlign: 'justify' }) ? styles.richTextBtnActive : ''}`}
+            className={`ee-richtext-btn ee-richtext-align-justify ${styles['ee-rich-text-btn']} ${editor.isActive({ textAlign: 'justify' }) ? styles['ee-rich-text-btn-active'] : ''}`}
             onClick={() => editor.chain().focus().setTextAlign('justify').run()}
             aria-label="Justify"
             aria-pressed={editor.isActive({ textAlign: 'justify' })}
@@ -160,10 +160,10 @@ export function RichTextToolbar({ editor, defaultFontFamily, defaultFontSize }: 
       </div>
 
       {/* Group 5 — Lists */}
-      <div className={`ee-richtext-group ${styles.richTextGroup}`}>
+      <div className={`ee-richtext-group ${styles['ee-rich-text-group']}`}>
         <Tooltip label="Bullet List" shortcut="Ctrl+Shift+8">
           <button
-            className={`ee-richtext-btn ee-richtext-bullet-list ${styles.richTextBtn} ${editor.isActive('bulletList') ? styles.richTextBtnActive : ''}`}
+            className={`ee-richtext-btn ee-richtext-bullet-list ${styles['ee-rich-text-btn']} ${editor.isActive('bulletList') ? styles['ee-rich-text-btn-active'] : ''}`}
             onClick={() => editor.chain().focus().toggleBulletList().run()}
             aria-label="Bullet List"
             aria-pressed={editor.isActive('bulletList')}
@@ -173,7 +173,7 @@ export function RichTextToolbar({ editor, defaultFontFamily, defaultFontSize }: 
         </Tooltip>
         <Tooltip label="Ordered List" shortcut="Ctrl+Shift+7">
           <button
-            className={`ee-richtext-btn ee-richtext-ordered-list ${styles.richTextBtn} ${editor.isActive('orderedList') ? styles.richTextBtnActive : ''}`}
+            className={`ee-richtext-btn ee-richtext-ordered-list ${styles['ee-rich-text-btn']} ${editor.isActive('orderedList') ? styles['ee-rich-text-btn-active'] : ''}`}
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
             aria-label="Ordered List"
             aria-pressed={editor.isActive('orderedList')}
@@ -183,7 +183,7 @@ export function RichTextToolbar({ editor, defaultFontFamily, defaultFontSize }: 
         </Tooltip>
         <Tooltip label="Outdent" shortcut="Shift+Tab">
           <button
-            className={`ee-richtext-btn ee-richtext-outdent ${styles.richTextBtn}`}
+            className={`ee-richtext-btn ee-richtext-outdent ${styles['ee-rich-text-btn']}`}
             onClick={() => {
               if (editor.isActive('listItem')) {
                 editor.chain().focus().liftListItem('listItem').run();
@@ -199,7 +199,7 @@ export function RichTextToolbar({ editor, defaultFontFamily, defaultFontSize }: 
         </Tooltip>
         <Tooltip label="Indent" shortcut="Tab">
           <button
-            className={`ee-richtext-btn ee-richtext-indent ${styles.richTextBtn}`}
+            className={`ee-richtext-btn ee-richtext-indent ${styles['ee-rich-text-btn']}`}
             onClick={() => {
               if (editor.isActive('listItem')) {
                 editor.chain().focus().sinkListItem('listItem').run();
@@ -216,11 +216,11 @@ export function RichTextToolbar({ editor, defaultFontFamily, defaultFontSize }: 
       </div>
 
       {/* Group 6 — Utilities */}
-      <div className={`ee-richtext-group ${styles.richTextGroup}`}>
+      <div className={`ee-richtext-group ${styles['ee-rich-text-group']}`}>
         <InlineLinkEditor editor={editor} />
         <Tooltip label="Horizontal Rule">
           <button
-            className={`ee-richtext-btn ee-richtext-hr ${styles.richTextBtn}`}
+            className={`ee-richtext-btn ee-richtext-hr ${styles['ee-rich-text-btn']}`}
             onClick={() => editor.chain().focus().setHorizontalRule().run()}
             aria-label="Horizontal Rule"
           >
@@ -229,7 +229,7 @@ export function RichTextToolbar({ editor, defaultFontFamily, defaultFontSize }: 
         </Tooltip>
         <Tooltip label="Clear Formatting">
           <button
-            className={`ee-richtext-btn ee-richtext-clear ${styles.richTextBtn}`}
+            className={`ee-richtext-btn ee-richtext-clear ${styles['ee-rich-text-btn']}`}
             onClick={() => editor.chain().focus().unsetAllMarks().run()}
             aria-label="Clear Formatting"
           >
@@ -256,7 +256,7 @@ function FontFamilySelect({ editor, defaultFontFamily }: { editor: Editor; defau
 
   return (
     <select
-      className={`ee-richtext-font-select ${styles.richTextSelect}`}
+      className={`ee-richtext-font-select ${styles['ee-rich-text-select']}`}
       value={currentFont}
       onChange={(e) => {
         const value = e.target.value;
@@ -294,7 +294,7 @@ function FontSizeSelect({ editor, defaultFontSize }: { editor: Editor; defaultFo
 
   return (
     <select
-      className={`ee-richtext-size-select ${styles.richTextSelectSmall}`}
+      className={`ee-richtext-size-select ${styles['ee-rich-text-select-small']}`}
       value={currentSize}
       onChange={(e) => {
         const value = e.target.value;
@@ -389,9 +389,9 @@ function InlineLinkEditor({ editor }: { editor: Editor }) {
   );
 
   return (
-    <div className={`ee-richtext-link ${styles.richTextColorWrapper}`} ref={wrapperRef}>
+    <div className={`ee-richtext-link ${styles['ee-rich-text-color-wrapper']}`} ref={wrapperRef}>
       <button
-        className={`ee-richtext-btn ee-richtext-link-btn ${styles.richTextBtn} ${isActive ? styles.richTextBtnActive : ''}`}
+        className={`ee-richtext-btn ee-richtext-link-btn ${styles['ee-rich-text-btn']} ${isActive ? styles['ee-rich-text-btn-active'] : ''}`}
         onClick={handleOpen}
         title="Link"
         aria-label="Link"
@@ -400,23 +400,23 @@ function InlineLinkEditor({ editor }: { editor: Editor }) {
         <LinkIcon />
       </button>
       {isOpen && (
-        <div className={`ee-richtext-link-dropdown ${styles.richTextLinkDropdown}`}>
-          <label className={`ee-richtext-link-label ${styles.richTextLinkLabel}`}>URL</label>
+        <div className={`ee-richtext-link-dropdown ${styles['ee-rich-text-link-dropdown']}`}>
+          <label className={`ee-richtext-link-label ${styles['ee-rich-text-link-label']}`}>URL</label>
           <input
             ref={inputRef}
-            className={`ee-richtext-link-input ${styles.richTextLinkInput}`}
+            className={`ee-richtext-link-input ${styles['ee-rich-text-link-input']}`}
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="https://, mailto:, or tel:"
           />
-          {urlError && <div className={`ee-richtext-link-error ${styles.richTextLinkError}`}>{urlError}</div>}
-          <div className={`ee-richtext-link-actions ${styles.richTextLinkActions}`}>
-            <button className={`ee-richtext-link-apply ${styles.richTextLinkApply}`} onClick={handleApply}>
+          {urlError && <div className={`ee-richtext-link-error ${styles['ee-rich-text-link-error']}`}>{urlError}</div>}
+          <div className={`ee-richtext-link-actions ${styles['ee-rich-text-link-actions']}`}>
+            <button className={`ee-richtext-link-apply ${styles['ee-rich-text-link-apply']}`} onClick={handleApply}>
               Apply
             </button>
             {isActive && (
-              <button className={`ee-richtext-link-remove ${styles.richTextLinkRemove}`} onClick={handleRemove}>
+              <button className={`ee-richtext-link-remove ${styles['ee-rich-text-link-remove']}`} onClick={handleRemove}>
                 Remove
               </button>
             )}
@@ -507,9 +507,9 @@ function InlineColorPicker({ editor, type, title, icon }: InlineColorPickerProps
   const indicatorColor = type === 'color' ? currentColor : (currentColor || 'transparent');
 
   return (
-    <div className={`ee-richtext-color ee-richtext-color--${type} ${styles.richTextColorWrapper}`} ref={wrapperRef}>
+    <div className={`ee-richtext-color ee-richtext-color--${type} ${styles['ee-rich-text-color-wrapper']}`} ref={wrapperRef}>
       <button
-        className={`ee-richtext-btn ee-richtext-color-btn ${styles.richTextBtnWithIndicator}`}
+        className={`ee-richtext-btn ee-richtext-color-btn ${styles['ee-rich-text-btn-with-indicator']}`}
         onClick={() => setIsOpen(!isOpen)}
         title={title}
         aria-label={title}
@@ -517,19 +517,19 @@ function InlineColorPicker({ editor, type, title, icon }: InlineColorPickerProps
       >
         {icon}
         <span
-          className={`ee-richtext-color-indicator ${styles.richTextColorIndicator}`}
+          className={`ee-richtext-color-indicator ${styles['ee-rich-text-color-indicator']}`}
           style={{ backgroundColor: indicatorColor }}
         />
       </button>
       {isOpen && (
-        <div className={`ee-richtext-color-dropdown ${styles.richTextColorDropdown}`}>
+        <div className={`ee-richtext-color-dropdown ${styles['ee-rich-text-color-dropdown']}`}>
           {/* Preset colors */}
-          <div className={`ee-richtext-color-section-label ${styles.richTextColorSectionLabel}`}>Presets</div>
-          <div className={`ee-richtext-color-grid ${styles.richTextColorGrid}`}>
+          <div className={`ee-richtext-color-section-label ${styles['ee-rich-text-color-section-label']}`}>Presets</div>
+          <div className={`ee-richtext-color-grid ${styles['ee-rich-text-color-grid']}`}>
             {COLOR_PRESETS.map((color) => (
               <button
                 key={color}
-                className={`ee-richtext-color-swatch ${styles.richTextColorSwatch} ${currentColor.toLowerCase() === color.toLowerCase() ? styles.richTextColorSwatchActive : ''}`}
+                className={`ee-richtext-color-swatch ${styles['ee-rich-text-color-swatch']} ${currentColor.toLowerCase() === color.toLowerCase() ? styles['ee-rich-text-color-swatch-active'] : ''}`}
                 style={{ backgroundColor: color }}
                 onClick={() => applyColor(color, true)}
                 title={color}
@@ -540,18 +540,18 @@ function InlineColorPicker({ editor, type, title, icon }: InlineColorPickerProps
           {/* Custom saved colors */}
           {customColorPresets.length > 0 && (
             <>
-              <div className={`ee-richtext-color-section-label ${styles.richTextColorSectionLabel}`}>Custom</div>
-              <div className={`ee-richtext-color-grid ${styles.richTextColorGrid}`}>
+              <div className={`ee-richtext-color-section-label ${styles['ee-rich-text-color-section-label']}`}>Custom</div>
+              <div className={`ee-richtext-color-grid ${styles['ee-rich-text-color-grid']}`}>
                 {customColorPresets.map((color) => (
                   <button
                     key={`custom-${color}`}
-                    className={`ee-richtext-color-swatch ${styles.richTextColorSwatch} ${currentColor.toLowerCase() === color.toLowerCase() ? styles.richTextColorSwatchActive : ''}`}
+                    className={`ee-richtext-color-swatch ${styles['ee-rich-text-color-swatch']} ${currentColor.toLowerCase() === color.toLowerCase() ? styles['ee-rich-text-color-swatch-active'] : ''}`}
                     style={{ backgroundColor: color }}
                     onClick={() => applyColor(color, true)}
                     title={color}
                   >
                     <span
-                      className={`ee-richtext-color-swatch-remove ${styles.richTextColorSwatchRemove}`}
+                      className={`ee-richtext-color-swatch-remove ${styles['ee-rich-text-color-swatch-remove']}`}
                       onClick={(e) => { e.stopPropagation(); removeCustomColorPreset(color); }}
                       title="Remove"
                     >
@@ -573,9 +573,9 @@ function InlineColorPicker({ editor, type, title, icon }: InlineColorPickerProps
           </div>
 
           {/* Custom color input row: hex + apply */}
-          <div className={`ee-richtext-color-custom-row ${styles.richTextColorCustomRow}`}>
+          <div className={`ee-richtext-color-custom-row ${styles['ee-rich-text-color-custom-row']}`}>
             <input
-              className={`ee-richtext-color-hex-input ${styles.richTextColorHexInput}`}
+              className={`ee-richtext-color-hex-input ${styles['ee-rich-text-color-hex-input']}`}
               value={hexInput}
               onChange={(e) => setHexInput(e.target.value)}
               onKeyDown={handleHexKeyDown}
@@ -584,7 +584,7 @@ function InlineColorPicker({ editor, type, title, icon }: InlineColorPickerProps
               spellCheck={false}
             />
             <button
-              className={`ee-richtext-color-apply ${styles.richTextColorApplyBtn}`}
+              className={`ee-richtext-color-apply ${styles['ee-rich-text-color-apply-btn']}`}
               onClick={handleHexApply}
               disabled={!isValidHex}
               title="Apply color"
@@ -594,9 +594,9 @@ function InlineColorPicker({ editor, type, title, icon }: InlineColorPickerProps
           </div>
 
           {/* Bottom actions: save + clear */}
-          <div className={`ee-richtext-color-bottom ${styles.richTextColorBottomActions}`}>
+          <div className={`ee-richtext-color-bottom ${styles['ee-rich-text-color-bottom-actions']}`}>
             <button
-              className={`ee-richtext-color-save ${styles.richTextColorClearBtn}`}
+              className={`ee-richtext-color-save ${styles['ee-rich-text-color-clear-btn']}`}
               onClick={handleSaveCustom}
               title="Save this color to your custom presets"
               disabled={!isValidHex || customColorPresets.includes(hexInput.trim())}
@@ -604,7 +604,7 @@ function InlineColorPicker({ editor, type, title, icon }: InlineColorPickerProps
               + Save preset
             </button>
             <button
-              className={`ee-richtext-color-clear ${styles.richTextColorClearBtn}`}
+              className={`ee-richtext-color-clear ${styles['ee-rich-text-color-clear-btn']}`}
               onClick={clearColor}
             >
               Clear

@@ -1,4 +1,4 @@
-.overlay {
+.ee-overlay {
   position: fixed;
   top: 0; right: 0; bottom: 0; left: 0;
   background: var(--ee-overlay-backdrop);
@@ -9,7 +9,7 @@
   animation: fadeIn var(--ee-transition-fast);
 }
 
-.dialog {
+.ee-dialog {
   background: var(--ee-bg-panel);
   border-radius: var(--ee-border-radius-lg);
   box-shadow: var(--ee-shadow-lg);
@@ -20,27 +20,27 @@
   font-family: var(--ee-font-family);
 }
 
-.title {
+.ee-title {
   margin: 0 0 var(--ee-space-sm) 0;
   font-size: var(--ee-font-size-lg);
   font-weight: var(--ee-font-weight-semibold);
   color: var(--ee-text-primary);
 }
 
-.message {
+.ee-message {
   margin: 0 0 var(--ee-space-xl) 0;
   font-size: var(--ee-font-size-base);
   color: var(--ee-text-secondary);
   line-height: 1.5;
 }
 
-.actions {
+.ee-actions {
   display: flex;
   justify-content: flex-end;
   gap: var(--ee-space-sm);
 }
 
-.btnCancel {
+.ee-btn-cancel {
   padding: var(--ee-space-sm) var(--ee-space-lg);
   border: 1px solid var(--ee-border-color);
   border-radius: var(--ee-border-radius-sm);
@@ -52,12 +52,12 @@
   transition: all var(--ee-transition-fast);
 }
 
-.btnCancel:hover {
+.ee-btn-cancel:hover {
   background: var(--ee-bg-hover);
   border-color: var(--ee-border-color-strong);
 }
 
-.btnConfirm {
+.ee-btn-confirm {
   padding: var(--ee-space-sm) var(--ee-space-lg);
   border: 1px solid var(--ee-color-danger);
   border-radius: var(--ee-border-radius-sm);
@@ -69,7 +69,7 @@
   transition: all var(--ee-transition-fast);
 }
 
-.btnConfirm:hover {
+.ee-btn-confirm:hover {
   background: var(--ee-color-danger-hover);
   border-color: var(--ee-color-danger-hover);
 }

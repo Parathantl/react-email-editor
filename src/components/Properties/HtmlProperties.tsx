@@ -13,7 +13,7 @@ export function HtmlProperties({ block }: HtmlPropertiesProps) {
   const p = block.properties;
 
   return (
-    <div className={styles.propertiesBody}>
+    <div className={styles['ee-properties-body']}>
       <PropertyField type="textarea" label="HTML Content" value={p.content} onChange={(v) => update({ content: v })} placeholder="<p>Enter raw HTML here...</p>" rows={10} code />
       <PropertyField type="padding" label="Padding" value={p.padding} onChange={(v) => update({ padding: v })} />
     </div>

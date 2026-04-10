@@ -29,7 +29,7 @@ export function SectionProperties({ section }: SectionPropertiesProps) {
   );
 
   return (
-    <div className={styles.propertiesBody}>
+    <div className={styles['ee-properties-body']}>
       <PropertyField type="color" label="Background Color" value={properties.backgroundColor} onChange={(v) => update({ backgroundColor: v })} />
       <PropertyField type="padding" label="Padding" value={properties.padding} onChange={(v) => update({ padding: v })} />
       <PropertyField type="text" label="Border Radius" value={properties.borderRadius} onChange={(v) => update({ borderRadius: v })} />

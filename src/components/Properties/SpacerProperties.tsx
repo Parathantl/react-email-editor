@@ -14,7 +14,7 @@ export function SpacerProperties({ block }: SpacerPropertiesProps) {
   const heightNum = parseInt(p.height, 10) || 20;
 
   return (
-    <div className={styles.propertiesBody}>
+    <div className={styles['ee-properties-body']}>
       <PropertyField type="slider" label="Height" value={heightNum} min={5} max={200} step={5} unit="px" onChange={(v) => update({ height: `${v}px` })} />
     </div>
   );

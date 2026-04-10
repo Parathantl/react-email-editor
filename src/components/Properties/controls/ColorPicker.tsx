@@ -52,24 +52,24 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
   const isHex = /^#[0-9a-fA-F]{6}$/.test(value);
 
   return (
-    <div className={`ee-field-group ee-color-picker ${styles.fieldGroup}`}>
-      <label className={styles.fieldLabel}>{label}</label>
-      <div className={styles.colorPickerWrapper} ref={wrapperRef}>
+    <div className={`ee-field-group ee-color-picker ${styles['ee-field-group']}`}>
+      <label className={styles['ee-field-label']}>{label}</label>
+      <div className={styles['ee-color-picker-wrapper']} ref={wrapperRef}>
         <div
-          className={styles.colorPickerTrigger}
+          className={styles['ee-color-picker-trigger']}
           onClick={() => setIsOpen(!isOpen)}
         >
           <div
-            className={`${styles.colorSwatch} ${value === 'transparent' ? styles.colorSwatchTransparent : ''}`}
+            className={`${styles['ee-color-swatch']} ${value === 'transparent' ? styles['ee-color-swatch-transparent'] : ''}`}
             style={value !== 'transparent' ? { backgroundColor: value || 'transparent' } : undefined}
           />
-          <span className={styles.colorValue}>{value || 'transparent'}</span>
+          <span className={styles['ee-color-value']}>{value || 'transparent'}</span>
         </div>
         {isOpen && (
-          <div className={styles.colorPresets}>
+          <div className={styles['ee-color-presets']}>
             <button
-              className={`ee-color-preset-transparent ${styles.colorPresetBtn} ${styles.colorPresetBtnTransparent} ${styles.colorPresetBtnFull} ${
-                value === 'transparent' ? styles.colorPresetBtnActive : ''
+              className={`ee-color-preset-transparent ${styles['ee-color-preset-btn']} ${styles['ee-color-preset-btn-transparent']} ${styles['ee-color-preset-btn-full']} ${
+                value === 'transparent' ? styles['ee-color-preset-btn-active'] : ''
               }`}
               onClick={() => handlePresetClick('transparent')}
               title="transparent"
@@ -79,8 +79,8 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
             {COLOR_PRESETS.map((color) => (
               <button
                 key={color}
-                className={`${styles.colorPresetBtn} ${
-                  color === value ? styles.colorPresetBtnActive : ''
+                className={`${styles['ee-color-preset-btn']} ${
+                  color === value ? styles['ee-color-preset-btn-active'] : ''
                 }`}
                 style={{ backgroundColor: color }}
                 onClick={() => handlePresetClick(color)}
@@ -89,12 +89,12 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
             ))}
             {customColorPresets.length > 0 && (
               <>
-                <div className={`${styles.colorPresetBtnFull} ${styles.colorPresetSectionLabel}`}>Custom</div>
+                <div className={`${styles['ee-color-preset-btn-full']} ${styles['ee-color-preset-section-label']}`}>Custom</div>
                 {customColorPresets.map((color) => (
                   <button
                     key={`custom-${color}`}
-                    className={`${styles.colorPresetBtn} ${
-                      color === value ? styles.colorPresetBtnActive : ''
+                    className={`${styles['ee-color-preset-btn']} ${
+                      color === value ? styles['ee-color-preset-btn-active'] : ''
                     }`}
                     style={{ backgroundColor: color }}
                     onClick={() => handlePresetClick(color)}
@@ -104,13 +104,13 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
                 ))}
               </>
             )}
-            <div className={`${styles.colorPresetBtnFull}`} style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'stretch' }}>
+            <div className={`${styles['ee-color-preset-btn-full']}`} style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'stretch' }}>
               <HslColorArea
                 value={isHex ? value : '#ffffff'}
                 onChange={onChange}
               />
               <button
-                className={`ee-color-save-preset ${styles.colorSavePresetBtn}`}
+                className={`ee-color-save-preset ${styles['ee-color-save-preset-btn']}`}
                 onClick={handleSavePreset}
                 title="Save current color as preset"
                 disabled={!value || value === 'transparent' || customColorPresets.includes(value)}

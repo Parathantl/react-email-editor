@@ -1,11 +1,11 @@
-.propertiesInner {
+.ee-properties-inner {
   display: flex;
   flex-direction: column;
   flex: 1;
   min-height: 0;
 }
 
-.propertiesHeader {
+.ee-properties-header {
   padding: var(--ee-space-md) var(--ee-space-lg);
   border-bottom: 1px solid var(--ee-border-color);
   font-size: var(--ee-font-size-sm);
@@ -15,14 +15,14 @@
   letter-spacing: 0.5px;
 }
 
-.propertiesBody {
+.ee-properties-body {
   padding: var(--ee-space-md) var(--ee-space-lg);
   display: flex;
   flex-direction: column;
   gap: var(--ee-space-md);
 }
 
-.emptyProperties {
+.ee-empty-properties {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,7 +34,7 @@
   padding: var(--ee-space-lg);
 }
 
-.fieldHint {
+.ee-field-hint {
   font-size: var(--ee-font-size-xs);
   color: var(--ee-text-muted);
   background: var(--ee-bg-hover);
@@ -45,13 +45,13 @@
 }
 
 /* Form controls */
-.fieldGroup {
+.ee-field-group {
   display: flex;
   flex-direction: column;
   gap: var(--ee-space-xs);
 }
 
-.fieldLabel {
+.ee-field-label {
   font-size: var(--ee-font-size-xs);
   font-weight: var(--ee-font-weight-medium);
   color: var(--ee-text-secondary);
@@ -59,7 +59,7 @@
   letter-spacing: 0.3px;
 }
 
-.fieldInput {
+.ee-field-input {
   width: 100%;
   padding: 6px 8px;
   font-size: var(--ee-font-size-md);
@@ -73,19 +73,19 @@
   box-sizing: border-box;
 }
 
-.fieldInput:focus {
+.ee-field-input:focus {
   border-color: var(--ee-border-focus);
   box-shadow: var(--ee-shadow-focus);
 }
 
-.fieldTextarea {
-  composes: fieldInput;
+.ee-field-textarea {
+  composes: ee-field-input;
   resize: vertical;
   min-height: 60px;
 }
 
-.fieldSelect {
-  composes: fieldInput;
+.ee-field-select {
+  composes: ee-field-input;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M3 5l3 3 3-3z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -93,22 +93,22 @@
   padding-right: 24px;
 }
 
-.fieldRow {
+.ee-field-row {
   display: flex;
   gap: var(--ee-space-sm);
   align-items: center;
 }
 
-.fieldHalf {
+.ee-field-half {
   flex: 1;
 }
 
 /* Color Picker */
-.colorPickerWrapper {
+.ee-color-picker-wrapper {
   position: relative;
 }
 
-.colorPickerTrigger {
+.ee-color-picker-trigger {
   display: flex;
   align-items: center;
   gap: var(--ee-space-sm);
@@ -121,7 +121,7 @@
   box-sizing: border-box;
 }
 
-.colorSwatch {
+.ee-color-swatch {
   width: 20px;
   height: 20px;
   border-radius: 3px;
@@ -129,13 +129,13 @@
   flex-shrink: 0;
 }
 
-.colorValue {
+.ee-color-value {
   font-size: var(--ee-font-size-sm);
   color: var(--ee-text-primary);
   font-family: monospace;
 }
 
-.colorPresets {
+.ee-color-presets {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 4px;
@@ -152,7 +152,7 @@
   margin-top: 4px;
 }
 
-.colorPresetBtn {
+.ee-color-preset-btn {
   width: 28px;
   height: 28px;
   border-radius: 4px;
@@ -161,15 +161,15 @@
   transition: all var(--ee-transition-fast);
 }
 
-.colorPresetBtn:hover {
+.ee-color-preset-btn:hover {
   transform: scale(1.15);
 }
 
-.colorPresetBtnActive {
+.ee-color-preset-btn-active {
   border-color: var(--ee-color-primary);
 }
 
-.colorPresetBtnTransparent {
+.ee-color-preset-btn-transparent {
   background: repeating-conic-gradient(var(--ee-border-color-strong) 0% 25%, var(--ee-bg-panel) 0% 50%) 0 0 / 12px 12px;
   font-size: var(--ee-font-size-xs);
   color: var(--ee-text-secondary);
@@ -177,45 +177,45 @@
   height: 24px;
 }
 
-.colorSwatchTransparent {
+.ee-color-swatch-transparent {
   background: repeating-conic-gradient(var(--ee-border-color-strong) 0% 25%, var(--ee-bg-panel) 0% 50%) 0 0 / 8px 8px;
 }
 
 /* Padding Input */
-.paddingGrid {
+.ee-padding-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--ee-space-xs);
 }
 
-.paddingField {
+.ee-padding-field {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.paddingLabel {
+.ee-padding-label {
   font-size: 10px;
   color: var(--ee-text-muted);
   text-align: center;
 }
 
-.paddingInput {
-  composes: fieldInput;
+.ee-padding-input {
+  composes: ee-field-input;
   text-align: center;
   padding: 4px;
   font-size: var(--ee-font-size-xs);
 }
 
 /* Alignment Picker */
-.alignmentPicker {
+.ee-alignment-picker {
   display: flex;
   border: 1px solid var(--ee-border-color);
   border-radius: var(--ee-border-radius-sm);
   overflow: hidden;
 }
 
-.alignmentBtn {
+.ee-alignment-btn {
   flex: 1;
   display: flex;
   align-items: center;
@@ -230,27 +230,27 @@
   transition: all var(--ee-transition-fast);
 }
 
-.alignmentBtn:last-child {
+.ee-alignment-btn:last-child {
   border-right: none;
 }
 
-.alignmentBtn:hover {
+.ee-alignment-btn:hover {
   background: var(--ee-bg-hover);
 }
 
-.alignmentBtnActive {
+.ee-alignment-btn-active {
   background: var(--ee-color-primary) !important;
   color: var(--ee-text-inverse);
 }
 
 /* Slider Input */
-.sliderWrapper {
+.ee-slider-wrapper {
   display: flex;
   align-items: center;
   gap: var(--ee-space-sm);
 }
 
-.sliderInput {
+.ee-slider-input {
   flex: 1;
   height: 4px;
   appearance: none;
@@ -259,7 +259,7 @@
   outline: none;
 }
 
-.sliderInput::-webkit-slider-thumb {
+.ee-slider-input::-webkit-slider-thumb {
   appearance: none;
   width: 14px;
   height: 14px;
@@ -268,7 +268,7 @@
   cursor: pointer;
 }
 
-.sliderInput::-moz-range-thumb {
+.ee-slider-input::-moz-range-thumb {
   width: 14px;
   height: 14px;
   border: none;
@@ -277,7 +277,7 @@
   cursor: pointer;
 }
 
-.sliderValue {
+.ee-slider-value {
   font-size: var(--ee-font-size-xs);
   color: var(--ee-text-secondary);
   min-width: 36px;
@@ -286,7 +286,7 @@
 }
 
 /* Item action buttons (move up/down, remove) in list editors */
-.itemActionBtn {
+.ee-item-action-btn {
   padding: 4px 6px;
   cursor: pointer;
   border: 1px solid var(--ee-border-color);
@@ -294,13 +294,13 @@
   background: var(--ee-bg-input);
 }
 
-.itemActionBtnDanger {
-  composes: itemActionBtn;
+.ee-item-action-btn-danger {
+  composes: ee-item-action-btn;
   color: var(--ee-color-danger);
 }
 
 /* Add item button (e.g. "+ Add Item", "+ Add Element") */
-.addItemBtn {
+.ee-add-item-btn {
   margin-top: 8px;
   padding: 6px 12px;
   cursor: pointer;
@@ -312,72 +312,72 @@
 }
 
 /* Input that stretches to fill remaining row space */
-.fieldInputFlex {
-  composes: fieldInput;
+.ee-field-input-flex {
+  composes: ee-field-input;
   flex: 1;
 }
 
 /* Flex row for link-type input combos */
-.fieldRowCompact {
+.ee-field-row-compact {
   display: flex;
   gap: 4px;
 }
 
-.fieldSelectNarrow {
-  composes: fieldSelect;
+.ee-field-select-narrow {
+  composes: ee-field-select;
   width: 90px;
   flex-shrink: 0;
 }
 
 /* Monospace textarea for code/HTML editing */
-.fieldTextareaCode {
-  composes: fieldInput;
+.ee-field-textarea-code {
+  composes: ee-field-input;
   font-family: monospace;
   font-size: 12px;
   resize: vertical;
 }
 
 /* Upload-style button with centered text */
-.fieldBtnUpload {
-  composes: fieldInput;
+.ee-field-btn-upload {
+  composes: ee-field-input;
   cursor: pointer;
   text-align: center;
 }
 
-.fieldBtnUploadDisabled {
-  composes: fieldBtnUpload;
+.ee-field-btn-upload-disabled {
+  composes: ee-field-btn-upload;
   cursor: wait;
 }
 
 /* Validation error message */
-.validationError {
+.ee-validation-error {
   color: var(--ee-color-danger);
   font-size: var(--ee-font-size-xs);
   margin-top: 2px;
 }
 
 /* Spacing helper for stacked inputs within a list item */
-.fieldInputStacked {
-  composes: fieldInput;
+.ee-field-input-stacked {
+  composes: ee-field-input;
   margin-top: 4px;
 }
 
 /* Checkbox label inline */
-.checkboxLabel {
-  composes: fieldLabel;
+.ee-checkbox-label {
+  composes: ee-field-label;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 /* Color picker grid overrides */
-.colorPresetBtnFull {
+.ee-color-preset-btn-full {
   grid-column: 1 / -1;
   width: 100%;
 }
 
 /* Custom color preset section label */
-.colorPresetSectionLabel {
+.ee-color-preset-section-label {
   font-size: var(--ee-font-size-xs);
   color: var(--ee-text-muted);
   text-align: center;
@@ -387,7 +387,7 @@
 }
 
 /* Save preset button */
-.colorSavePresetBtn {
+.ee-color-save-preset-btn {
   padding: 2px 8px;
   font-size: var(--ee-font-size-xs);
   border: 1px solid var(--ee-border-color);
@@ -397,13 +397,13 @@
   white-space: nowrap;
 }
 
-.colorSavePresetBtn:disabled {
+.ee-color-save-preset-btn:disabled {
   opacity: 0.4;
   cursor: default;
 }
 
 /* Separator */
-.separator {
+.ee-separator {
   height: 1px;
   background: var(--ee-border-color);
   margin: var(--ee-space-xs) 0;

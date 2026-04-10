@@ -57,7 +57,7 @@ export const BlockPalette = React.memo(function BlockPalette({ blockDefinitions,
   );
 
   return (
-    <div className={`ee-block-palette ${styles.blockPalette}`} role="list" aria-label="Available blocks">
+    <div className={`ee-block-palette ${styles['ee-block-palette']}`} role="list" aria-label="Available blocks">
       {defs.map((def) => {
         const iconKey = BLOCK_PALETTE_ICON_KEYS[def.type];
         const icon = customIcons?.[iconKey] ?? def.icon;
@@ -65,7 +65,7 @@ export const BlockPalette = React.memo(function BlockPalette({ blockDefinitions,
         <div
           key={def.type}
           data-block-type={def.type}
-          className={`ee-palette-item ee-palette-item--${def.type} ${styles.blockCard}`}
+          className={`ee-palette-item ee-palette-item--${def.type} ${styles['ee-block-card']}`}
           draggable
           onDragStart={(e) => handleDragStart(def.type, e)}
           title={def.description}
@@ -79,8 +79,8 @@ export const BlockPalette = React.memo(function BlockPalette({ blockDefinitions,
             }
           }}
         >
-          <span className={`ee-palette-icon ${styles.blockCardIcon}`} aria-hidden="true">{icon}</span>
-          <span className={`ee-palette-label ${styles.blockCardLabel}`}>{def.label}</span>
+          <span className={`ee-palette-icon ${styles['ee-block-card-icon']}`} aria-hidden="true">{icon}</span>
+          <span className={`ee-palette-label ${styles['ee-block-card-label']}`}>{def.label}</span>
         </div>
         );
       })}
