@@ -349,7 +349,8 @@ export const EmailEditor = forwardRef<EmailEditorRef, EmailEditorProps>(
       onSelectionChange,
       onTemplateLoad,
       onHistoryChange,
-      customIcons
+      customIcons,
+      variableFormConfig,
     } = props;
 
     let template = initialTemplate;
@@ -384,6 +385,7 @@ export const EmailEditor = forwardRef<EmailEditorRef, EmailEditorProps>(
         onTemplateLoad={onTemplateLoad}
         onHistoryChange={onHistoryChange}
         customIcons={customIcons}
+        variableFormConfig={variableFormConfig}
       >
         <div className={`ee-editor-wrapper ${editorStyles['ee-editor-wrapper']} ${className || ''}`} style={style}>
           <EditorInner ref={ref} {...props} />

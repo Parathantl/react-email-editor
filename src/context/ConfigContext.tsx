@@ -16,6 +16,10 @@ export interface ConfigContextValue {
   customColorPresets: string[];
   addCustomColorPreset: (color: string) => void;
   removeCustomColorPreset: (color: string) => void;
+  variableFormConfig?: {
+    showLabelField?: boolean;
+    showGroupField?: boolean;
+  };
 }
 
 export const ConfigContext = createContext<ConfigContextValue | null>(null);

@@ -367,6 +367,11 @@ export interface EmailEditorProps {
   onReady?: () => void;
   /** Called when custom variables are added or removed by the user. Receives all custom variables. */
   onVariablesChange?: (customVariables: Variable[]) => void;
+  /** Configure which fields are shown in the "Add Variable" form. The Key field is always shown. Label and Group are hidden unless enabled. */
+  variableFormConfig?: {
+    showLabelField?: boolean;
+    showGroupField?: boolean;
+  };
   /** Custom font family options for the rich text toolbar. Falls back to FONT_OPTIONS constant. */
   fontFamilies?: string[];
   /** Custom font size options for the rich text toolbar (e.g. ['12px', '14px', '16px']). Falls back to DEFAULT_FONT_SIZES constant. */

@@ -1,9 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import { useEditorVariables } from '../../context/EditorContext';
+import { useConfigContext } from '../../context/ConfigContext';
 import styles from '../../styles/sidebar.module.css';
 
 export function AddVariableForm() {
   const { variables, addCustomVariable } = useEditorVariables();
+  const { variableFormConfig } = useConfigContext();
+  const showLabelField = variableFormConfig?.showLabelField ?? false;
+  const showGroupField = variableFormConfig?.showGroupField ?? false;
   const [isOpen, setIsOpen] = useState(false);
   const [key, setKey] = useState('');
   const [label, setLabel] = useState('');
@@ -75,24 +79,28 @@ export function AddVariableForm() {
           autoFocus
         />
       </div>
-      <div className={`ee-add-variable-field ${styles['ee-add-variable-field']}`}>
-        <label className={`ee-add-variable-label ${styles['ee-add-variable-label']}`}>Label</label>
-        <input
-          className={`ee-add-variable-input ${styles['ee-add-variable-input']}`}
-          value={label}
-          onChange={(e) => setLabel(e.target.value)}
-          placeholder="e.g. Coupon Code"
-        />
-      </div>
-      <div className={`ee-add-variable-field ${styles['ee-add-variable-field']}`}>
-        <label className={`ee-add-variable-label ${styles['ee-add-variable-label']}`}>Group</label>
-        <input
-          className={`ee-add-variable-input ${styles['ee-add-variable-input']}`}
-          value={group}
-          onChange={(e) => setGroup(e.target.value)}
-          placeholder="Custom"
-        />
-      </div>
+      {showLabelField && (
+        <div className={`ee-add-variable-field ${styles['ee-add-variable-field']}`}>
+          <label className={`ee-add-variable-label ${styles['ee-add-variable-label']}`}>Label</label>
+          <input
+            className={`ee-add-variable-input ${styles['ee-add-variable-input']}`}
+            value={label}
+            onChange={(e) => setLabel(e.target.value)}
+            placeholder="e.g. Coupon Code"
+          />
+        </div>
+      )}
+      {showGroupField && (
+        <div className={`ee-add-variable-field ${styles['ee-add-variable-field']}`}>
+          <label className={`ee-add-variable-label ${styles['ee-add-variable-label']}`}>Group</label>
+          <input
+            className={`ee-add-variable-input ${styles['ee-add-variable-input']}`}
+            value={group}
+            onChange={(e) => setGroup(e.target.value)}
+            placeholder="Custom"
+          />
+        </div>
+      )}
       {error && <div className={`ee-add-variable-error ${styles['ee-add-variable-error']}`}>{error}</div>}
       <div className={`ee-add-variable-actions ${styles['ee-add-variable-actions']}`}>
         <button type="button" className={`ee-add-variable-cancel ${styles['ee-add-variable-cancel-btn']}`} onClick={handleCancel}>

@@ -70,6 +70,10 @@ interface EditorProviderProps {
   onSelectionChange?: (selection: SelectionState) => void;
   onTemplateLoad?: (template: EmailTemplate) => void;
   onHistoryChange?: (canUndo: boolean, canRedo: boolean) => void;
+  variableFormConfig?: {
+    showLabelField?: boolean;
+    showGroupField?: boolean;
+  };
 }
 
 export function EditorProvider({
@@ -96,6 +100,7 @@ export function EditorProvider({
   onSelectionChange,
   onTemplateLoad,
   onHistoryChange,
+  variableFormConfig,
 }: EditorProviderProps) {
   const fontFamilies = fontFamiliesProp ?? FONT_OPTIONS;
   const fontSizes = fontSizesProp ?? DEFAULT_FONT_SIZES;
@@ -366,8 +371,9 @@ export function EditorProvider({
       customColorPresets,
       addCustomColorPreset,
       removeCustomColorPreset,
+      variableFormConfig,
     }),
-    [allVariables, predefinedVariables, customVariables, imageUploadAdapter, addCustomVariable, removeCustomVariable, variableChipStyle, updateVariableChipStyle, fontFamilies, fontSizes, clearPersisted, customColorPresets, addCustomColorPreset, removeCustomColorPreset],
+    [allVariables, predefinedVariables, customVariables, imageUploadAdapter, addCustomVariable, removeCustomVariable, variableChipStyle, updateVariableChipStyle, fontFamilies, fontSizes, clearPersisted, customColorPresets, addCustomColorPreset, removeCustomColorPreset, variableFormConfig],
   );
 
   const blockIndexValue = useMemo(() => state.blockIndex, [state.blockIndex]);
