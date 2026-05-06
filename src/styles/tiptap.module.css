@@ -54,8 +54,21 @@
   border: 1px solid var(--ee-variable-border);
   border-radius: var(--ee-border-radius-sm);
   vertical-align: baseline;
-  user-select: none;
+  /* `user-select: all` lets a single mouse click select the whole chip as one
+     atomic unit (ProseMirror then promotes it to a NodeSelection so Backspace
+     deletes the chip). `none` would block the browser from starting any
+     selection at all, which is why mouse clicks weren't selecting it. */
+  user-select: all;
   white-space: nowrap;
+  cursor: pointer;
+}
+
+/* When selected via NodeSelection (keyboard or click), ProseMirror adds the
+   ProseMirror-selectednode class. Show a clear focus ring so users see what's
+   selected before they hit Backspace/Delete. */
+.ee-tiptap-wrapper :global(.ee-variable-chip.ProseMirror-selectednode) {
+  outline: 2px solid var(--ee-color-primary);
+  outline-offset: 1px;
 }
 
 /* Focus styling */

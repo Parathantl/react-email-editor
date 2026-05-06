@@ -17,6 +17,17 @@ export const CustomIcon: React.FC<CustomIconProps> = ({
       const doc = parser.parseFromString(svg, 'image/svg+xml');
       const svgEl = doc.documentElement;
 
+      // Translate HTML/SVG attribute names to React's JSX names.
+      // - `class` → `className`
+      // - `data-*` / `aria-*` stay as-is (React accepts those kebab-case)
+      // - Every other kebab-case attribute (stroke-linecap, clip-path, …)
+      //   becomes camelCase so React doesn't warn about unknown DOM props.
+      const toReactAttr = (name: string): string => {
+        if (name === 'class') return 'className';
+        if (name.startsWith('data-') || name.startsWith('aria-')) return name;
+        return name.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase());
+      };
+
       const convertNode = (node: ChildNode): React.ReactNode => {
         if (node.nodeType === Node.TEXT_NODE) {
           return node.textContent;
@@ -28,18 +39,7 @@ export const CustomIcon: React.FC<CustomIconProps> = ({
         const props: any = {};
 
         for (const attr of Array.from(el.attributes)) {
-          const name =
-            attr.name === 'class'
-              ? 'className'
-              : attr.name === 'stroke-width'
-                ? 'strokeWidth'
-                : attr.name === 'fill-rule'
-                  ? 'fillRule'
-                  : attr.name === 'clip-rule'
-                    ? 'clipRule'
-                    : attr.name;
-
-          props[name] = attr.value;
+          props[toReactAttr(attr.name)] = attr.value;
         }
 
         return React.createElement(

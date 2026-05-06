@@ -15,6 +15,7 @@ import { parseMJML } from '../mjml/parser';
 import { createSection, createBlock } from '../utils/factory';
 import { DEFAULT_GLOBAL_STYLES, DEFAULT_HEAD_METADATA } from '../constants';
 import { extractVariableKeys } from '../utils/variables';
+import { sanitizeTemplate } from '../utils/validate';
 import editorStyles from '../styles/editor.module.css';
 import '../styles/variables.css';
 
@@ -167,12 +168,24 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
     getJSON: () => JSON.parse(JSON.stringify(templateRef.current)),
 
     loadMJML: (source: string) => {
-      const parsed = parseMJML(source);
-      dispatch({ type: 'SET_TEMPLATE', payload: parsed });
+      // Wrap parsing so a malformed input (e.g. server returned garbage) doesn't
+      // bubble up as an uncaught render-time exception. Editor state is left
+      // untouched on failure; consumers can still try/catch to show their own UI.
+      let parsed;
+      try {
+        parsed = parseMJML(source);
+      } catch (err) {
+        console.error('[EmailEditor] loadMJML failed to parse input:', err);
+        throw err;
+      }
+      dispatch({ type: 'SET_TEMPLATE', payload: sanitizeTemplate(parsed) });
     },
 
     loadJSON: (t) => {
-      dispatch({ type: 'SET_TEMPLATE', payload: t });
+      // Run the consumer-supplied template through the same sanitizer the
+      // localStorage adapter uses, so unknown block types and missing fields
+      // don't put the reducer in a state the renderer can't handle.
+      dispatch({ type: 'SET_TEMPLATE', payload: sanitizeTemplate(t) });
     },
 
     insertBlock: (type: BlockType, sectionIdx?: number) => {
@@ -356,7 +369,7 @@ export const EmailEditor = forwardRef<EmailEditorRef, EmailEditorProps>(
     let template = initialTemplate;
     if (!template && initialMJML) {
       try {
-        template = parseMJML(initialMJML);
+        template = sanitizeTemplate(parseMJML(initialMJML));
       } catch {
         template = undefined;
       }

@@ -3,7 +3,7 @@ import Suggestion, { type SuggestionProps } from '@tiptap/suggestion';
 import { ReactRenderer } from '@tiptap/react';
 import type { Variable } from '../types';
 import {
-  VariableSuggestionPopup,
+  SafeVariableSuggestionPopup,
   type VariableSuggestionPopupHandle,
   type VariableSuggestionCommand,
 } from '../components/Canvas/blocks/VariableSuggestionPopup';
@@ -158,7 +158,7 @@ export const VariableSuggestion = Extension.create<VariableSuggestionConfig>({
               initHost(host);
               document.body.appendChild(host);
 
-              renderer = new ReactRenderer(VariableSuggestionPopup, {
+              renderer = new ReactRenderer(SafeVariableSuggestionPopup, {
                 editor: props.editor,
                 props: buildProps(props),
               });

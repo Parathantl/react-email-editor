@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Section } from './Section';
 import { SectionDropZone } from './SectionDropZone';
 import { useTemplateContext, useEditorDispatch, useHistoryContext } from '../../context/EditorContext';
@@ -43,6 +43,21 @@ export const Canvas = React.memo(function Canvas({ customIcons }: CanvasProps) {
       return;
     }
     setIsDragOver(false);
+  }, []);
+
+  // Child drop targets (Column, DropZone, SectionDropZone, Section) call
+  // stopPropagation on their drop handlers, so a drop landing on any of them
+  // never reaches the canvas body's onDrop and the body-wide highlight would
+  // stay until the next drag started. Listen for drag-end / drop at the window
+  // level so the highlight always clears regardless of where the drop landed.
+  useEffect(() => {
+    const clear = () => setIsDragOver(false);
+    window.addEventListener('dragend', clear);
+    window.addEventListener('drop', clear);
+    return () => {
+      window.removeEventListener('dragend', clear);
+      window.removeEventListener('drop', clear);
+    };
   }, []);
 
   const handleBodyDrop = useCallback(

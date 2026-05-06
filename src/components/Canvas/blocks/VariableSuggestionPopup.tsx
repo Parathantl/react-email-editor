@@ -1,6 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import type { Variable } from '../../../types';
 import { displayVariableName, groupVariables } from '../../../utils/variables';
+import { ErrorBoundary } from '../../ErrorBoundary';
 import styles from '../../../styles/variableSuggestion.module.css';
 
 export interface VariableSuggestionPopupHandle {
@@ -26,8 +27,20 @@ interface FlatRow {
   selectableIndex?: number;
 }
 
+/** Defend against malformed Variable entries from consumer input — anything
+ * without a non-empty string key would crash displayVariableName and the row
+ * key prop in the JSX list below. */
+function safeItems(input: unknown): Variable[] {
+  if (!Array.isArray(input)) return [];
+  return input.filter(
+    (v): v is Variable =>
+      v != null && typeof v === 'object' && typeof (v as Variable).key === 'string' && (v as Variable).key.length > 0,
+  );
+}
+
 export const VariableSuggestionPopup = forwardRef<VariableSuggestionPopupHandle, PopupProps>(
-  function VariableSuggestionPopup({ items, query, canCreate, createKey, command }, ref) {
+  function VariableSuggestionPopup({ items: rawItems, query, canCreate, createKey, command }, ref) {
+    const items = useMemo(() => safeItems(rawItems), [rawItems]);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const selectedIndexRef = useRef(0);
     const itemsRef = useRef(items);
@@ -220,3 +233,26 @@ export const VariableSuggestionPopup = forwardRef<VariableSuggestionPopupHandle,
     );
   }
 );
+
+/**
+ * ErrorBoundary-wrapped popup. The popup mounts via ReactRenderer into
+ * document.body — outside the editor's React tree — so a render-time throw
+ * here would otherwise be uncaught and could leak the host element + listeners.
+ * Falling back to `null` keeps the host alive (the suggestion plugin's onExit
+ * still tears it down on the next interaction) without breaking the editor.
+ */
+export const SafeVariableSuggestionPopup = forwardRef<
+  VariableSuggestionPopupHandle,
+  PopupProps
+>(function SafeVariableSuggestionPopup(props, ref) {
+  return (
+    <ErrorBoundary
+      fallback={null}
+      onError={(err) => {
+        console.error('[VariableSuggestionPopup] render error:', err);
+      }}
+    >
+      <VariableSuggestionPopup {...props} ref={ref} />
+    </ErrorBoundary>
+  );
+});
