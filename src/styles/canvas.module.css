@@ -252,6 +252,33 @@
   border-color: var(--ee-color-primary);
 }
 
+.ee-block-drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: var(--ee-bg-panel);
+  border: 1px solid var(--ee-border-color);
+  border-radius: 3px;
+  cursor: grab;
+  font-size: 10px;
+  color: var(--ee-text-secondary);
+  transition: all var(--ee-transition-fast);
+  user-select: none;
+  line-height: 1;
+}
+
+.ee-block-drag-handle:hover {
+  background: var(--ee-color-primary);
+  color: var(--ee-text-inverse);
+  border-color: var(--ee-color-primary);
+}
+
+.ee-block-drag-handle:active {
+  cursor: grabbing;
+}
+
 .ee-block-wrapper.ee-block-drop-before {
   outline: 2px solid var(--ee-dropzone-color);
   outline-offset: -2px;

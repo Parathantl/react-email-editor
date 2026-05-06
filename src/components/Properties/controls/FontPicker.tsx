@@ -1,4 +1,3 @@
-import React from 'react';
 import { FONT_OPTIONS } from '../../../constants';
 import styles from '../../../styles/properties.module.css';
 

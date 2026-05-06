@@ -1,13 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import type { EditorState, EditorAction, EmailTemplate, Block, Section } from '../types';
-import { DEFAULT_GLOBAL_STYLES, DEFAULT_HEAD_METADATA, DEFAULT_SECTION_PROPERTIES, DEFAULT_TEXT_PROPERTIES, DEFAULT_BUTTON_PROPERTIES } from '../constants';
-
-// We need to import the reducer. Since it's not exported directly,
-// we test via a minimal reimplementation or extract it.
-// For now, let's test the logic by re-importing from context.
-// The reducer is not exported, so we'll create a test-friendly export.
-
-// Instead, we test through the factory + types which are exported
 import { createBlock, createSection, cloneBlock, cloneSection } from '../utils/factory';
 
 // ---- Factory Tests ----

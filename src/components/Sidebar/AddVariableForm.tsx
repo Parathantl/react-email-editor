@@ -36,9 +36,13 @@ export function AddVariableForm() {
         return;
       }
 
+      const trimmedLabel = label.trim();
       addCustomVariable({
         key: trimmedKey,
-        label: label.trim() || trimmedKey,
+        // Leave label undefined when not provided so displayVariableName()
+        // can render a humanized form (e.g. "coupon_code" → "Coupon Code")
+        // instead of storing the raw snake_case key as the label.
+        ...(trimmedLabel ? { label: trimmedLabel } : {}),
         group: group.trim() || 'Custom',
       });
 

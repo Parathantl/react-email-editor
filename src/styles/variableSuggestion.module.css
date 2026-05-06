@@ -1,0 +1,168 @@
+.ee-variable-suggestion {
+  display: flex;
+  flex-direction: column;
+  min-width: min(280px, calc(100vw - 16px));
+  max-width: min(360px, calc(100vw - 16px));
+  background: var(--ee-bg-panel);
+  border: 1px solid var(--ee-border-color);
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+  font-family: var(--ee-font-family);
+  font-size: var(--ee-font-size-sm);
+  overflow: hidden;
+}
+
+.ee-variable-suggestion-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 4px;
+  gap: 1px;
+}
+
+.ee-variable-suggestion-group {
+  padding: 8px 10px 4px;
+  font-size: 10px;
+  font-weight: var(--ee-font-weight-semibold, 600);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ee-text-muted);
+}
+
+.ee-variable-suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: transparent;
+  border: 0;
+  border-left: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--ee-text-primary);
+  transition: background-color var(--ee-transition-fast), border-color var(--ee-transition-fast);
+  width: 100%;
+  min-width: 0;
+}
+
+.ee-variable-suggestion-item:focus {
+  outline: none;
+}
+
+.ee-variable-suggestion-item-selected {
+  background: var(--ee-bg-selected);
+  border-left-color: var(--ee-color-primary);
+}
+
+.ee-variable-suggestion-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background: var(--ee-variable-bg);
+  color: var(--ee-variable-color);
+  font-family: var(--ee-font-family-mono, ui-monospace, SFMono-Regular, monospace);
+  font-size: 11px;
+  font-weight: var(--ee-font-weight-medium);
+  line-height: 1;
+}
+
+.ee-variable-suggestion-item-create .ee-variable-suggestion-icon {
+  background: var(--ee-color-primary);
+  color: var(--ee-text-inverse, #fff);
+  font-size: 14px;
+  font-weight: var(--ee-font-weight-semibold, 600);
+}
+
+.ee-variable-suggestion-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.ee-variable-suggestion-label {
+  font-weight: var(--ee-font-weight-medium);
+  color: var(--ee-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.ee-variable-suggestion-item-create .ee-variable-suggestion-label {
+  color: var(--ee-color-primary);
+}
+
+.ee-variable-suggestion-key {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--ee-font-family-mono, ui-monospace, SFMono-Regular, monospace);
+  font-size: 11px;
+  color: var(--ee-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.ee-variable-suggestion-dot {
+  color: var(--ee-border-color-strong, var(--ee-border-color));
+  flex-shrink: 0;
+}
+
+.ee-variable-suggestion-sample {
+  font-family: var(--ee-font-family);
+  color: var(--ee-text-secondary);
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ee-variable-suggestion-empty {
+  padding: 20px 12px;
+  color: var(--ee-text-muted);
+  text-align: center;
+  font-size: var(--ee-font-size-sm);
+  line-height: 1.4;
+}
+
+.ee-variable-suggestion-footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-top: 1px solid var(--ee-border-color);
+  background: var(--ee-bg-subtle, rgba(0, 0, 0, 0.02));
+  font-size: 11px;
+  color: var(--ee-text-muted);
+}
+
+.ee-variable-suggestion-footer kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: var(--ee-bg-panel);
+  border: 1px solid var(--ee-border-color);
+  border-radius: 3px;
+  font-family: var(--ee-font-family-mono, ui-monospace, SFMono-Regular, monospace);
+  font-size: 10px;
+  color: var(--ee-text-secondary);
+  line-height: 1;
+}
+
+.ee-variable-suggestion-footer-sep {
+  color: var(--ee-border-color-strong, var(--ee-border-color));
+}

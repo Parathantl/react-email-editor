@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Block } from '../../types';
 import { useBlockUpdate } from '../../hooks/useBlockUpdate';
 import { PropertyField } from './PropertyField';

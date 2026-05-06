@@ -53,6 +53,20 @@ export function convertVariablesToChips(html: string): string {
   });
 }
 
+/**
+ * Human-readable name for a variable.
+ * Falls back to a Title-Cased version of the key when `label` is missing,
+ * so a bare `{ key: 'coupon_code' }` renders as "Coupon Code" instead of
+ * the raw snake_case identifier.
+ */
+export function displayVariableName(variable: Variable): string {
+  if (variable.label && variable.label.trim()) return variable.label;
+  return variable.key
+    .replace(/[_-]+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (c) => c.toUpperCase()) || variable.key;
+}
+
 export function groupVariables(variables: Variable[]): Map<string, Variable[]> {
   const groups = new Map<string, Variable[]>();
   for (const variable of variables) {

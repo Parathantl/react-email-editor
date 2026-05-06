@@ -1,6 +1,7 @@
-/* Scoped to editor container and portal overlays (e.g. ConfirmDialog) */
+/* Scoped to editor container and portal overlays (e.g. ConfirmDialog, variable suggestion popup) */
 .ee-editor-wrapper,
-.ee-dialog-overlay {
+.ee-dialog-overlay,
+.ee-variable-suggestion {
   /* Colors */
   --ee-color-primary: #2563eb;
   --ee-color-primary-hover: #1d4ed8;

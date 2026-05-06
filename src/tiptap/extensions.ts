@@ -11,9 +11,13 @@ import { VariableNode } from './VariableNode';
 import { FontSize } from './FontSize';
 import { FontFamily } from './FontFamily';
 import { Indent } from './Indent';
+import { VariableSuggestion, type VariableSuggestionConfig } from './VariableSuggestion';
 
-export function getExtensions(placeholder?: string) {
-  return [
+export function getExtensions(
+  placeholder?: string,
+  variableSuggestion?: VariableSuggestionConfig,
+) {
+  const extensions = [
     StarterKit.configure({
       history: false,
     }),
@@ -56,4 +60,8 @@ export function getExtensions(placeholder?: string) {
     Indent,
     VariableNode,
   ];
+  if (variableSuggestion) {
+    extensions.push(VariableSuggestion.configure(variableSuggestion));
+  }
+  return extensions;
 }

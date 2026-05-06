@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import type { HeadMetadata } from '../../types';
 import { useTemplateContext, useEditorDispatch } from '../../context/EditorContext';
 import { PropertyField } from './PropertyField';

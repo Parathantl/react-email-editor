@@ -8,8 +8,9 @@ A visual drag-and-drop email template editor for React, powered by MJML. Build r
 ## Features
 
 - 12 block types: Text, Heading, Button, Image, Video, Divider, Spacer, Social, HTML, Countdown, Menu, Hero
-- Drag-and-drop block reordering and section management
+- Drag-and-drop block reordering and section management (with keyboard reordering via Arrow keys)
 - Rich text editing (TipTap) with formatting toolbar
+- Inline `{{` autocomplete — type `{{` in any Text/Heading block to search variables and insert at the cursor; create new variables on the fly without leaving the editor
 - MJML generation, parsing, and HTML compilation
 - Template variable support (`{{ variable }}` syntax)
 - Built-in persistence with localStorage or custom adapters
@@ -68,19 +69,22 @@ Templates auto-save and restore when you provide a `persistenceKey`. Each key st
 import type { PersistenceAdapter } from '@parathantl/react-email-editor';
 
 const serverAdapter: PersistenceAdapter = {
-  save(key, template) {
-    fetch(`/api/templates/${key}`, {
+  async save(key, template) {
+    await fetch(`/api/templates/${key}`, {
       method: 'PUT',
       body: JSON.stringify(template),
       headers: { 'Content-Type': 'application/json' },
     });
   },
-  load(key) {
-    // Must be synchronous — preload data before rendering the editor
-    return window.__PRELOADED_TEMPLATES__?.[key] ?? null;
+  async load(key) {
+    // `load` may return synchronously or as a Promise — the editor handles both.
+    // When async, the editor renders with `initialTemplate` first, then swaps in
+    // the loaded data once it resolves.
+    const res = await fetch(`/api/templates/${key}`);
+    return res.ok ? res.json() : null;
   },
-  remove(key) {
-    fetch(`/api/templates/${key}`, { method: 'DELETE' });
+  async remove(key) {
+    await fetch(`/api/templates/${key}`, { method: 'DELETE' });
   },
 };
 
@@ -186,6 +190,7 @@ Every key is optional. If you skip a key, the editor uses its default emoji/icon
     sectionDrag: '↕️',
     sectionDuplicate: '📄',
     sectionRemove: '🗑️',
+    blockDrag: '↕️',
     blockDuplicate: '📄',
     blockRemove: '🗑️',
     previewDesktop: '🖥️',
@@ -223,6 +228,7 @@ Every key is optional. If you skip a key, the editor uses its default emoji/icon
 | `sectionDrag` | Section drag handle |
 | `sectionDuplicate` | Section duplicate action |
 | `sectionRemove` | Section remove action |
+| `blockDrag` | Block drag handle |
 | `blockDuplicate` | Block duplicate action |
 | `blockRemove` | Block remove action |
 | `previewDesktop` | Preview panel desktop toggle |
@@ -259,7 +265,13 @@ Every key is optional. If you skip a key, the editor uses its default emoji/icon
 
 ## Template Variables
 
-Define variables and insert them into text blocks as `{{ variable_name }}`. Variables appear as insertable chips in the sidebar, grouped by category. Users can click or drag them into any text/heading block.
+Define variables and insert them into text blocks as `{{ variable_name }}`. There are three insertion paths:
+
+- **Inline autocomplete** — type `{{` in any Text or Heading block to open a popup at the cursor. Continue typing to filter by key or label, use ↑/↓ to navigate, `Enter`/`Tab` to insert, `Esc` to cancel.
+- **Sidebar click** — click a variable chip in the sidebar to insert it at the cursor in the focused editor.
+- **Sidebar drag** — drag a chip from the sidebar into a text/heading block.
+
+Variables in the sidebar are grouped by their `group` field; in the autocomplete popup, group headers appear when no query is typed and the list flattens into a search-result view as you type.
 
 ```tsx
 <EmailEditor
@@ -290,7 +302,7 @@ const keys = editorRef.current?.getVariables();
 
 ### Listening for custom variable changes
 
-Users can create custom variables at runtime via the sidebar. Use `onVariablesChange` to sync these back to your backend:
+Users can create custom variables at runtime two ways: via the sidebar form, or inline by picking the "+ Create variable" entry at the bottom of the `{{` autocomplete popup. Inline-created variables are added with `group: "Custom"` and a label derived from the key (underscores become spaces). Both paths fire `onVariablesChange`:
 
 ```tsx
 <EmailEditor
@@ -445,6 +457,8 @@ See `src/styles/variables.css` for the full list of 70+ customizable tokens.
 
 ## Keyboard Shortcuts
 
+### Editor
+
 | Shortcut | Action |
 |----------|--------|
 | `Ctrl/Cmd + Z` | Undo |
@@ -452,6 +466,20 @@ See `src/styles/variables.css` for the full list of 70+ customizable tokens.
 | `Ctrl/Cmd + S` | Save (triggers `onSave`) |
 | `Escape` | Deselect block/section |
 | `Delete` / `Backspace` | Remove selected block or section |
+
+### Drag handles (focused)
+
+| Shortcut | Action |
+|----------|--------|
+| `↑` / `↓` | Reorder the focused section or block within its container |
+
+### `{{` autocomplete (open popup)
+
+| Shortcut | Action |
+|----------|--------|
+| `↑` / `↓` | Move selection through matches |
+| `Enter` / `Tab` | Insert the selected variable, or create the typed key as a new custom variable when the "+ Create variable" row is highlighted |
+| `Escape` | Close without inserting |
 
 ## Responsive Editor
 

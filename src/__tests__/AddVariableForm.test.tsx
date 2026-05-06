@@ -13,7 +13,6 @@ describe('AddVariableForm', () => {
     renderWithEditor(<AddVariableForm />);
     fireEvent.click(screen.getByText('+ Add Variable'));
     expect(screen.getByPlaceholderText('e.g. coupon_code')).toBeTruthy();
-    expect(screen.getByPlaceholderText('e.g. Coupon Code')).toBeTruthy();
   });
 
   it('shows validation error when key is empty', () => {

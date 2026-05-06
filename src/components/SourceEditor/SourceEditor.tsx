@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useTemplateContext, useEditorDispatch } from '../../context/EditorContext';
 import { generateMJML } from '../../mjml/generator';
 import { parseMJML } from '../../mjml/parser';

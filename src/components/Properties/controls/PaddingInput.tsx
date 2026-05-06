@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import styles from '../../../styles/properties.module.css';
 
 interface PaddingInputProps {

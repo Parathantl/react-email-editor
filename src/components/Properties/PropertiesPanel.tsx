@@ -1,5 +1,4 @@
-import React from 'react';
-import type { Block, BlockType } from '../../types';
+import type { Block } from '../../types';
 import { useSelectedBlock, useSelectedSection } from '../../context/EditorContext';
 import { blockPropertiesRegistry } from '../../registry';
 import { SectionProperties } from './SectionProperties';

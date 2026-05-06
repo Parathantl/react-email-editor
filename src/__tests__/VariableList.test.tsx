@@ -46,11 +46,11 @@ describe('VariableList', () => {
     expect(screen.getByText('@')).toBeTruthy();
   });
 
-  it('falls back to key when label is not provided', () => {
+  it('humanizes the key when label is not provided', () => {
     const variables: Variable[] = [
       { key: 'user_id', group: 'System' },
     ];
     renderWithEditor(<VariableList />, { variables });
-    expect(screen.getByText('user_id')).toBeTruthy();
+    expect(screen.getByText('User Id')).toBeTruthy();
   });
 });

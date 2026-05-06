@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import type { Block } from '../../types';
 import { useBlockUpdate } from '../../hooks/useBlockUpdate';
 import { PropertyField, FieldSeparator } from './PropertyField';

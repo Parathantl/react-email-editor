@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { editorReducer, createInitialState } from '../context/EditorContext';
 import { createBlock, createSection } from '../utils/factory';
-import type { EditorState, EditorAction } from '../types';
+import type { EditorState } from '../types';
 
 function makeState(): EditorState {
   const section = createSection();
@@ -261,7 +261,6 @@ describe('editorReducer', () => {
   describe('UNDO / REDO', () => {
     it('undoes the last action', () => {
       let state = makeState();
-      const original = state.template;
 
       state = editorReducer(state, {
         type: 'ADD_SECTION',

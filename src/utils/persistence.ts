@@ -6,7 +6,7 @@ import { sanitizeTemplate } from './validate';
  * All operations are wrapped in try/catch to handle quota errors,
  * private browsing restrictions, and SSR environments.
  */
-export const localStorageAdapter: PersistenceAdapter = {
+export const localStorageAdapter = {
   save(key: string, template: EmailTemplate): void {
     try {
       localStorage.setItem(key, JSON.stringify(template));
@@ -35,4 +35,4 @@ export const localStorageAdapter: PersistenceAdapter = {
       // Silently fail
     }
   },
-};
+} satisfies PersistenceAdapter;

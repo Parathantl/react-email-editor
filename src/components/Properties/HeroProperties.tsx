@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Block } from '../../types';
 import { narrowBlock } from '../../types';
 import { useBlockUpdate } from '../../hooks/useBlockUpdate';

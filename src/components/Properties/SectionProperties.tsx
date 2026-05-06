@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import type { Section } from '../../types';
 import { useEditorDispatch } from '../../context/EditorContext';
 import { PropertyField, FieldSeparator } from './PropertyField';

@@ -36,6 +36,7 @@ export const Column = React.memo(function Column({ column, sectionId, customIcon
   const [blockToRemove, setBlockToRemove] = useState<string | null>(null);
   const blockDuplicateIcon = customIcons?.blockDuplicate ?? '📄';
   const blockRemoveIcon = customIcons?.blockRemove ?? '🗑️';
+  const blockDragIcon = customIcons?.blockDrag ?? '↕️';
 
   const confirmRemoveBlock = useCallback(
     (blockId: string) => {
@@ -94,11 +95,46 @@ export const Column = React.memo(function Column({ column, sectionId, customIcon
 
   const handleBlockDragStart = useCallback(
     (e: React.DragEvent) => {
-      const data = getBlockData(e);
-      if (!data) return;
-      setBlockMoveDragData(e, data.blockId, sectionId, column.id);
+      const wrapper = (e.currentTarget as HTMLElement).closest('[data-block-id]') as HTMLElement | null;
+      const blockId = wrapper?.dataset.blockId;
+      if (!blockId) return;
+      setBlockMoveDragData(e, blockId, sectionId, column.id);
+      if (wrapper) {
+        const rect = wrapper.getBoundingClientRect();
+        e.dataTransfer.setDragImage(wrapper, e.clientX - rect.left, e.clientY - rect.top);
+      }
     },
     [sectionId, column.id],
+  );
+
+  const handleBlockDragKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+      const wrapper = (e.currentTarget as HTMLElement).closest('[data-block-id]') as HTMLElement | null;
+      const blockId = wrapper?.dataset.blockId;
+      if (!blockId) return;
+      const currentIndex = column.blocks.findIndex((b) => b.id === blockId);
+      if (currentIndex === -1) return;
+      const newIndex = e.key === 'ArrowUp' ? currentIndex - 1 : currentIndex + 1;
+      if (newIndex < 0 || newIndex >= column.blocks.length) return;
+      e.preventDefault();
+      e.stopPropagation();
+      // MOVE_BLOCK auto-decrements toIndex when fromIdx < toIndex within the same column,
+      // so for a downward swap we pass currentIndex + 2 to land at currentIndex + 1.
+      const toIndex = e.key === 'ArrowUp' ? newIndex : currentIndex + 2;
+      dispatch({
+        type: 'MOVE_BLOCK',
+        payload: {
+          fromSectionId: sectionId,
+          fromColumnId: column.id,
+          blockId,
+          toSectionId: sectionId,
+          toColumnId: column.id,
+          toIndex,
+        },
+      });
+    },
+    [dispatch, sectionId, column.id, column.blocks],
   );
 
   // Block-level drop detection: determines top/bottom half for precise insertion
@@ -248,8 +284,6 @@ export const Column = React.memo(function Column({ column, sectionId, customIcon
               .filter(Boolean)
               .join(' ')}
             onClick={handleBlockClick}
-            draggable
-            onDragStart={handleBlockDragStart}
             onDragOver={handleBlockDragOver}
             onDragLeave={handleBlockDragLeave}
             onDrop={handleBlockDrop}
@@ -260,6 +294,19 @@ export const Column = React.memo(function Column({ column, sectionId, customIcon
             tabIndex={0}
           >
             <div className={`ee-block-actions ${styles['ee-block-overlay']}`} role="group" aria-label="Block actions">
+              <span
+                className={`ee-block-drag ${styles['ee-block-drag-handle']}`}
+                draggable
+                onDragStart={handleBlockDragStart}
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={handleBlockDragKeyDown}
+                title="Drag to reorder (or use Arrow Up/Down)"
+                role="button"
+                aria-label="Reorder block with Arrow Up/Down keys"
+                tabIndex={0}
+              >
+                {blockDragIcon}
+              </span>
               <button
                 className={`ee-block-duplicate ${styles['ee-block-btn']} ${styles['ee-block-btn-duplicate']}`}
                 onClick={handleDuplicateClick}

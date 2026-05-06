@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from '../../../styles/properties.module.css';
 
 interface AlignmentPickerProps {
@@ -7,13 +6,6 @@ interface AlignmentPickerProps {
   onChange: (align: string) => void;
   options?: string[];
 }
-
-const ALIGN_ICONS: Record<string, string> = {
-  left: '\u2261',
-  center: '\u2261',
-  right: '\u2261',
-  justify: '\u2261',
-};
 
 export function AlignmentPicker({
   label,

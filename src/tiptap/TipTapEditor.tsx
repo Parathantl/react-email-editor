@@ -1,18 +1,20 @@
-import React, { useMemo, useEffect, useRef } from 'react';
+import { useMemo, useEffect, useRef } from 'react';
 import { useEditor as useTipTapEditor, EditorContent } from '@tiptap/react';
 import type { Editor } from '@tiptap/core';
 import { getExtensions } from './extensions';
+import type { VariableSuggestionConfig } from './VariableSuggestion';
 import { cleanPastedHTML } from './pasteClean';
 
 export interface TipTapEditorProps {
   content: string;
   onUpdate: (html: string) => void;
   onFocus?: () => void;
-  onBlur?: () => void;
+  onBlur?: (event: FocusEvent) => void;
   editable?: boolean;
   className?: string;
   editorRef?: (editor: Editor | null) => void;
   placeholder?: string;
+  variableSuggestion?: VariableSuggestionConfig;
 }
 
 export function TipTapEditor({
@@ -24,9 +26,16 @@ export function TipTapEditor({
   className,
   editorRef,
   placeholder,
+  variableSuggestion,
 }: TipTapEditorProps) {
-  // Memoize extensions to prevent TipTap editor re-creation on every render
-  const extensions = useMemo(() => getExtensions(placeholder), [placeholder]);
+  // Memoize extensions to prevent TipTap editor re-creation on every render.
+  // variableSuggestion is intentionally excluded from deps — its callbacks read
+  // from refs internally so the extension stays reactive without rebuilding.
+  const extensions = useMemo(
+    () => getExtensions(placeholder, variableSuggestion),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [placeholder],
+  );
 
   // Use refs for callbacks to avoid stale closures in TipTap event handlers
   const onUpdateRef = useRef(onUpdate);
@@ -51,7 +60,7 @@ export function TipTapEditor({
       onUpdateRef.current(e.getHTML());
     },
     onFocus: () => onFocusRef.current?.(),
-    onBlur: () => onBlurRef.current?.(),
+    onBlur: ({ event }) => onBlurRef.current?.(event),
   });
 
   // Notify parent when the editor instance changes.

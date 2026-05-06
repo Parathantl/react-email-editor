@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import styles from '../../../styles/properties.module.css';
 
 type LinkType = 'url' | 'email' | 'phone';

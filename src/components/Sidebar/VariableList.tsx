@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useEditorVariables } from '../../context/EditorContext';
-import { groupVariables } from '../../utils/variables';
+import { displayVariableName, groupVariables } from '../../utils/variables';
 import styles from '../../styles/sidebar.module.css';
 
 export function VariableList() {
@@ -74,7 +74,7 @@ export function VariableList() {
                 }}
               >
                 {v.icon && <span className={`ee-variable-chip-icon ${styles['ee-variable-chip-icon']}`}>{v.icon}</span>}
-                {v.label ?? v.key}
+                {displayVariableName(v)}
                 {customKeys.has(v.key) && (
                   <button
                     className={`ee-variable-chip-delete ${styles['ee-variable-chip-delete']}`}
