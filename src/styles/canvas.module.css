@@ -246,9 +246,10 @@
 
 .ee-block-overlay {
   position: absolute;
-  /* Sit above the block's top edge so the sticky rich-text toolbar
-     (which pins inside the block at top: 0) doesn't cover these buttons. */
-  top: -30px;
+  /* Sit ABOVE the block with a real visual gap so when the rich-text
+     toolbar appears at top: 0 inside the block it has clear space below
+     the action banner instead of stacking flush against it. */
+  top: -38px;
   right: -1px;
   display: flex;
   align-items: center;
@@ -263,6 +264,18 @@
   opacity: 0;
   transition: opacity var(--ee-transition-fast);
   z-index: var(--ee-z-block-overlay);
+}
+
+/* Transparent hover bridge from the card's bottom edge down to the block
+   top — keeps wrapper :hover continuous so the card doesn't fade out
+   as the cursor crosses the gap. */
+.ee-block-overlay::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 8px;
 }
 
 /* Block type label ("Text", "Button", "Image"...) — gives the user an
