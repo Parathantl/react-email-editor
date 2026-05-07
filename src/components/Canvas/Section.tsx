@@ -89,6 +89,9 @@ export const Section = React.memo(function Section({ section, customIcons }: Sec
       aria-selected={isSelected}
     >
       <div className={`ee-section-actions ${styles['ee-section-overlay']}`} role="group" aria-label="Section actions">
+        <span className={`ee-section-type-label ${styles['ee-section-type-label']}`} aria-hidden="true">
+          Section
+        </span>
         <span
           className={`ee-section-drag ${styles['ee-section-drag-handle']}`}
           draggable

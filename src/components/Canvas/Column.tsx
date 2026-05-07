@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import type { Column as ColumnType } from '../../types';
 import { BlockRenderer } from './BlockRenderer';
 import { DropZone } from './DropZone';
@@ -142,6 +142,19 @@ export const Column = React.memo(function Column({ column, sectionId, customIcon
     blockId: string;
     position: 'before' | 'after';
   } | null>(null);
+
+  // Defensive cleanup: ensure the drop indicator never sticks if the drag
+  // ends without a clean dragleave on this element (e.g., dropped on a
+  // sibling, or released outside any valid target).
+  useEffect(() => {
+    const clear = () => setDropTarget(null);
+    window.addEventListener('dragend', clear);
+    window.addEventListener('drop', clear);
+    return () => {
+      window.removeEventListener('dragend', clear);
+      window.removeEventListener('drop', clear);
+    };
+  }, []);
 
   const handleBlockDragOver = useCallback(
     (e: React.DragEvent) => {
@@ -294,6 +307,9 @@ export const Column = React.memo(function Column({ column, sectionId, customIcon
             tabIndex={0}
           >
             <div className={`ee-block-actions ${styles['ee-block-overlay']}`} role="group" aria-label="Block actions">
+              <span className={`ee-block-type-label ${styles['ee-block-type-label']}`} aria-hidden="true">
+                {block.type.charAt(0).toUpperCase() + block.type.slice(1)}
+              </span>
               <span
                 className={`ee-block-drag ${styles['ee-block-drag-handle']}`}
                 draggable

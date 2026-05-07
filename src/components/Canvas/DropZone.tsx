@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { isDropAllowed, getBlockTypeFromDrop, getBlockMoveFromDrop, DND_TYPES } from '../../utils/dnd';
 import { useEditorDispatch } from '../../context/EditorContext';
 import { generateBlockId } from '../../utils/id';
@@ -17,6 +17,44 @@ export const DropZone = React.memo(function DropZone({ sectionId, columnId, inde
   const dispatch = useEditorDispatch();
   const [isOver, setIsOver] = useState(false);
   const isOverRef = useRef(false);
+  const elRef = useRef<HTMLDivElement>(null);
+
+  // Defensive cleanup: dragleave / onDrop on this exact element can miss in
+  // real-world flows (sibling drops, fast cursor exits, auto-scroll, browser
+  // quirks). These global listeners guarantee the indicator never sticks.
+  //   - dragover: if the cursor isn't actually on this dropzone, it can't be
+  //     "over" — force-clear isOver. Catches any case where dragleave didn't
+  //     fire.
+  //   - dragend/drop: always clear when any drag operation ends.
+  useEffect(() => {
+    const clearIfNotOver = (e: DragEvent) => {
+      if (!isOverRef.current) return;
+      const el = elRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const inside =
+        e.clientX >= rect.left && e.clientX <= rect.right &&
+        e.clientY >= rect.top && e.clientY <= rect.bottom;
+      if (!inside) {
+        isOverRef.current = false;
+        setIsOver(false);
+      }
+    };
+    const clear = () => {
+      if (isOverRef.current) {
+        isOverRef.current = false;
+        setIsOver(false);
+      }
+    };
+    window.addEventListener('dragover', clearIfNotOver);
+    window.addEventListener('dragend', clear);
+    window.addEventListener('drop', clear);
+    return () => {
+      window.removeEventListener('dragover', clearIfNotOver);
+      window.removeEventListener('dragend', clear);
+      window.removeEventListener('drop', clear);
+    };
+  }, []);
 
   const handleDragOver = useCallback(
     (e: React.DragEvent) => {
@@ -92,6 +130,7 @@ export const DropZone = React.memo(function DropZone({ sectionId, columnId, inde
   if (emptyPlaceholder) {
     return (
       <div
+        ref={elRef}
         className={`ee-drop-zone ee-drop-zone--empty ${styles['ee-empty-column']} ${isOver ? styles['ee-empty-column-active'] : ''}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -104,6 +143,7 @@ export const DropZone = React.memo(function DropZone({ sectionId, columnId, inde
 
   return (
     <div
+      ref={elRef}
       className={`ee-drop-zone ${styles['ee-drop-zone']} ${isOver ? styles['ee-drop-zone-active'] : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}

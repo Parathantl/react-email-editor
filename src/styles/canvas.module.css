@@ -71,6 +71,9 @@
   flex: 1;
   min-height: 0;
   overflow: auto;
+  /* Reserve scrollbar space so the centered canvas doesn't shift when
+     drop zones expand during drag and a scrollbar appears. */
+  scrollbar-gutter: stable;
 }
 
 .ee-canvas-body {
@@ -114,14 +117,45 @@
   top: -1px;
   right: -1px;
   display: flex;
-  gap: 2px;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  background: var(--ee-bg-panel);
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius-sm);
+  box-shadow: var(--ee-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.08));
   opacity: 0;
   transition: opacity var(--ee-transition-fast);
   z-index: var(--ee-z-block-overlay);
 }
 
+/* Section label — same role as the block type label, but tells the user
+   they're operating on the parent section rather than a single block. */
+.ee-section-type-label {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 8px;
+  margin-right: 1px;
+  border-right: 1px solid var(--ee-border-color);
+  font-size: var(--ee-font-size-xs);
+  font-weight: var(--ee-font-weight-medium);
+  color: var(--ee-color-primary);
+  white-space: nowrap;
+  user-select: none;
+}
+
 .ee-section:hover .ee-section-overlay {
   opacity: 1;
+}
+
+/* When a block within the section is hovered or selected, hide the
+   section's own action overlay so the two don't compete in the same
+   top-right corner. The block overlay takes precedence — the user is
+   working with the block, not the section. */
+.ee-section:has(.ee-block-wrapper:hover) .ee-section-overlay,
+.ee-section:has(.ee-block-wrapper.ee-block-selected) .ee-section-overlay {
+  opacity: 0;
 }
 
 .ee-section-btn {
@@ -130,8 +164,8 @@
   justify-content: center;
   width: 24px;
   height: 24px;
-  background: var(--ee-bg-panel);
-  border: 1px solid var(--ee-border-color);
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: var(--ee-border-radius-sm);
   cursor: pointer;
   font-size: 12px;
@@ -157,8 +191,8 @@
   justify-content: center;
   width: 24px;
   height: 24px;
-  background: var(--ee-bg-panel);
-  border: 1px solid var(--ee-border-color);
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: var(--ee-border-radius-sm);
   cursor: grab;
   font-size: 14px;
@@ -212,16 +246,44 @@
 
 .ee-block-overlay {
   position: absolute;
-  top: -1px;
+  /* Sit above the block's top edge so the sticky rich-text toolbar
+     (which pins inside the block at top: 0) doesn't cover these buttons. */
+  top: -30px;
   right: -1px;
   display: flex;
-  gap: 2px;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  /* Card-style background visually separates the actions from any
+     block content / section background underneath. */
+  background: var(--ee-bg-panel);
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius-sm);
+  box-shadow: var(--ee-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.08));
   opacity: 0;
   transition: opacity var(--ee-transition-fast);
   z-index: var(--ee-z-block-overlay);
 }
 
-.ee-block-wrapper:hover .ee-block-overlay {
+/* Block type label ("Text", "Button", "Image"...) — gives the user an
+   immediate read on what kind of block they're working with. */
+.ee-block-type-label {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 8px;
+  margin-right: 1px;
+  border-right: 1px solid var(--ee-border-color);
+  font-size: var(--ee-font-size-xs);
+  font-weight: var(--ee-font-weight-medium);
+  color: var(--ee-color-primary);
+  text-transform: capitalize;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.ee-block-wrapper:hover .ee-block-overlay,
+.ee-block-wrapper.ee-block-selected .ee-block-overlay {
   opacity: 1;
 }
 
@@ -229,13 +291,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  background: var(--ee-bg-panel);
-  border: 1px solid var(--ee-border-color);
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: 3px;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--ee-text-secondary);
   transition: all var(--ee-transition-fast);
 }
@@ -256,13 +318,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  background: var(--ee-bg-panel);
-  border: 1px solid var(--ee-border-color);
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: 3px;
   cursor: grab;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--ee-text-secondary);
   transition: all var(--ee-transition-fast);
   user-select: none;
@@ -282,40 +344,50 @@
 .ee-block-wrapper.ee-block-drop-before {
   outline: 2px solid var(--ee-dropzone-color);
   outline-offset: -2px;
-  border-top: 2px solid var(--ee-dropzone-color);
+  /* inset box-shadow instead of border-top — no layout shift while dragging. */
+  box-shadow: inset 0 2px 0 var(--ee-dropzone-color);
 }
 
 .ee-block-wrapper.ee-block-drop-after {
   outline: 2px solid var(--ee-dropzone-color);
   outline-offset: -2px;
-  border-bottom: 2px solid var(--ee-dropzone-color);
+  box-shadow: inset 0 -2px 0 var(--ee-dropzone-color);
 }
 
-/* Drop Zone */
+/* Drop Zone — fixed layout size. The active indicator is rendered via
+   an absolutely positioned ::before so it can be visually large without
+   pushing surrounding content around (which would shift the centered
+   email body and make the right sidebar appear to move). */
 .ee-drop-zone {
   min-height: 2px;
   padding: 4px 0;
-  transition: all var(--ee-transition-fast);
   position: relative;
   margin: 0 4px;
 }
 
-.ee-drop-zone-active {
-  min-height: var(--ee-dropzone-height-active);
+.ee-drop-zone-active::before {
+  content: '';
+  position: absolute;
+  top: -14px;
+  bottom: -14px;
+  left: 0;
+  right: 0;
   background: var(--ee-dropzone-bg);
   border: 2px dashed var(--ee-dropzone-color);
   border-radius: var(--ee-border-radius-sm);
+  pointer-events: none;
 }
 
 .ee-drop-zone-label {
   position: absolute;
-  top: 0; right: 0; bottom: 0; left: 0;
+  top: -14px; right: 0; bottom: -14px; left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: var(--ee-font-size-xs);
   color: var(--ee-dropzone-color);
   font-weight: var(--ee-font-weight-medium);
+  pointer-events: none;
 }
 
 /* Empty column */
@@ -340,30 +412,36 @@
   font-weight: var(--ee-font-weight-medium);
 }
 
-/* Section Drop Zone */
+/* Section Drop Zone — same approach as block drop zones: keep layout
+   size constant, render the active indicator absolutely. */
 .ee-section-drop-zone {
   min-height: 2px;
-  transition: all var(--ee-transition-fast);
   position: relative;
 }
 
-.ee-section-drop-zone-active {
-  min-height: 40px;
+.ee-section-drop-zone-active::before {
+  content: '';
+  position: absolute;
+  top: -19px;
+  bottom: -19px;
+  left: 4px;
+  right: 4px;
   background: var(--ee-dropzone-bg);
   border: 2px dashed var(--ee-dropzone-color);
   border-radius: var(--ee-border-radius-sm);
-  margin: 2px 4px;
+  pointer-events: none;
 }
 
 .ee-section-drop-zone-label {
   position: absolute;
-  top: 0; right: 0; bottom: 0; left: 0;
+  top: -19px; right: 4px; bottom: -19px; left: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: var(--ee-font-size-xs);
   color: var(--ee-dropzone-color);
   font-weight: var(--ee-font-weight-medium);
+  pointer-events: none;
 }
 
 /* Add section button */

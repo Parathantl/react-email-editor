@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { isSectionDrop, getSectionMoveFromDrop } from '../../utils/dnd';
 import { useEditorDispatch } from '../../context/EditorContext';
 import styles from '../../styles/canvas.module.css';
@@ -11,6 +11,37 @@ export const SectionDropZone = React.memo(function SectionDropZone({ index }: Se
   const dispatch = useEditorDispatch();
   const [isOver, setIsOver] = useState(false);
   const isOverRef = useRef(false);
+  const elRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const clearIfNotOver = (e: DragEvent) => {
+      if (!isOverRef.current) return;
+      const el = elRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const inside =
+        e.clientX >= rect.left && e.clientX <= rect.right &&
+        e.clientY >= rect.top && e.clientY <= rect.bottom;
+      if (!inside) {
+        isOverRef.current = false;
+        setIsOver(false);
+      }
+    };
+    const clear = () => {
+      if (isOverRef.current) {
+        isOverRef.current = false;
+        setIsOver(false);
+      }
+    };
+    window.addEventListener('dragover', clearIfNotOver);
+    window.addEventListener('dragend', clear);
+    window.addEventListener('drop', clear);
+    return () => {
+      window.removeEventListener('dragover', clearIfNotOver);
+      window.removeEventListener('dragend', clear);
+      window.removeEventListener('drop', clear);
+    };
+  }, []);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     if (!isSectionDrop(e)) return;
@@ -58,6 +89,7 @@ export const SectionDropZone = React.memo(function SectionDropZone({ index }: Se
 
   return (
     <div
+      ref={elRef}
       className={`ee-section-drop-zone ${styles['ee-section-drop-zone']} ${isOver ? styles['ee-section-drop-zone-active'] : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}

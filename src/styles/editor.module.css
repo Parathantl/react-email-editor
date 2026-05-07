@@ -24,6 +24,15 @@
   outline: none;
 }
 
+/* Applied to the editor container while a block/section drag is in progress.
+   Prevents the browser from extending a text selection across blocks and the
+   right sidebar as the cursor moves during the drag. */
+.ee-editor-is-dragging,
+.ee-editor-is-dragging * {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 .ee-editor-body {
   display: flex;
   flex: 1;
