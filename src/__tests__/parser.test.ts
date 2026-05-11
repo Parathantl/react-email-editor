@@ -492,4 +492,43 @@ describe('parseMJML', () => {
     const block = result.sections[0].columns[0].blocks[0];
     expect(block.type).toBe('text');
   });
+
+  describe('paragraphSpacing round-trip', () => {
+    it('recovers paragraphSpacing from inline margin-bottom and strips margins from content', () => {
+      const mjml = `
+        <mjml>
+          <mj-body>
+            <mj-section>
+              <mj-column>
+                <mj-text><p style="margin:0 0 14px 0">first</p><p style="margin:0">second</p></mj-text>
+              </mj-column>
+            </mj-section>
+          </mj-body>
+        </mjml>
+      `;
+      const result = parseMJML(mjml);
+      const block = result.sections[0].columns[0].blocks[0];
+      expect(block.type).toBe('text');
+      expect(block.properties.paragraphSpacing).toBe('14px');
+      // Content should no longer carry inline margin — the generator re-injects it.
+      expect(block.properties.content).not.toMatch(/margin/);
+    });
+
+    it('defaults paragraphSpacing to "0" when no margin-bottom is present', () => {
+      const mjml = `
+        <mjml>
+          <mj-body>
+            <mj-section>
+              <mj-column>
+                <mj-text><p>only</p></mj-text>
+              </mj-column>
+            </mj-section>
+          </mj-body>
+        </mjml>
+      `;
+      const result = parseMJML(mjml);
+      const block = result.sections[0].columns[0].blocks[0];
+      expect(block.properties.paragraphSpacing).toBe('0');
+    });
+  });
 });

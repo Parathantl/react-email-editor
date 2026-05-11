@@ -20,6 +20,7 @@ const MJML_DEFAULTS = {
     fontSize: '13px',
     color: '#000000',
     lineHeight: '1.5',
+    paragraphSpacing: '0',
     padding: '10px 25px',
     align: 'left',
     fontWeight: 'normal',
@@ -145,6 +146,90 @@ function fixVoidElements(mjml: string): string {
 export function stripEmptyParagraphPlaceholders(html: string): string {
   if (!html) return html;
   return html.replace(/<p\b([^>]*)>\s*<br\s*\/?\s*>\s*<\/p>/gi, '<p$1></p>');
+}
+
+const TEXT_BLOCK_MARGIN_TAGS = new Set(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'blockquote']);
+
+/**
+ * Inverse of generator.applyTextBlockMargins: pull paragraph-spacing back out of
+ * inline `margin-bottom` on top-level block siblings and return the cleaned HTML
+ * along with the recovered spacing value (or '0' if none detected). Strips all
+ * inline `margin` declarations on these block tags so the editor doesn't carry
+ * them on the content — the generator re-applies them on export.
+ */
+export function extractParagraphSpacing(html: string): { content: string; paragraphSpacing: string } {
+  if (!html || typeof DOMParser === 'undefined') {
+    return { content: html, paragraphSpacing: '0' };
+  }
+
+  const doc = new DOMParser().parseFromString(`<div>${html}</div>`, 'text/html');
+  const root = doc.body.firstElementChild;
+  if (!root) return { content: html, paragraphSpacing: '0' };
+
+  const topLevel: HTMLElement[] = [];
+  for (let i = 0; i < root.children.length; i++) {
+    const child = root.children[i] as HTMLElement;
+    if (TEXT_BLOCK_MARGIN_TAGS.has(child.tagName.toLowerCase())) {
+      topLevel.push(child);
+    }
+  }
+
+  let spacing = '0';
+  // Use the first non-last top-level sibling's margin-bottom as the canonical value.
+  for (let i = 0; i < topLevel.length - 1; i++) {
+    const bottom = readInlineMarginBottom(topLevel[i]);
+    if (bottom) {
+      spacing = bottom;
+      break;
+    }
+  }
+
+  // Strip inline margin from every block-level descendant so re-export is clean.
+  const all = root.querySelectorAll('p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote');
+  for (let i = 0; i < all.length; i++) {
+    stripInlineMargin(all[i] as HTMLElement);
+  }
+
+  return { content: root.innerHTML, paragraphSpacing: spacing };
+}
+
+function readInlineMarginBottom(el: HTMLElement): string | null {
+  const style = el.getAttribute('style');
+  if (!style) return null;
+  const decls = style.split(';').map((s) => s.trim()).filter(Boolean);
+  let bottom: string | null = null;
+  for (const decl of decls) {
+    const colon = decl.indexOf(':');
+    if (colon === -1) continue;
+    const prop = decl.slice(0, colon).trim().toLowerCase();
+    const value = decl.slice(colon + 1).trim();
+    if (prop === 'margin-bottom') {
+      bottom = value;
+    } else if (prop === 'margin') {
+      // Parse shorthand: 1-value, 2-value, 3-value, or 4-value
+      const parts = value.split(/\s+/);
+      if (parts.length === 1) bottom = parts[0];
+      else if (parts.length === 2) bottom = parts[0];
+      else if (parts.length === 3) bottom = parts[2];
+      else if (parts.length >= 4) bottom = parts[2];
+    }
+  }
+  if (!bottom || bottom === '0' || bottom === '0px') return null;
+  return bottom;
+}
+
+function stripInlineMargin(el: HTMLElement): void {
+  const style = el.getAttribute('style');
+  if (!style) return;
+  const kept = style
+    .split(';')
+    .map((s) => s.trim())
+    .filter((s) => s && !/^margin(-(top|right|bottom|left))?\s*:/i.test(s));
+  if (kept.length === 0) {
+    el.removeAttribute('style');
+  } else {
+    el.setAttribute('style', kept.join('; '));
+  }
 }
 
 /**
@@ -568,15 +653,19 @@ function parseTextBlock(el: Element): Block {
   }
 
   const d = MJML_DEFAULTS.text;
+  const { content: marginCleaned, paragraphSpacing } = extractParagraphSpacing(
+    stripEmptyParagraphPlaceholders(convertLegacyHtml(innerHTML)),
+  );
   return {
     id: generateBlockId(),
     type: 'text',
     properties: {
-      content: convertVariablesToChips(stripEmptyParagraphPlaceholders(convertLegacyHtml(innerHTML))),
+      content: convertVariablesToChips(marginCleaned),
       fontFamily: el.getAttribute('font-family') ?? d.fontFamily,
       fontSize: el.getAttribute('font-size') ?? d.fontSize,
       color: el.getAttribute('color') ?? d.color,
       lineHeight: el.getAttribute('line-height') ?? d.lineHeight,
+      paragraphSpacing,
       padding: resolvePadding(el, d.padding),
       align: el.getAttribute('align') ?? d.align,
       fontWeight: el.getAttribute('font-weight') ?? d.fontWeight,

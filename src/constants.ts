@@ -27,6 +27,7 @@ export const DEFAULT_TEXT_PROPERTIES: TextBlockProperties = {
   fontSize: '14px',
   color: '#000000',
   lineHeight: '1.5',
+  paragraphSpacing: '10px',
   padding: '10px 25px',
   align: 'left',
   fontWeight: 'normal',

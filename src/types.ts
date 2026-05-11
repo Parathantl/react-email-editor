@@ -10,6 +10,7 @@ export interface TextBlockProperties {
   fontSize: string;
   color: string;
   lineHeight: string;
+  paragraphSpacing: string;
   padding: string;
   align: 'left' | 'center' | 'right' | 'justify';
   fontWeight: string;

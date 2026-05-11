@@ -268,4 +268,56 @@ describe('generateMJML', () => {
     // Should contain JSON (not pipe-delimited)
     expect(mjml).toContain('Sale | Limited Time');
   });
+
+  describe('paragraphSpacing', () => {
+    it('applies margin-bottom to non-last top-level paragraphs when set', () => {
+      const section = createSection();
+      const block = createBlock('text');
+      block.properties.content = '<p>First</p><p>Second</p><p>Third</p>';
+      block.properties.paragraphSpacing = '12px';
+      section.columns[0].blocks.push(block);
+
+      const mjml = generateMJML(makeTemplate([section]));
+      const first = mjml.match(/<p[^>]*>First<\/p>/)?.[0] ?? '';
+      const second = mjml.match(/<p[^>]*>Second<\/p>/)?.[0] ?? '';
+      const third = mjml.match(/<p[^>]*>Third<\/p>/)?.[0] ?? '';
+
+      expect(first).toContain('margin:0 0 12px 0');
+      expect(second).toContain('margin:0 0 12px 0');
+      expect(third).toContain('margin:0');
+      expect(third).not.toContain('12px');
+    });
+
+    it('falls back to margin:0 everywhere when paragraphSpacing is 0 or unset', () => {
+      const section = createSection();
+      const block = createBlock('text');
+      block.properties.content = '<p>A</p><p>B</p>';
+      block.properties.paragraphSpacing = '0';
+      section.columns[0].blocks.push(block);
+
+      const mjml = generateMJML(makeTemplate([section]));
+      const ps = mjml.match(/<p[^>]*>/g) ?? [];
+      expect(ps.length).toBeGreaterThan(0);
+      for (const tag of ps) {
+        expect(tag).toContain('margin:0');
+        expect(tag).not.toMatch(/margin:0 0 [^0]/);
+      }
+    });
+
+    it('keeps nested block descendants at margin:0', () => {
+      const section = createSection();
+      const block = createBlock('text');
+      block.properties.content = '<blockquote><p>quoted</p></blockquote><p>after</p>';
+      block.properties.paragraphSpacing = '10px';
+      section.columns[0].blocks.push(block);
+
+      const mjml = generateMJML(makeTemplate([section]));
+      const nestedP = mjml.match(/<p[^>]*>quoted<\/p>/)?.[0] ?? '';
+      const blockquoteTag = mjml.match(/<blockquote[^>]*>/)?.[0] ?? '';
+
+      expect(blockquoteTag).toContain('margin:0 0 10px 0');
+      expect(nestedP).toContain('margin:0');
+      expect(nestedP).not.toContain('10px');
+    });
+  });
 });

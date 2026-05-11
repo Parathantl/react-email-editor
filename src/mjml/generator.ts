@@ -208,7 +208,9 @@ function generateTextBlock(block: Block, indent: string): string {
     'container-background-color': p.backgroundColor && p.backgroundColor !== 'transparent' ? p.backgroundColor : undefined,
   });
 
-  const content = fillEmptyParagraphs(resetBlockMargins(stripVariableChips(p.content || '')));
+  const content = fillEmptyParagraphs(
+    applyTextBlockMargins(stripVariableChips(p.content || ''), p.paragraphSpacing),
+  );
   return `${indent}<mj-text${attrs}>${content}</mj-text>`;
 }
 
@@ -532,6 +534,66 @@ function resetBlockMargins(html: string): string {
     /<(p|h[1-4]|ul|ol|blockquote)(\s*>)/gi,
     '<$1 style="margin:0"$2',
   );
+}
+
+const TEXT_BLOCK_MARGIN_TAGS = new Set(['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'blockquote']);
+
+/**
+ * Apply inter-paragraph spacing as inline `margin-bottom` on top-level block siblings
+ * within a text block's content. The last sibling and every nested block descendant
+ * keep `margin:0` to avoid runaway gaps. Falls back to the regex-based reset when
+ * spacing is empty/zero or DOMParser isn't available (e.g., legacy SSR paths).
+ */
+function applyTextBlockMargins(html: string, paragraphSpacing: string | undefined): string {
+  if (!html) return html;
+
+  const spacing = (paragraphSpacing ?? '').trim();
+  const hasSpacing = spacing !== '' && spacing !== '0' && spacing !== '0px';
+
+  if (!hasSpacing) {
+    return resetBlockMargins(html);
+  }
+
+  if (typeof DOMParser === 'undefined') {
+    return resetBlockMargins(html);
+  }
+
+  const doc = new DOMParser().parseFromString(`<div>${html}</div>`, 'text/html');
+  const root = doc.body.firstElementChild;
+  if (!root) return resetBlockMargins(html);
+
+  const topLevel: HTMLElement[] = [];
+  for (let i = 0; i < root.children.length; i++) {
+    const child = root.children[i] as HTMLElement;
+    if (TEXT_BLOCK_MARGIN_TAGS.has(child.tagName.toLowerCase())) {
+      topLevel.push(child);
+    }
+  }
+
+  if (topLevel.length === 0) return resetBlockMargins(html);
+
+  const bottomMargin = `0 0 ${spacing} 0`;
+  topLevel.forEach((el, idx) => {
+    const isLast = idx === topLevel.length - 1;
+    setInlineMargin(el, isLast ? '0' : bottomMargin);
+    // Nested block descendants keep margin:0 so cumulative spacing doesn't blow up.
+    const nested = el.querySelectorAll('p, h1, h2, h3, h4, h5, h6, ul, ol, blockquote');
+    for (let j = 0; j < nested.length; j++) {
+      setInlineMargin(nested[j] as HTMLElement, '0');
+    }
+  });
+
+  return root.innerHTML;
+}
+
+function setInlineMargin(el: HTMLElement, margin: string): void {
+  const existing = el.getAttribute('style') ?? '';
+  const kept = existing
+    .split(';')
+    .map((s) => s.trim())
+    .filter((s) => s && !/^margin(-(top|right|bottom|left))?\s*:/i.test(s));
+  kept.unshift(`margin:${margin}`);
+  el.setAttribute('style', kept.join('; '));
 }
 
 function buildAttrs(obj: Record<string, string | undefined>): string {

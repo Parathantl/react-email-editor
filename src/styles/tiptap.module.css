@@ -34,6 +34,21 @@
   color: var(--ee-text-secondary);
 }
 
+/* Paragraph spacing: apply margin-bottom to top-level block siblings except the
+   last, so single Enter gives a visible gap that matches the exported email. */
+.ee-tiptap-wrapper :global(.ProseMirror) > p:not(:last-child),
+.ee-tiptap-wrapper :global(.ProseMirror) > h1:not(:last-child),
+.ee-tiptap-wrapper :global(.ProseMirror) > h2:not(:last-child),
+.ee-tiptap-wrapper :global(.ProseMirror) > h3:not(:last-child),
+.ee-tiptap-wrapper :global(.ProseMirror) > h4:not(:last-child),
+.ee-tiptap-wrapper :global(.ProseMirror) > h5:not(:last-child),
+.ee-tiptap-wrapper :global(.ProseMirror) > h6:not(:last-child),
+.ee-tiptap-wrapper :global(.ProseMirror) > ul:not(:last-child),
+.ee-tiptap-wrapper :global(.ProseMirror) > ol:not(:last-child),
+.ee-tiptap-wrapper :global(.ProseMirror) > blockquote:not(:last-child) {
+  margin-bottom: var(--ee-paragraph-spacing, 0);
+}
+
 .ee-tiptap-wrapper :global(.ProseMirror) a {
   color: var(--ee-text-link);
   text-decoration: underline;

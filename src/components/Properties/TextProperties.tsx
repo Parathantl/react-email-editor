@@ -18,6 +18,7 @@ export function TextProperties({ block }: TextPropertiesProps) {
       </p>
       <PropertyField type="color" label="Background Color" value={p.backgroundColor || 'transparent'} onChange={(v) => update({ backgroundColor: v })} />
       <PropertyField type="text" label="Line Height" value={p.lineHeight} onChange={(v) => update({ lineHeight: v })} />
+      <PropertyField type="text" label="Paragraph Spacing" value={p.paragraphSpacing ?? '0px'} onChange={(v) => update({ paragraphSpacing: v })} />
       <PropertyField type="padding" label="Padding" value={p.padding} onChange={(v) => update({ padding: v })} />
     </div>
   );

@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, useEffect, useReducer, useMemo } from 'react';
+import { useCallback, useRef, useState, useEffect, useReducer, useMemo, type CSSProperties } from 'react';
 import type { Block, Variable } from '../../../types';
 import { useEditorDispatch, useEditorVariables, useMethodsContext } from '../../../context/EditorContext';
 import { TipTapEditor } from '../../../tiptap/TipTapEditor';
@@ -131,18 +131,25 @@ export function RichTextBlock({
   const p = block.properties;
   const resolvedFontSize = fontSizeOverride ?? p.fontSize;
 
-  const wrapperStyle = useMemo(() => ({
-    fontFamily: p.fontFamily,
-    fontSize: resolvedFontSize,
-    color: p.color,
-    lineHeight: p.lineHeight,
-    padding: p.padding,
-    textAlign: p.align,
-    fontWeight: p.fontWeight,
-    textTransform: p.textTransform,
-    letterSpacing: p.letterSpacing,
-    backgroundColor: p.backgroundColor && p.backgroundColor !== 'transparent' ? p.backgroundColor : undefined,
-  }), [p.fontFamily, resolvedFontSize, p.color, p.lineHeight, p.padding, p.align, p.fontWeight, p.textTransform, p.letterSpacing, p.backgroundColor]);
+  const wrapperStyle = useMemo(() => {
+    const style: CSSProperties = {
+      fontFamily: p.fontFamily,
+      fontSize: resolvedFontSize,
+      color: p.color,
+      lineHeight: p.lineHeight,
+      padding: p.padding,
+      textAlign: p.align,
+      fontWeight: p.fontWeight,
+      textTransform: p.textTransform,
+      letterSpacing: p.letterSpacing,
+      backgroundColor: p.backgroundColor && p.backgroundColor !== 'transparent' ? p.backgroundColor : undefined,
+    };
+    // Only text blocks carry paragraphSpacing; heading blocks leave the var unset.
+    if (typeof p.paragraphSpacing === 'string' && p.paragraphSpacing) {
+      (style as Record<string, string>)['--ee-paragraph-spacing'] = p.paragraphSpacing;
+    }
+    return style;
+  }, [p.fontFamily, resolvedFontSize, p.color, p.lineHeight, p.padding, p.align, p.fontWeight, p.textTransform, p.letterSpacing, p.backgroundColor, p.paragraphSpacing]);
 
   return (
     <div className={wrapperClassName} ref={wrapperRef}>

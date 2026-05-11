@@ -29,7 +29,10 @@ describe('empty paragraph round-trip', () => {
 
     const parsed = parseMJML(mjml);
     const block = parsed.sections[0].columns[0].blocks[0];
-    expect(block.properties.content).toContain('<p style="margin:0"></p>');
+    // Parser strips inline margin from content — the generator re-applies it
+    // (with or without paragraph-spacing) on export, so the canonical stored
+    // form is a bare empty <p></p>.
+    expect(block.properties.content).toContain('<p></p>');
     expect(block.properties.content).not.toContain('<br>');
 
     const div = document.createElement('div');
