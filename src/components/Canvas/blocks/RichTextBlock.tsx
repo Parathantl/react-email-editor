@@ -137,11 +137,12 @@ export function RichTextBlock({
     color: p.color,
     lineHeight: p.lineHeight,
     padding: p.padding,
+    textAlign: p.align,
     fontWeight: p.fontWeight,
     textTransform: p.textTransform,
     letterSpacing: p.letterSpacing,
     backgroundColor: p.backgroundColor && p.backgroundColor !== 'transparent' ? p.backgroundColor : undefined,
-  }), [p.fontFamily, resolvedFontSize, p.color, p.lineHeight, p.padding, p.fontWeight, p.textTransform, p.letterSpacing, p.backgroundColor]);
+  }), [p.fontFamily, resolvedFontSize, p.color, p.lineHeight, p.padding, p.align, p.fontWeight, p.textTransform, p.letterSpacing, p.backgroundColor]);
 
   return (
     <div className={wrapperClassName} ref={wrapperRef}>

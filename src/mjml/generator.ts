@@ -208,7 +208,7 @@ function generateTextBlock(block: Block, indent: string): string {
     'container-background-color': p.backgroundColor && p.backgroundColor !== 'transparent' ? p.backgroundColor : undefined,
   });
 
-  const content = resetBlockMargins(stripVariableChips(p.content || ''));
+  const content = fillEmptyParagraphs(resetBlockMargins(stripVariableChips(p.content || '')));
   return `${indent}<mj-text${attrs}>${content}</mj-text>`;
 }
 
@@ -503,6 +503,19 @@ function stripVariableChips(html: string): string {
   });
   
   return div.innerHTML;
+}
+
+/**
+ * Inject a <br> into empty <p></p> tags so the compiled email preview renders
+ * them as a visible blank line, matching what users see in the canvas (where
+ * ProseMirror auto-inserts a trailing <br> for cursor positioning). Without
+ * this, empty paragraphs collapse to height 0 in the rendered HTML and the
+ * preview shows fewer blank lines than the editor. The parser's
+ * stripEmptyParagraphPlaceholders inverts this on re-import to avoid doubling.
+ */
+function fillEmptyParagraphs(html: string): string {
+  if (!html) return html;
+  return html.replace(/<p\b([^>]*)>\s*<\/p>/gi, '<p$1><br></p>');
 }
 
 /**

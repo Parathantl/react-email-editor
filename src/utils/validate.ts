@@ -1,6 +1,7 @@
 import type { EmailTemplate, BlockType, Section, Column, Block, GlobalStyles } from '../types';
 import { DEFAULT_GLOBAL_STYLES, DEFAULT_HEAD_METADATA } from '../constants';
 import { getRegisteredBlockTypes } from '../registry';
+import { stripEmptyParagraphPlaceholders } from '../mjml/parser';
 
 const BUILT_IN_BLOCK_TYPES: ReadonlySet<string> = new Set<BlockType>([
   'text', 'button', 'image', 'divider', 'spacer', 'social',
@@ -141,7 +142,15 @@ export function sanitizeTemplate(data: unknown): EmailTemplate {
         if (typeof rb.id !== 'string' || !rb.id) continue;
         if (!isValidBlockType(rb.type as string)) continue;
         if (!rb.properties || typeof rb.properties !== 'object') continue;
-        blocks.push({ id: rb.id, type: rb.type as BlockType, properties: rb.properties as Record<string, any> });
+        const properties = rb.properties as Record<string, any>;
+        // Normalize rich-text content: TipTap renders <p><br></p> with both the
+        // <br> AND its own trailing-break, doubling the visible blank line in
+        // the canvas vs the preview. Strip to canonical empty <p></p>; the
+        // generator re-injects the <br> for the preview/export path.
+        if ((rb.type === 'text' || rb.type === 'heading') && typeof properties.content === 'string') {
+          properties.content = stripEmptyParagraphPlaceholders(properties.content);
+        }
+        blocks.push({ id: rb.id, type: rb.type as BlockType, properties });
       }
 
       columns.push({

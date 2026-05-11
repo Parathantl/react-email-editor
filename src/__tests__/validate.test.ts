@@ -140,4 +140,29 @@ describe('sanitizeTemplate', () => {
     expect(result.sections[0].properties.backgroundColor).toBe('transparent');
     expect(result.sections[0].properties.padding).toBe('20px 0');
   });
+
+  it('strips <p><br></p> placeholders from text-block content on load', () => {
+    // Old persisted state (or content that came from the generator) can carry
+    // <p><br></p> spacers. TipTap renders them with a HardBreak AND its own
+    // trailing-break, doubling the blank line vs the preview. Normalize on
+    // load so the canvas stays in sync with what the generator re-injects.
+    const result = sanitizeTemplate({
+      sections: [{
+        id: 's1',
+        columns: [{
+          id: 'c1',
+          width: '100%',
+          blocks: [{
+            id: 'b1',
+            type: 'text',
+            properties: {
+              content: '<p>One</p><p style="margin:0"><br></p><p>Two</p>',
+            },
+          }],
+        }],
+      }],
+    });
+    expect(result.sections[0].columns[0].blocks[0].properties.content)
+      .toBe('<p>One</p><p style="margin:0"></p><p>Two</p>');
+  });
 });

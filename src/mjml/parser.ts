@@ -135,6 +135,19 @@ function fixVoidElements(mjml: string): string {
 }
 
 /**
+ * Normalize `<p><br></p>` back to empty `<p></p>` so re-imported MJML doesn't
+ * double the visible spacer height. The generator fills empty paragraphs with
+ * `<br>` so the compiled email preview shows them as a visible blank line
+ * (matching TipTap's trailing-break behavior in the canvas). If we kept the
+ * `<br>` on re-import, TipTap would parse it as a HardBreak AND still add its
+ * own trailing-break, rendering two line breaks where the author wrote one.
+ */
+export function stripEmptyParagraphPlaceholders(html: string): string {
+  if (!html) return html;
+  return html.replace(/<p\b([^>]*)>\s*<br\s*\/?\s*>\s*<\/p>/gi, '<p$1></p>');
+}
+
+/**
  * Convert legacy HTML elements (<font>, etc.) to modern <span style="...">
  * for TipTap compatibility. Uses DOM parsing for robustness.
  */
@@ -559,7 +572,7 @@ function parseTextBlock(el: Element): Block {
     id: generateBlockId(),
     type: 'text',
     properties: {
-      content: convertVariablesToChips(convertLegacyHtml(innerHTML)),
+      content: convertVariablesToChips(stripEmptyParagraphPlaceholders(convertLegacyHtml(innerHTML))),
       fontFamily: el.getAttribute('font-family') ?? d.fontFamily,
       fontSize: el.getAttribute('font-size') ?? d.fontSize,
       color: el.getAttribute('color') ?? d.color,
