@@ -115,7 +115,7 @@
 .ee-section-overlay {
   position: absolute;
   top: -1px;
-  right: -1px;
+  left: -1px;
   display: flex;
   align-items: center;
   gap: 3px;
@@ -145,17 +145,9 @@
   user-select: none;
 }
 
-.ee-section:hover .ee-section-overlay {
+.ee-section:hover .ee-section-overlay,
+.ee-section.ee-section-selected .ee-section-overlay {
   opacity: 1;
-}
-
-/* When a block within the section is hovered or selected, hide the
-   section's own action overlay so the two don't compete in the same
-   top-right corner. The block overlay takes precedence — the user is
-   working with the block, not the section. */
-.ee-section:has(.ee-block-wrapper:hover) .ee-section-overlay,
-.ee-section:has(.ee-block-wrapper.ee-block-selected) .ee-section-overlay {
-  opacity: 0;
 }
 
 .ee-section-btn {
