@@ -3,8 +3,11 @@ import { generateMJML } from '../mjml/generator';
 import { compileMJMLToHTML } from '../mjml/compiler';
 
 // Forces backgrounds and colors to render in print output (browsers strip them
-// by default), aligns the page margins with the email body, and discourages
-// page breaks inside sections so blocks don't split awkwardly.
+// by default) and aligns the page margins with the email body. We intentionally
+// do NOT set `page-break-inside: avoid` on the MJML wrapper tables/cells —
+// MJML nests everything in tables, so that rule causes tall sections to be
+// pushed to a new page (leaving a blank page) and can clip content at the
+// bottom. Only images get break protection so they aren't split mid-figure.
 const PRINT_STYLES = `
 <style>
   *, *::before, *::after {
@@ -15,11 +18,19 @@ const PRINT_STYLES = `
   @page { margin: 0; }
   @media print {
     html, body { margin: 0; padding: 0; }
-    table, tr, td, div, .mj-outlook-group-fix {
+    img {
+      max-width: 100% !important;
       page-break-inside: avoid;
       break-inside: avoid;
     }
-    img { max-width: 100% !important; }
+    p, li, h1, h2, h3, h4, h5, h6 {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      page-break-after: avoid;
+      break-after: avoid;
+    }
   }
 </style>
 `;
