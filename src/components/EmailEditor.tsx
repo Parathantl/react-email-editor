@@ -12,6 +12,7 @@ import { SourceEditor } from './SourceEditor/SourceEditor';
 import { generateMJML } from '../mjml/generator';
 import { compileMJMLToHTML } from '../mjml/compiler';
 import { parseMJML } from '../mjml/parser';
+import { exportTemplateAsPDF } from '../utils/exportPDF';
 import { createSection, createBlock } from '../utils/factory';
 import { DEFAULT_GLOBAL_STYLES, DEFAULT_HEAD_METADATA } from '../constants';
 import { extractVariableKeys } from '../utils/variables';
@@ -366,30 +367,7 @@ const EditorInner = forwardRef<EmailEditorRef, EmailEditorProps>(function Editor
     clearPersisted: () => clearPersisted(),
 
     exportPDF: async () => {
-      const mjml = generateMJML(templateRef.current);
-      const result = await compileMJMLToHTML(mjml);
-      const printStyles = `
-        <style>
-          @page { margin: 0; size: auto; }
-          @media print {
-            html, body { margin: 0; padding: 0; }
-          }
-        </style>
-      `;
-      const htmlWithPrintStyles = result.html.replace(
-        '</head>',
-        `${printStyles}</head>`,
-      );
-      const iframe = document.createElement('iframe');
-      iframe.style.position = 'fixed';
-      iframe.style.left = '-9999px';
-      document.body.appendChild(iframe);
-      const doc = iframe.contentDocument!;
-      doc.open();
-      doc.write(htmlWithPrintStyles);
-      doc.close();
-      iframe.contentWindow!.print();
-      setTimeout(() => document.body.removeChild(iframe), 1000);
+      await exportTemplateAsPDF(templateRef.current);
     },
   }), [dispatch, clearPersisted]);
 
