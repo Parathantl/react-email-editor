@@ -1,10 +1,14 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { VariablePicker, type VariablePickerHandle } from './VariablePicker';
 import styles from '../../../styles/properties.module.css';
 
 type LinkType = 'url' | 'email' | 'phone';
 
 function validateLink(value: string, type: LinkType): string | null {
   if (!value) return null;
+  // Once the value contains a variable, downstream templating fills it in at
+  // send time — we can't shape-check a partial template, so skip validation.
+  if (value.includes('{{')) return null;
   if (type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
     return 'Invalid email address';
   }
@@ -46,6 +50,10 @@ export function LinkInput({ label, value, onChange }: LinkInputProps) {
   const [rawValue, setRawValue] = useState(() => stripPrefix(value, detectType(value)));
   const validationError = useMemo(() => validateLink(rawValue, type), [rawValue, type]);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const pickerRef = useRef<VariablePickerHandle>(null);
+  const caretRef = useRef<number>(rawValue.length);
+
   useEffect(() => {
     const detected = detectType(value);
     setType(detected);
@@ -68,6 +76,40 @@ export function LinkInput({ label, value, onChange }: LinkInputProps) {
     [type, onChange],
   );
 
+  const insertVariableAtCaret = useCallback(
+    (key: string) => {
+      const token = `{{ ${key} }}`;
+      // The default new-button href is '#'. Inserting at caret would produce
+      // '#{{ var }}', which is never what the user wants — the '#' is a
+      // factory placeholder, not real content. Replace the field entirely
+      // when its only content is that lone '#'.
+      const isLonePlaceholder = rawValue === '#';
+      const caret = isLonePlaceholder ? 0 : caretRef.current;
+      const before = isLonePlaceholder ? '' : rawValue.slice(0, caret);
+      const after = isLonePlaceholder ? '' : rawValue.slice(caret);
+      const next = `${before}${token}${after}`;
+      handleValueChange(next);
+      requestAnimationFrame(() => {
+        const el = inputRef.current;
+        if (!el) return;
+        el.focus();
+        const newCaret = (isLonePlaceholder ? 0 : caret) + token.length;
+        el.setSelectionRange(newCaret, newCaret);
+        caretRef.current = newCaret;
+      });
+    },
+    [rawValue, handleValueChange],
+  );
+
+  const captureCaret = useCallback(() => {
+    const el = inputRef.current;
+    if (el && document.activeElement === el) {
+      caretRef.current = el.selectionStart ?? el.value.length;
+    } else {
+      caretRef.current = rawValue.length;
+    }
+  }, [rawValue]);
+
   const placeholder = type === 'email' ? 'user@example.com'
     : type === 'phone' ? '+1234567890'
     : 'https://';
@@ -86,12 +128,27 @@ export function LinkInput({ label, value, onChange }: LinkInputProps) {
           <option value="phone">Phone</option>
         </select>
         <input
+          ref={inputRef}
           className={styles['ee-field-input-flex']}
           value={rawValue}
           onChange={(e) => handleValueChange(e.target.value)}
+          onKeyDown={(e) => {
+            const handled = pickerRef.current?.handleHostKeyDown(e.nativeEvent);
+            if (handled) e.preventDefault();
+          }}
+          onSelect={(e) => {
+            const el = e.currentTarget;
+            caretRef.current = el.selectionStart ?? el.value.length;
+          }}
           placeholder={placeholder}
           aria-label={label}
           aria-invalid={!!validationError}
+        />
+        <VariablePicker
+          ref={pickerRef}
+          onInsert={insertVariableAtCaret}
+          onBeforeOpen={captureCaret}
+          hostRef={inputRef}
         />
       </div>
       {validationError && (

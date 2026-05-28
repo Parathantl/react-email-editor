@@ -476,6 +476,66 @@ describe('parseMJML', () => {
     expect(block.properties.src).toBe('https://youtu.be/xyz789');
   });
 
+  it('round-trips a button href with a bare variable through parse + generate', async () => {
+    const { generateMJML } = await import('../mjml/generator');
+    const mjmlIn = `
+      <mjml>
+        <mj-body>
+          <mj-section>
+            <mj-column>
+              <mj-button href="{{ unsubscribe_url }}">Unsubscribe</mj-button>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `;
+    const template = parseMJML(mjmlIn);
+    const block = template.sections[0].columns[0].blocks[0];
+    expect(block.type).toBe('button');
+    expect(block.properties.href).toBe('{{ unsubscribe_url }}');
+
+    const mjmlOut = generateMJML(template);
+    expect(mjmlOut).toContain('href="{{ unsubscribe_url }}"');
+    expect(mjmlOut).not.toContain('href="#"');
+  });
+
+  it('round-trips a mailto: href with a variable through parse + generate', async () => {
+    const { generateMJML } = await import('../mjml/generator');
+    const mjmlIn = `
+      <mjml>
+        <mj-body>
+          <mj-section>
+            <mj-column>
+              <mj-button href="mailto:{{ user_email }}">Reply</mj-button>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `;
+    const template = parseMJML(mjmlIn);
+    expect(template.sections[0].columns[0].blocks[0].properties.href).toBe('mailto:{{ user_email }}');
+    const mjmlOut = generateMJML(template);
+    expect(mjmlOut).toContain('href="mailto:{{ user_email }}"');
+  });
+
+  it('preserves variable placeholders inside mj-button text on load', () => {
+    const mjml = `
+      <mjml>
+        <mj-body>
+          <mj-section>
+            <mj-column>
+              <mj-button href="https://example.com">Hi {{ customer_name }}, click here</mj-button>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `;
+    const result = parseMJML(mjml);
+    const block = result.sections[0].columns[0].blocks[0];
+    expect(block.type).toBe('button');
+    expect(block.properties.text).toBe('Hi {{ customer_name }}, click here');
+  });
+
   it('parses regular text block without heading promotion', () => {
     const mjml = `
       <mjml>

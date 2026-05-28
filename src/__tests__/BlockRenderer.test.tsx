@@ -11,6 +11,47 @@ describe('BlockRenderer', () => {
     expect(screen.getByText('Click me')).toBeTruthy();
   });
 
+  it('renders plain button text without chip spans', () => {
+    const block = createBlock('button');
+    block.properties.text = 'Click me';
+    const { container } = renderWithEditor(<BlockRenderer block={block} />);
+    expect(container.querySelectorAll('.ee-variable-chip')).toHaveLength(0);
+  });
+
+  it('renders a single variable in button text as a chip', () => {
+    const block = createBlock('button');
+    block.properties.text = 'Hi {{ name }}';
+    const { container } = renderWithEditor(<BlockRenderer block={block} />);
+    const chips = container.querySelectorAll('.ee-variable-chip');
+    expect(chips).toHaveLength(1);
+    expect(chips[0].textContent).toBe('{{ name }}');
+  });
+
+  it('renders multiple variables interleaved with text in a button', () => {
+    const block = createBlock('button');
+    block.properties.text = 'Hi {{ first }} {{ last }}!';
+    const { container } = renderWithEditor(<BlockRenderer block={block} />);
+    const chips = container.querySelectorAll('.ee-variable-chip');
+    expect(chips).toHaveLength(2);
+    expect(chips[0].textContent).toBe('{{ first }}');
+    expect(chips[1].textContent).toBe('{{ last }}');
+    // The full button preview (outer) must still contain the literal suffix.
+    const preview = container.querySelector('.ee-block-button');
+    expect(preview?.textContent).toBe('Hi {{ first }} {{ last }}!');
+  });
+
+  it('does not crash on stray braces in button text', () => {
+    const block = createBlock('button');
+    // No well-formed pair: an opening `{{` without a matching `}}` should not
+    // render a chip and must not throw at render time.
+    const block2Text = 'Hi {{ incomplete';
+    block.properties.text = block2Text;
+    const { container } = renderWithEditor(<BlockRenderer block={block} />);
+    expect(container.querySelectorAll('.ee-variable-chip')).toHaveLength(0);
+    const preview = container.querySelector('.ee-block-button');
+    expect(preview?.textContent).toBe(block2Text);
+  });
+
   it('renders a divider block', () => {
     const block = createBlock('divider');
     const { container } = renderWithEditor(<BlockRenderer block={block} />);

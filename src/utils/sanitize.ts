@@ -145,10 +145,17 @@ const SAFE_URL_PATTERN = /^(https?:\/\/|mailto:|tel:|#|\/)/i;
 /**
  * Returns true if the URL scheme is safe (http, https, mailto, tel, fragment, relative path).
  * Rejects javascript:, data:, vbscript:, and other dangerous schemes.
+ *
+ * URLs whose first non-whitespace token is a `{{ var }}` placeholder are also
+ * allowed: the downstream templating engine substitutes the variable at send
+ * time, and we can't validate the resolved value here. Without this, bare
+ * variable hrefs like `{{ unsubscribe_url }}` would be rewritten to `#` and
+ * the placeholder would never reach the templating step.
  */
 export function isSafeURL(url: string): boolean {
   const trimmed = url.trim();
   if (!trimmed) return false;
+  if (trimmed.startsWith('{{')) return true;
   if (trimmed.startsWith('/') || trimmed.startsWith('#') || trimmed.startsWith('?')) return true;
   return SAFE_URL_PATTERN.test(trimmed);
 }

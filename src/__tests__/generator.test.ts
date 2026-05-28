@@ -222,6 +222,61 @@ describe('generateMJML', () => {
     expect(mjml).toContain('src="#"');
   });
 
+  it('preserves a bare variable as button href so mustache can substitute it', () => {
+    const section = createSection();
+    const block = createBlock('button');
+    block.properties.href = '{{ unsubscribe_url }}';
+    section.columns[0].blocks.push(block);
+
+    const mjml = generateMJML(makeTemplate([section]));
+    expect(mjml).toContain('href="{{ unsubscribe_url }}"');
+    expect(mjml).not.toContain('href="#"');
+  });
+
+  it('preserves a variable embedded after a safe URL prefix in href', () => {
+    const section = createSection();
+    const block = createBlock('button');
+    block.properties.href = 'https://example.com/?ref={{ campaign_id }}';
+    section.columns[0].blocks.push(block);
+
+    const mjml = generateMJML(makeTemplate([section]));
+    // The `&` in encoded form is not relevant here — there's no `&` in this href.
+    expect(mjml).toContain('href="https://example.com/?ref={{ campaign_id }}"');
+  });
+
+  it('preserves a variable inside mailto: href', () => {
+    const section = createSection();
+    const block = createBlock('button');
+    block.properties.href = 'mailto:{{ user_email }}';
+    section.columns[0].blocks.push(block);
+
+    const mjml = generateMJML(makeTemplate([section]));
+    expect(mjml).toContain('href="mailto:{{ user_email }}"');
+  });
+
+  it('still rewrites dangerous schemes to # even when followed by a variable', () => {
+    const section = createSection();
+    const block = createBlock('button');
+    block.properties.href = 'javascript:alert({{ x }})';
+    section.columns[0].blocks.push(block);
+
+    const mjml = generateMJML(makeTemplate([section]));
+    expect(mjml).not.toContain('javascript:');
+    expect(mjml).toContain('href="#"');
+  });
+
+  it('preserves variable placeholders in button text', () => {
+    const section = createSection();
+    const block = createBlock('button');
+    block.properties.text = 'Hi {{ customer_name }}, click here';
+    section.columns[0].blocks.push(block);
+
+    const mjml = generateMJML(makeTemplate([section]));
+    // escapeHTML must not mangle {{ }} markers — downstream templating
+    // engines need them intact to substitute at send time.
+    expect(mjml).toContain('Hi {{ customer_name }}, click here</mj-button>');
+  });
+
   it('preserves safe https URLs in button href', () => {
     const section = createSection();
     const block = createBlock('button');

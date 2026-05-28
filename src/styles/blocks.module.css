@@ -41,6 +41,24 @@
   border: none;
 }
 
+/* Variable chip rendered inside the button preview. Inherits the button's
+   font so it sizes with the surrounding text but keeps the chip colors. */
+.ee-button-preview :global(.ee-variable-chip) {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
+  margin: 0 1px;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  background: var(--ee-variable-bg);
+  color: var(--ee-variable-color);
+  border: 1px solid var(--ee-variable-border);
+  border-radius: var(--ee-border-radius-sm);
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+
 /* Image Block */
 .ee-image-block {
   display: flex;

@@ -1,6 +1,7 @@
 import type { Block } from '../../types';
 import { useBlockUpdate } from '../../hooks/useBlockUpdate';
 import { PropertyField, FieldSeparator } from './PropertyField';
+import { VariableTextInput } from './controls/VariableTextInput';
 import styles from '../../styles/properties.module.css';
 
 const FONT_WEIGHT_OPTIONS = [
@@ -27,7 +28,7 @@ export function ButtonProperties({ block }: ButtonPropertiesProps) {
 
   return (
     <div className={styles['ee-properties-body']}>
-      <PropertyField type="text" label="Button Text" value={p.text} onChange={(v) => update({ text: v })} />
+      <VariableTextInput label="Button Text" value={p.text} onChange={(v) => update({ text: v })} />
       <PropertyField type="link" label="Link URL" value={p.href} onChange={(v) => update({ href: v })} />
       <FieldSeparator />
       <PropertyField type="color" label="Background Color" value={p.backgroundColor} onChange={(v) => update({ backgroundColor: v })} />

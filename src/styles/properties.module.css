@@ -362,6 +362,89 @@
   margin-top: 4px;
 }
 
+/* Variable picker trigger sitting beside a text input */
+.ee-variable-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  padding: 0;
+  background: var(--ee-bg-input);
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius-sm);
+  color: var(--ee-variable-color);
+  font-family: var(--ee-font-family-mono, ui-monospace, SFMono-Regular, monospace);
+  font-size: 12px;
+  font-weight: var(--ee-font-weight-semibold, 600);
+  cursor: pointer;
+  transition: background-color var(--ee-transition-fast), border-color var(--ee-transition-fast);
+}
+
+.ee-variable-trigger:hover {
+  background: var(--ee-bg-hover);
+  border-color: var(--ee-border-focus, var(--ee-color-primary));
+}
+
+.ee-variable-trigger:focus {
+  outline: none;
+  border-color: var(--ee-border-focus, var(--ee-color-primary));
+  box-shadow: var(--ee-shadow-focus);
+}
+
+/* Popover card containing the search input + suggestion list. Renders as
+   one unified card; the inner SuggestionPopup's own card styling is flattened
+   via descendant selectors so we don't get two stacked panels. */
+.ee-variable-popover {
+  display: flex;
+  flex-direction: column;
+  width: min(320px, calc(100vw - 16px));
+  max-width: min(320px, calc(100vw - 16px));
+  background: var(--ee-bg-panel, #ffffff);
+  border: 1px solid var(--ee-border-color);
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  font-family: var(--ee-font-family);
+}
+
+.ee-variable-popover-search {
+  padding: 8px;
+  border-bottom: 1px solid var(--ee-border-color);
+  background: var(--ee-bg-panel, #ffffff);
+}
+
+.ee-variable-popover-search-input {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: var(--ee-font-size-sm);
+  font-family: var(--ee-font-family);
+  border: 1px solid var(--ee-border-color);
+  border-radius: var(--ee-border-radius-sm);
+  background: var(--ee-bg-input, #ffffff);
+  color: var(--ee-text-primary);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color var(--ee-transition-fast);
+}
+
+.ee-variable-popover-search-input:focus {
+  border-color: var(--ee-border-focus, var(--ee-color-primary));
+  box-shadow: var(--ee-shadow-focus);
+}
+
+/* Flatten the SuggestionPopup when it lives inside our card — we already
+   own the outer border, shadow, and radius. */
+.ee-variable-popover :global(.ee-variable-suggestion) {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  min-width: 0;
+  max-width: none;
+  width: 100%;
+}
+
 /* Checkbox label inline */
 .ee-checkbox-label {
   composes: ee-field-label;

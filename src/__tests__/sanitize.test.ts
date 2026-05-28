@@ -217,4 +217,18 @@ describe('isSafeURL', () => {
   it('rejects javascript: with leading whitespace (trimmed)', () => {
     expect(isSafeURL('  javascript:alert(1)  ')).toBe(false);
   });
+
+  it('accepts a bare variable placeholder as URL', () => {
+    expect(isSafeURL('{{ unsubscribe_url }}')).toBe(true);
+  });
+
+  it('accepts a variable placeholder followed by a path', () => {
+    expect(isSafeURL('{{ base_url }}/page')).toBe(true);
+  });
+
+  it('rejects dangerous schemes even when they contain a variable', () => {
+    // Variable substitution does not bypass scheme checks — the URL still
+    // starts with a known-dangerous scheme.
+    expect(isSafeURL('javascript:alert({{ x }})')).toBe(false);
+  });
 });
