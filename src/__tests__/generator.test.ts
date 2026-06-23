@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { generateMJML } from '../mjml/generator';
+import { parseMJML } from '../mjml/parser';
+import { compileMJMLToHTML } from '../mjml/compiler';
 import type { EmailTemplate } from '../types';
 import { createBlock, createSection } from '../utils/factory';
 
@@ -373,6 +375,64 @@ describe('generateMJML', () => {
       expect(blockquoteTag).toContain('margin:0 0 10px 0');
       expect(nestedP).toContain('margin:0');
       expect(nestedP).not.toContain('10px');
+    });
+  });
+
+  describe('hero block with background image', () => {
+    const BG = 'https://example.com/bg.jpg';
+
+    function heroSection(withBg: boolean) {
+      const section = createSection();
+      const block = createBlock('hero');
+      block.properties.heading = 'Welcome';
+      block.properties.padding = '40px 25px';
+      if (withBg) block.properties.backgroundImage = BG;
+      section.columns[0].blocks.push(block);
+      return section;
+    }
+
+    function findHero(template: EmailTemplate): any {
+      for (const s of template.sections)
+        for (const c of s.columns)
+          for (const b of c.blocks) if (b.type === 'hero') return b;
+      return null;
+    }
+
+    it('renders a hero with a background image as an mj-section, not mj-hero', () => {
+      // mj-hero collapses to a negative height and has only a weak Outlook fallback;
+      // mj-section is the canonical background-image container.
+      const mjml = generateMJML(makeTemplate([heroSection(true)]));
+      expect(mjml).toContain('<mj-section');
+      expect(mjml).not.toContain('<mj-hero');
+      expect(mjml).toContain(`background-url="${BG}"`);
+      expect(mjml).toContain('background-size="cover"');
+      // Round-trip marker so the section parses back to a hero block.
+      expect(mjml).toContain('css-class="ee-block-hero"');
+    });
+
+    it('keeps a hero without a background image as mj-hero', () => {
+      const mjml = generateMJML(makeTemplate([heroSection(false)]));
+      expect(mjml).toContain('<mj-hero');
+    });
+
+    it('compiles cleanly: bg url present, no negative height, no NaN', async () => {
+      const mjml = generateMJML(makeTemplate([heroSection(true)]));
+      const { html, errors } = await compileMJMLToHTML(mjml);
+      expect(errors).toEqual([]);
+      expect(html).toContain(BG);
+      expect(html).not.toMatch(/height:\s*-\d/); // no collapsing negative height
+      expect(html).not.toMatch(/height="-\d/);
+      expect(html).not.toContain('NaN');
+    });
+
+    it('round-trips a hero background image through generate -> parse', () => {
+      const mjml = generateMJML(makeTemplate([heroSection(true)]));
+      const hero = findHero(parseMJML(mjml));
+      expect(hero).not.toBeNull();
+      expect(hero.type).toBe('hero');
+      expect(hero.properties.backgroundImage).toBe(BG);
+      expect(hero.properties.padding).toBe('40px 25px');
+      expect(hero.properties.heading).toBe('Welcome');
     });
   });
 });

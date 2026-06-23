@@ -117,10 +117,43 @@ function generateHeroAsSection(block: Block, indent: string): string {
   // Normalize empty/missing backgroundColor to 'transparent' so the attribute
   // is always present and round-trips correctly (parser defaults to #ffffff when missing)
   const bgColor = p.backgroundColor || 'transparent';
+
+  // When the hero has a background image, render it as an mj-section carrying the
+  // background-url instead of mj-hero. Without explicit dimensions mj-hero emits a
+  // collapsing negative height (height:-80px) and only a weak Outlook <v:image>
+  // fallback. mj-section is MJML's canonical background-image container: clean
+  // output plus a proper <v:rect>/<v:fill> VML fallback so the image actually
+  // renders across email clients. The ee-hero metadata comment + ee-block-hero
+  // css-class keep it round-tripping back to a hero block (via parseHeroFromMjText).
+  // Section padding is 0 so the image fills edge-to-edge; the inner mj-text carries
+  // the hero's padding (which is what the parser reads back).
+  if (p.backgroundImage) {
+    const sectionAttrs = buildAttrs({
+      'background-color': bgColor,
+      'background-url': p.backgroundImage,
+      'background-size': 'cover',
+      'background-repeat': 'no-repeat',
+      'background-position': 'center center',
+      padding: '0',
+    });
+    const textAttrs = buildAttrs({
+      padding: p.padding,
+      align: p.align,
+      'css-class': 'ee-block-hero',
+    });
+    const inner = `${buildHeroMetaComment(p)}${buildHeroContentHTML(p)}`;
+    return [
+      `${indent}<mj-section${sectionAttrs}>`,
+      `${indent}  <mj-column>`,
+      `${indent}    <mj-text${textAttrs}>${inner}</mj-text>`,
+      `${indent}  </mj-column>`,
+      `${indent}</mj-section>`,
+    ].join('\n');
+  }
+
+  // No background image: a plain/color hero renders fine as mj-hero.
   const heroAttrs = buildAttrs({
     'background-color': bgColor,
-    'background-url': p.backgroundImage || undefined,
-    'background-position': p.backgroundImage ? 'center center' : undefined,
     padding: p.padding,
   });
 
@@ -435,9 +468,9 @@ function generateMenuBlock(block: Block, indent: string): string {
   return lines.join('\n');
 }
 
-function generateHeroBlock(block: Block, indent: string): string {
-  const p = block.properties;
-
+// Heading/subtext/button markup shared by the hero generators. Centering is
+// handled by the surrounding mj-text `align` attribute, so no text-align here.
+function buildHeroContentHTML(p: Record<string, any>): string {
   let html = '';
   if (p.heading) {
     html += `<h2 style="color:${escapeAttr(p.headingColor)};font-size:${escapeAttr(p.headingFontSize)};font-weight:bold;line-height:1.2;margin:0 0 16px">${escapeHTML(p.heading)}</h2>`;
@@ -448,16 +481,12 @@ function generateHeroBlock(block: Block, indent: string): string {
   if (p.buttonText) {
     html += `<a href="${escapeAttr(safeHref(p.buttonHref))}" style="display:inline-block;background-color:${escapeAttr(p.buttonBackgroundColor)};color:${escapeAttr(p.buttonColor)};border-radius:${escapeAttr(p.buttonBorderRadius)};padding:12px 28px;font-weight:600;font-size:16px;text-decoration:none">${escapeHTML(p.buttonText)}</a>`;
   }
+  return html;
+}
 
-  // Wrap in a div with background styles when backgroundImage is set
-  if (p.backgroundImage) {
-    const bgStyle = `background-image:url(${escapeAttr(p.backgroundImage)});background-size:cover;background-position:center;background-repeat:no-repeat;${p.backgroundColor ? `background-color:${escapeAttr(p.backgroundColor)};` : ''}`;
-    html = `<div style="${bgStyle}padding:20px;">${html}</div>`;
-  }
-
-  const bgColor = !p.backgroundImage && p.backgroundColor && p.backgroundColor !== 'transparent' ? p.backgroundColor : undefined;
-
-  // Embed hero metadata as a comment for round-trip parsing (like countdown blocks)
+// Hero metadata embedded as an HTML comment so an mj-text marked with the
+// ee-block-hero css-class round-trips back to a hero block (parseHeroFromMjText).
+function buildHeroMetaComment(p: Record<string, any>): string {
   const metaJson = JSON.stringify({
     heading: p.heading,
     subtext: p.subtext,
@@ -473,7 +502,25 @@ function generateHeroBlock(block: Block, indent: string): string {
     backgroundImage: p.backgroundImage,
     backgroundColor: p.backgroundColor,
   });
-  const meta = `<!--ee-hero:${escapeAttr(metaJson)}-->`;
+  return `<!--ee-hero:${escapeAttr(metaJson)}-->`;
+}
+
+function generateHeroBlock(block: Block, indent: string): string {
+  const p = block.properties;
+
+  let html = buildHeroContentHTML(p);
+
+  // Wrap in a div with background styles when backgroundImage is set. (This nested
+  // path can't hoist the background onto a shared mj-section the way a standalone
+  // hero does, since the section may contain sibling blocks.)
+  if (p.backgroundImage) {
+    const bgStyle = `background-image:url(${escapeAttr(p.backgroundImage)});background-size:cover;background-position:center;background-repeat:no-repeat;${p.backgroundColor ? `background-color:${escapeAttr(p.backgroundColor)};` : ''}`;
+    html = `<div style="${bgStyle}padding:20px;">${html}</div>`;
+  }
+
+  const bgColor = !p.backgroundImage && p.backgroundColor && p.backgroundColor !== 'transparent' ? p.backgroundColor : undefined;
+
+  const meta = buildHeroMetaComment(p);
 
   const attrs = buildAttrs({
     padding: p.padding,
