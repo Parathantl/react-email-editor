@@ -249,6 +249,33 @@ describe('parseMJML', () => {
     expect(hero.properties.buttonBackgroundColor).toBe('#000000');
   });
 
+  it('recovers hero background image from mj-section when the ee-hero comment is stripped', () => {
+    // A storage / sanitizer layer removing the <!--ee-hero--> comment must NOT lose
+    // the background image: it survives as the wrapping mj-section's background-url
+    // attribute and is recovered from there (plus content from the rendered markup).
+    const mjml = `
+      <mjml>
+        <mj-body>
+          <mj-section background-color="#ffffff" background-url="https://example.com/bg.png" background-size="cover" background-repeat="no-repeat" padding="0">
+            <mj-column>
+              <mj-text padding="40px 25px" align="center" css-class="ee-block-hero"><h2 style="color:#333333;font-size:32px;font-weight:bold;margin:0 0 16px">Custom Heading</h2><p style="color:#666666;font-size:16px;margin:0 0 24px">Custom Sub</p><a href="https://example.com" style="background-color:#2563eb;color:#ffffff;border-radius:4px;padding:12px 28px">Get Started</a></mj-text>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `;
+    const result = parseMJML(mjml);
+    const hero = result.sections[0].columns[0].blocks[0];
+    expect(hero.type).toBe('hero');
+    expect(hero.properties.backgroundImage).toBe('https://example.com/bg.png');
+    expect(hero.properties.backgroundColor).toBe('#ffffff');
+    expect(hero.properties.heading).toBe('Custom Heading');
+    expect(hero.properties.subtext).toBe('Custom Sub');
+    expect(hero.properties.buttonText).toBe('Get Started');
+    expect(hero.properties.buttonHref).toBe('https://example.com');
+    expect(hero.properties.buttonBackgroundColor).toBe('#2563eb');
+  });
+
   it('parses mj-hero with no children as empty hero block', () => {
     const mjml = `
       <mjml>

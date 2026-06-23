@@ -768,6 +768,15 @@ function parseHeroFromMjText(el: Element): Block {
   const defaults = DEFAULT_BLOCK_PROPERTIES.hero;
   const innerHTML = el.innerHTML?.trim() ?? '';
 
+  // The ee-hero JSON comment is the primary source of the hero's structured data,
+  // but HTML comments are routinely stripped by storage / sanitizer layers. When
+  // that happens, rebuild the hero from data that survives the round trip: the
+  // rendered <h2>/<p>/<a> markup and — crucially for the background image — the
+  // background-* attributes on the wrapping mj-section (see generateHeroAsSection).
+  // Without this, a stripped comment silently reverts the hero to defaults, losing
+  // the background image even though the section still carries its background-url.
+  const recovered = recoverHeroFromMarkup(el);
+
   // Extract metadata from embedded JSON comment
   const metaMatch = innerHTML.match(/<!--ee-hero:([\s\S]*?)-->/);
 
@@ -778,39 +787,104 @@ function parseHeroFromMjText(el: Element): Block {
       return {
         id: generateBlockId(),
         type: 'hero',
-        properties: {
-          heading: meta.heading ?? defaults.heading,
-          subtext: meta.subtext ?? defaults.subtext,
-          buttonText: meta.buttonText ?? '',
-          buttonHref: meta.buttonHref ?? defaults.buttonHref,
-          headingColor: meta.headingColor ?? defaults.headingColor,
-          headingFontSize: meta.headingFontSize ?? defaults.headingFontSize,
-          subtextColor: meta.subtextColor ?? defaults.subtextColor,
-          subtextFontSize: meta.subtextFontSize ?? defaults.subtextFontSize,
-          buttonBackgroundColor: meta.buttonBackgroundColor ?? defaults.buttonBackgroundColor,
-          buttonColor: meta.buttonColor ?? defaults.buttonColor,
-          buttonBorderRadius: meta.buttonBorderRadius ?? defaults.buttonBorderRadius,
-          align: el.getAttribute('align') ?? defaults.align,
-          padding: resolvePadding(el, defaults.padding),
-          backgroundImage: meta.backgroundImage ?? defaults.backgroundImage,
-          backgroundColor: meta.backgroundColor || 'transparent',
-        },
+        properties: buildHeroProperties(el, defaults, meta, recovered),
       };
     } catch {
-      // JSON parse failed — fall through to default
+      // JSON parse failed — fall through to markup recovery
     }
   }
 
-  // Fallback: create a default hero block
+  // No usable comment — reconstruct from the recovered markup, falling back to
+  // defaults for anything that couldn't be recovered.
   return {
     id: generateBlockId(),
     type: 'hero',
-    properties: {
-      ...defaults,
-      padding: resolvePadding(el, defaults.padding),
-      align: el.getAttribute('align') ?? defaults.align,
-    },
+    properties: buildHeroProperties(el, defaults, {}, recovered),
   };
+}
+
+// Merge hero properties from three sources in priority order:
+// embedded comment metadata > values recovered from surviving markup > defaults.
+function buildHeroProperties(
+  el: Element,
+  defaults: Record<string, any>,
+  meta: Record<string, any>,
+  rec: Record<string, any>,
+): Record<string, any> {
+  return {
+    heading: meta.heading ?? rec.heading ?? defaults.heading,
+    subtext: meta.subtext ?? rec.subtext ?? defaults.subtext,
+    buttonText: meta.buttonText ?? rec.buttonText ?? '',
+    buttonHref: meta.buttonHref ?? rec.buttonHref ?? defaults.buttonHref,
+    headingColor: meta.headingColor ?? rec.headingColor ?? defaults.headingColor,
+    headingFontSize: meta.headingFontSize ?? rec.headingFontSize ?? defaults.headingFontSize,
+    subtextColor: meta.subtextColor ?? rec.subtextColor ?? defaults.subtextColor,
+    subtextFontSize: meta.subtextFontSize ?? rec.subtextFontSize ?? defaults.subtextFontSize,
+    buttonBackgroundColor: meta.buttonBackgroundColor ?? rec.buttonBackgroundColor ?? defaults.buttonBackgroundColor,
+    buttonColor: meta.buttonColor ?? rec.buttonColor ?? defaults.buttonColor,
+    buttonBorderRadius: meta.buttonBorderRadius ?? rec.buttonBorderRadius ?? defaults.buttonBorderRadius,
+    align: el.getAttribute('align') ?? defaults.align,
+    padding: resolvePadding(el, defaults.padding),
+    backgroundImage: meta.backgroundImage ?? rec.backgroundImage ?? defaults.backgroundImage,
+    backgroundColor: meta.backgroundColor || rec.backgroundColor || 'transparent',
+  };
+}
+
+// Recover hero fields from the parts of the MJML that survive comment stripping:
+// the rendered <h2>/<p>/<a> markup inside the mj-text, and the background-* on the
+// wrapping mj-section. Missing values come back undefined so callers can fall back.
+function recoverHeroFromMarkup(el: Element): Record<string, any> {
+  const section = closestSection(el);
+  const h2 = el.querySelector('h2');
+  const para = el.querySelector('p');
+  const anchor = el.querySelector('a');
+  const hStyle = parseInlineStyle(h2?.getAttribute('style'));
+  const pStyle = parseInlineStyle(para?.getAttribute('style'));
+  const aStyle = parseInlineStyle(anchor?.getAttribute('style'));
+  const text = (node: Element | null) => {
+    const t = node?.textContent?.trim();
+    return t || undefined;
+  };
+  return {
+    heading: text(h2),
+    headingColor: hStyle['color'],
+    headingFontSize: hStyle['font-size'],
+    subtext: text(para),
+    subtextColor: pStyle['color'],
+    subtextFontSize: pStyle['font-size'],
+    buttonText: text(anchor),
+    buttonHref: anchor?.getAttribute('href') || undefined,
+    buttonBackgroundColor: aStyle['background-color'],
+    buttonColor: aStyle['color'],
+    buttonBorderRadius: aStyle['border-radius'],
+    backgroundImage: section?.getAttribute('background-url') || undefined,
+    backgroundColor: section?.getAttribute('background-color') || undefined,
+  };
+}
+
+// Walk up to the nearest ancestor mj-section (XML-safe: avoids relying on
+// Element.closest, which DOM implementations don't all expose for XML documents).
+function closestSection(el: Element): Element | null {
+  let cur: Element | null = el.parentElement;
+  while (cur) {
+    if (cur.tagName?.toLowerCase() === 'mj-section') return cur;
+    cur = cur.parentElement;
+  }
+  return null;
+}
+
+// Parse an inline style attribute into a lower-cased property → value map.
+function parseInlineStyle(style: string | null | undefined): Record<string, string> {
+  const map: Record<string, string> = {};
+  if (!style) return map;
+  for (const decl of style.split(';')) {
+    const i = decl.indexOf(':');
+    if (i === -1) continue;
+    const key = decl.slice(0, i).trim().toLowerCase();
+    const value = decl.slice(i + 1).trim();
+    if (key && value) map[key] = value;
+  }
+  return map;
 }
 
 function parseButtonBlock(el: Element): Block {
